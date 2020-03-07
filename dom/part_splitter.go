@@ -119,6 +119,16 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 	}
 	// combine the paths
 	bottomPath = transforms.SimpleJoin{}.JoinPaths(bottomPath, socketEdgePath)
+	// flip the bottom path back
+	bp, err := transforms.MirrorTransform{
+		Axis:             transforms.Horizontal,
+		Handle:           path.TopLeft,
+		SegmentOperators: so,
+	}.PathTransform(bottomPath)
+	if err != nil {
+		return nil, err
+	}
+	bottomPath = bp
 
 	ttl, tbr, err := path.BoundingBoxTrimWhitespace(topPath, so)
 	if err != nil {
