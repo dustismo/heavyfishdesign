@@ -10,8 +10,11 @@ via the ``import`` attribute on the document
 
 Example:
 
-here is a simple line component in file ``designs/common/line.json``
-It uses attributes ``to`` and ``from`` 
+Here is a simple line component:
+
+    `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/joints/line.json>`_
+
+It requires the attributes ``to`` and ``from`` when being imported
 
 .. code-block:: JSON
    :linenos:

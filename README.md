@@ -54,6 +54,16 @@ Build the docs:
 
     $ cd docs && make html && cd ..
 
+
+VSCODE
+
+To set the .hfd file associations edit settings.json and add:
+
+    "files.associations": {
+        "*.hfd": "json"
+    }
+
+
 *****
 
 The Code

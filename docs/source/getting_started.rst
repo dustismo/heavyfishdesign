@@ -3,7 +3,7 @@ Getting Started
 
 installation
 ------------------------------------------------------------------------------------------
-TODO
+TODO 
 
 HFD
 ----------------
@@ -21,15 +21,19 @@ Every HFD file has the following structure
             {"path": "another/custom/component.json"}
         ],
         "params": {
-            "offset": ".0035",
-            "material_width": 10,
-            "material_height": 12,
-            "measurement_units": "in",
-            "material_thickness": 0.2,
+            // These fields are recommended for all designs
+            "offset": ".0035",          // the cutting kerf / 2
+            "material_width": 18,       // size of the material we are cutting from
+            "material_height": 11,      // size of material
+            "material_thickness": 0.2,  // thickness of material
+            "measurement_units": "in",  // either "in" or "mm"
+
+            // more design specific params
             "some_param1": "0",
             "another_param": 3.25, 
         },
         "parts": [
+            // One or more parts
             {
                 "id": "some_identifier",
                 "components": [
@@ -39,23 +43,11 @@ Every HFD file has the following structure
                         "stem_topper_svg": "star_svg"
                     }
                 ]
-            },
-            {
-                "id": "spacer",
-                "repeat" : {
-                    "total" : "num_layers + num_stem_layers"
-                },
-                "components": [
-                    {
-                        "type": "spacer",
-                        "width": "stem_width * 2"
-                    }
-                ]
             }
         ]
     }
 
-Each document is divided into sections:
+Each document is divided into the following sections:
 
 * ``imports`` Imports allows importing custom components from other documents as well as importing siple SVG files. 
 * ``params`` List of parameters which impact the design.
