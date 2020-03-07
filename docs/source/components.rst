@@ -78,8 +78,15 @@ Commands
 
 edge
 ------------------------------------------------------------------------------------------
-an edge is some form of a line from x to y.  Typically these are used for 
-joints.  Each edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
+
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints>`_
+
+
+an edge is some form of a connection from x1,y1 to x2,y2.  Edges are specifically designed to be useful
+for joints, but can easily be used for other things.  Each edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
 Each of the subcomponents should be drawn horizontally from origin 0,0.  The component
 will stitch them together to make a continuous edge, and handle automatically handle 
 moving and rotating. 
@@ -131,6 +138,12 @@ Attributes
 
 xintercept
 ------------------------------------------------------------------------------------------
+
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/speaker.json>`_
+
 xintercept is a special component that allows you to render a repeatable shape horizontally 
 into another shape. 
 

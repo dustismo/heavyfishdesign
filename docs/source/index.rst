@@ -1,5 +1,4 @@
-Heavy Fish Design
-documentation
+Heavy Fish Design (the docs)
 =================================
 
 For Designers
