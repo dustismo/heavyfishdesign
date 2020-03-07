@@ -1,0 +1,70 @@
+{
+    "imports": [
+        {"path": "designs/box/front_with_access.hfd"},
+        {"path": "designs/box/front_flat_top.hfd"},
+        {"path": "designs/box/bottom.hfd"},
+        {"path": "designs/box/side_flat_top.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 18,
+        "material_height": 11,
+        "material_thickness": 0.2,
+        "box_width": 3,
+        "box_height": 3.25,
+        "box_depth": 1.6,
+        "finger_width": 0.2,
+        "finger_height": "material_thickness",
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness",
+        "finger_padding" : "(finger_space + finger_width) / 2",
+        "cutout_height": "2.25",
+        "cutout_width": ".8",
+        "cutout_radius": ".4"
+    },
+    "parts": [
+        {
+            "id": "box_front",
+            "components": [
+                {
+                    "type": "front_with_access",
+                    "width": "box_width",
+                    "height": "box_height" 
+                }
+            ]
+        },
+        {
+            "id": "box_back",
+            "components": [
+                {
+                    "type": "front_flat_top",
+                    "width": "box_width",
+                    "height": "box_height" 
+                }
+            ]
+        },
+        {
+            "id": "side",
+            "repeat": {
+                "total": 2
+            },
+            "components": [
+                {
+                    "type": "side_flat_top",
+                    "width": "box_depth",
+                    "height": "box_height"
+                }
+            ]
+        },
+        {
+            "id": "bottom",
+            "components": [
+                {
+                    "type": "box_bottom",
+                    "front_width": "box_width",
+                    "side_width": "box_depth" 
+                }
+            ]
+        }
+    ]
+}

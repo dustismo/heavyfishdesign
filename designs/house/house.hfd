@@ -1,0 +1,132 @@
+{
+    "imports": [
+        {"path": "designs/house/side.hfd"},
+        {"path": "designs/house/window.hfd"},
+        {"path": "designs/house/roof.hfd"},
+        {"path": "designs/house/front.hfd"},
+        {"path": "designs/house/floor.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 11,
+        "material_height": 12,
+        "material_thickness": 0.25,
+        "front_width": 4,
+        "side_width": 3.5,
+        "wall_height": 2, 
+        "window_width": "side_width / 2",
+        "window_height": "wall_height",
+        "window_mullion_width": ".15",
+        "roof_gable_height": 1.5,
+        "roof_overhang": 0.4,
+        "roof_eave": 0.5,
+        "finger_width": 0.3,
+        "finger_height": "material_thickness",
+        "finger_space": 0.2,
+        "finger_padding": 0.5,
+        "finger_depth": "material_thickness"
+    },
+    "parts": [
+        {
+            "id": "house_side_left",
+            "components" : [
+                {
+                    "type": "house_side_gabled",
+                    "width": "side_width",
+                    "height": "wall_height"
+                },
+                {
+                    "id": "side_window",
+                    "type": "window",
+                    "width": "window_width",
+                    "height": "window_height",
+                    "mullion_width": "window_mullion_width",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "side_width / 2, wall_height / 2",
+                            "handle": "$MIDDLE_MIDDLE"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "house_side_right",
+            "components" : [
+                {
+                    "type": "house_side_gabled",
+                    "width": "side_width",
+                    "height": "wall_height"
+                },
+                {
+                    "id": "side_window",
+                    "type": "window",
+                    "width": "window_width",
+                    "height": "window_height",
+                    "mullion_width": "window_mullion_width",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "side_width / 2, wall_height / 2",
+                            "handle": "$MIDDLE_MIDDLE"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "roof_left",
+            "components" : [
+                {
+                    "type": "house_roof",
+                    "house_front_width": "front_width",
+                    "house_height": "wall_height",
+                    "house_side_width": "side_width"
+                }
+            ]
+        },
+        {
+            "id": "roof_right",
+            "components" : [
+                {
+                    "type": "house_roof",
+                    "house_front_width": "front_width",
+                    "house_height": "wall_height",
+                    "house_side_width": "side_width"
+                }
+            ]
+        },
+        {
+            "id": "front_wall",
+            "components" : [
+                {
+                    "type": "house_front",
+                    "width": "front_width",
+                    "height": "wall_height"
+                }
+            ]
+        },
+        {
+            "id": "back_wall",
+            "components" : [
+                {
+                    "type": "house_front",
+                    "width": "front_width",
+                    "height": "wall_height"
+                }
+            ]
+        },
+        {
+            "id": "floor",
+            "components" : [
+                {
+                    "type": "house_floor",
+                    "width": "front_width",
+                    "height": "side_width"
+                }
+            ]
+        }
+
+    ]
+}

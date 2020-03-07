@@ -12,7 +12,7 @@ Example:
 
 Here is a simple line component:
 
-    `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/joints/line.json>`_
+    `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/joints/line.hfd>`_
 
 It requires the attributes ``to`` and ``from`` when being imported
 
@@ -54,7 +54,7 @@ Then to access the new component, simply import it and use it.
 
     {
         "imports": [
-            {"path": "designs/common/line.json"}
+            {"path": "designs/common/line.hfd"}
         ],
         "params": {
             "material_width": 20,

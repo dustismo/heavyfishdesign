@@ -1,6 +1,6 @@
 {
     "imports": [
-        {"path": "testdata/simple_square.json"}
+        {"path": "testdata/simple_square.hfd"}
     ],
     "params": {
         

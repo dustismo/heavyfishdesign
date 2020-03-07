@@ -20,7 +20,7 @@
                 {
                     "type": "reference",
                     "id" : "left",
-                    "filename": "testdata/finger_joint.json",
+                    "filename": "testdata/finger_joint.hfd",
                     "component": "@finger_joint",
                     "side": "plug",
                     "transforms": [

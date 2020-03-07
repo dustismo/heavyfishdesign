@@ -11,7 +11,7 @@ import (
 )
 
 func TestEdge1(t *testing.T) {
-	planset, context, err := LoadPlanSet("testdata/edge_test_1.json")
+	planset, context, err := LoadPlanSet("testdata/edge_test_1.hfd")
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -23,7 +23,7 @@ func TestEdge1(t *testing.T) {
 }
 
 func TestPartRepeat(t *testing.T) {
-	planset, context, err := LoadPlanSet("testdata/part_repeat_test.json")
+	planset, context, err := LoadPlanSet("testdata/part_repeat_test.hfd")
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -42,7 +42,7 @@ func TestPartRepeat(t *testing.T) {
 
 //this tests importing a Part as a Component
 func TestPartReference(t *testing.T) {
-	planset, context, err := LoadPlanSet("testdata/part_reference_test.json")
+	planset, context, err := LoadPlanSet("testdata/part_reference_test.hfd")
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -53,7 +53,7 @@ func TestPartReference(t *testing.T) {
 }
 
 func TestFingerJoint(t *testing.T) {
-	planset, context, err := LoadPlanSet("testdata/finger_joint_import_test.json")
+	planset, context, err := LoadPlanSet("testdata/finger_joint_import_test.hfd")
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -64,7 +64,7 @@ func TestFingerJoint(t *testing.T) {
 }
 
 func TestBox(t *testing.T) {
-	planset, context, err := LoadPlanSet("testdata/simple_square.json")
+	planset, context, err := LoadPlanSet("testdata/simple_square.hfd")
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -121,7 +121,7 @@ func TestSimpleEval(t *testing.T) {
 func TestReferenceComponent(t *testing.T) {
 	InitContext()
 
-	b, err := dom.AppContext().FileLoader().LoadBytes("testdata/finger_joint.json")
+	b, err := dom.AppContext().FileLoader().LoadBytes("testdata/finger_joint.hfd")
 	if err != nil {
 		t.Errorf("Error %s", err)
 	}

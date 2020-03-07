@@ -142,7 +142,7 @@ xintercept
 
 .. topic:: Examples
 
-    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/speaker.json>`_
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/speaker.hfd>`_
 
 xintercept is a special component that allows you to render a repeatable shape horizontally 
 into another shape. 

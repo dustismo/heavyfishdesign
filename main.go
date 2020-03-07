@@ -18,7 +18,7 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-var FileExtension = "json"
+var FileExtension = "hfd"
 
 func main() {
 	// initialize
@@ -310,7 +310,7 @@ func DirectoryList(directory string) ([]string, error) {
 // construct a suitable saveFile name from the give path + document name
 // for instance:
 // filepath = "/home/my_document/"
-// docuPath = "/home/designs/box_name.json"
+// docuPath = "/home/designs/box_name.hfd"
 // = /home/my_document/box_name_000.svg
 func createFilename(filePath string, documentPath string) string {
 	// if no filePath is specified then use the documentpath
@@ -381,7 +381,7 @@ func processRequest(w http.ResponseWriter, req *http.Request) {
 	}
 	params.UnmarshalUrlValues(req.Form)
 	logger := util.NewLog()
-	filename := params.MustString("file", "dom/testdata/box_test.json")
+	filename := params.MustString("file", "dom/testdata/box_test.hfd")
 	planset, err := renderPlanSet(filename, params, logger)
 	if err != nil {
 		logger.Errorf("Error during render: %s\n", err.Error())

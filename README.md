@@ -20,7 +20,7 @@ Local Render:
 
 To render an hfd file to the corresponding svg files use:
 
-    $ go run main.go render --path=designs/drawer_organizers/silverware.json --output_file=designs_rendered/silverware
+    $ go run main.go render --path=designs/drawer_organizers/silverware.hfd --output_file=designs_rendered/silverware
 
 Basic server operation:
 
@@ -31,7 +31,7 @@ then open browser to:
     http://localhost:2003/json?file=<path_to_hfd_file>
 
 ex: 
-    http://localhost:2003/json?file=designs/box/box_three_sided.json
+    http://localhost:2003/json?file=designs/box/box_three_sided.hfd
 
 *****
 
@@ -57,7 +57,7 @@ Build the docs:
 
 VSCODE
 
-To set the .hfd file associations edit settings.json and add:
+To set the .hfd file associations edit settings.hfd and add:
 
     "files.associations": {
         "*.hfd": "json"

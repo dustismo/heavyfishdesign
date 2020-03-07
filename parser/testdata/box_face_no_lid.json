@@ -37,7 +37,7 @@
                 },
                 {
                     "type": "reference",
-                    "filename": "dom/testdata/finger_joint.json",
+                    "filename": "dom/testdata/finger_joint.hfd",
                     "component": "@finger_joint",
                     "side": "plug",
                     "transforms": [
@@ -62,7 +62,7 @@
                 },
                 {
                     "type": "reference",
-                    "filename": "dom/testdata/finger_joint.json",
+                    "filename": "dom/testdata/finger_joint.hfd",
                     "component": "@finger_joint",
                     "side": "plug",
                     "transforms": [
@@ -84,7 +84,7 @@
                 //This is the bottom side
                 {
                     "type": "reference",
-                    "filename": "dom/testdata/finger_joint.json",
+                    "filename": "dom/testdata/finger_joint.hfd",
                     "component": "@finger_joint",
                     "side": "plug",
                     "transforms": [

@@ -1,0 +1,108 @@
+// A divided box with 3 compartments
+// |-------|
+// |       |
+// |-------|
+// |       |
+// |-------|
+// |       |
+// |-------|
+{
+    "imports": [
+        {"path": "designs/box/front_flat_top.hfd"},
+        {"path": "designs/box/bottom.hfd"},
+        {"path": "designs/box/side_flat_top.hfd"},
+        {"path": "designs/joints/finger_joint_holes.hfd"},
+        {"path": "designs/joints/line.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 18,
+        "material_height": 11,
+        "material_thickness": 0.25,
+        "box_width": 4,
+        "box_height": 12.5,
+        "box_depth": 12,
+        "finger_width": 0.2,
+        "finger_height": "material_thickness",
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness",
+        "finger_padding" : "(finger_space + finger_width) / 2",
+        "divider_1_position": 4,
+        "divider_2_position": 8
+    },
+    "parts": [
+        {
+            "id": "front_flat_top",
+            "repeat": {
+                "total": 4
+            },
+            "components" : [{
+                "type": "front_flat_top",
+                "width": "box_width",
+                "height": "box_height"
+            }]
+        },
+        {
+            "id": "side_flat_top",
+            "repeat": {
+                "total": 2
+            },
+            "part_transformers": [
+                {
+                    "type": "splitter",
+                    "y": "6",
+                    "bleed_top": "offset",
+                    "bleed_bottom": "offset",
+                    "plug_edge": {
+                        "id": "plug_edge",
+                        "type": "line"
+                    },
+                    "socket_edge": {
+                        "type": "line"
+                    }
+                }
+            ],
+            "components" : [
+                {
+                    "type": "side_flat_top",
+                    "width": "box_depth",
+                    "height": "box_height"
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "divider_1_position, 0",
+                    "to": "divider_1_position, box_height",
+                    "padding_left": "finger_padding",
+                    "padding_right": "finger_padding + material_thickness"
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "divider_2_position, 0",
+                    "to": "divider_2_position, box_height",
+                    "padding_left": "finger_padding",
+                    "padding_right": "finger_padding + material_thickness"
+                }
+            ]
+        },
+        {
+            "id": "bottom",
+            "components" : [
+                {
+                    "type": "box_bottom",
+                    "front_width": "box_width",
+                    "side_width": "box_depth"
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "0, divider_1_position",
+                    "to": "box_width, divider_1_position"
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "0, divider_2_position",
+                    "to": "box_width, divider_2_position"
+                }
+            ]
+        }
+    ]
+}

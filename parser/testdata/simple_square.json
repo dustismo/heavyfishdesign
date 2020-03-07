@@ -1,6 +1,6 @@
 {
     "imports": [
-        {"path": "testdata/line.json"}
+        {"path": "testdata/line.hfd"}
     ],
     "params": {
         "offset": 0.006,

@@ -1,0 +1,84 @@
+{
+    "imports": [
+        {"path": "designs/joints/finger_joint_holes.hfd"},
+        {"path": "designs/joints/finger_joint_plug.hfd"},
+        {"path": "designs/joints/finger_joint_socket.hfd"},
+        {"path": "designs/joints/dragon_joint_plug.hfd"},
+        {"path": "designs/joints/dragon_joint_socket.hfd"},
+        {"path": "designs/joints/line.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 18,
+        "material_height": 11,
+        "material_thickness": 0.2,
+        "front_width": 8,
+        "side_width": 8,
+        "finger_width": 0.3,
+        "finger_height": 0.2,
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness"
+    },
+    "parts": [
+        {
+            "custom_component": {
+                "type" : "box_bottom"
+            },
+            "part_transformers": [
+                {
+                    "type": "splitter",
+                    "auto_split": true,
+                    "max_width": 5,
+                    "max_height": 5,
+                    "plug_edge": {
+                        // "type": "dragon_joint_plug",
+                        "type": "line",
+                        "padding_left": "material_thickness * 3",
+                        "padding_right": "material_thickness * 3"
+                    },
+                    "socket_edge": {
+                        // "type": "dragon_joint_socket",
+                        "type": "line",
+                        "padding_left": "material_thickness * 3",
+                        "padding_right": "material_thickness * 3"
+                    }
+                }
+            ],
+            "id" : "box_bottom",
+            "finger_padding": "(finger_space + finger_width) / 2",
+            "transforms": [
+                {
+                    "type": "join",
+                    "close_path" : "true"
+                },
+                {
+                    "type": "offset",
+                    "distance" : "offset",
+                    "size_should_be" : "larger"
+                }
+            ],
+            "components": [
+                {
+                    "type": "finger_joint_socket",
+                    "from": "0,0",
+                    "to" : "front_width,0"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from": "front_width,0",
+                    "to" : "front_width,side_width"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from": "front_width,side_width",
+                    "to" : "0,side_width"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from": "0,side_width",
+                    "to" : "0,0"
+                }
+            ]
+        }
+    ]
+}

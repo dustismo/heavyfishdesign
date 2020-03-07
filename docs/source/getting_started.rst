@@ -17,8 +17,8 @@ Every HFD file has the following structure
 
     {
         "imports": [
-            {"path": "some/custom_component.json"},
-            {"path": "another/custom/component.json"}
+            {"path": "some/custom_component.hfd"},
+            {"path": "another/custom/component.hfd"}
         ],
         "params": {
             // These fields are recommended for all designs
