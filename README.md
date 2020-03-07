@@ -1,6 +1,9 @@
-This is Heavy Fish Design.  It's for designing things that scale (get it, get it?).  
+This is Heavy Fish Design  
+==========================
 
-HFD is a json based design language.  This package contains a compiler to SVG files, and various useful tools for working with 2d models.  
+It's for designing things that scale (get it, get it?).  
+
+At its heart, HFD is a json based design language.  This package contains a compiler to SVG files, and various useful tools for working with 2d models.  
 
 Features:
     * A fully functional JSON based language for designing parameterized 2d vector drawings.
