@@ -1,0 +1,73 @@
+{
+    "imports": [
+        {"path": "designs/common/screw_holes_rect.json"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "material_thickness": 0.2,
+        "speaker_slot_height": ".2",
+        "speaker_slot_spacing": ".2",
+        "speaker_diameter": "1.5",
+        "speaker_screw_hole_diameter": ".1",
+        "speaker_screw_hole_width": "3",
+        "speaker_screw_hole_height": "2"
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type": "group",
+                    "custom_component" : {
+                        "type": "speaker"
+                    },
+                    "components": [
+                        {
+                            "type": "screw_holes_rect",
+                            "width": "speaker_screw_hole_width",
+                            "height": "speaker_screw_hole_height",
+                            "diameter": "speaker_screw_hole_diameter"
+                        },
+                        {
+                            "type" : "xintercept", 
+                            "repeat_spacing": "speaker_slot_spacing",
+                            "transforms": [
+                                {
+                                    "type": "move",
+                                    "handle": "$MIDDLE_MIDDLE",
+                                    "to": "speaker_screw_hole_width / 2, speaker_screw_hole_height / 2"
+                                }
+                            ],   
+                            "outline": {
+                                "type": "draw",
+                                "commands": [
+                                    {
+                                        "command": "circle",
+                                        "radius": "speaker_diameter / 2"
+                                    }
+                                ]
+                            },
+                            "repeatable": {                        
+                                "type": "draw",
+                                "transforms": [
+                                    { 
+                                        "type" : "move",
+                                        "to": "from__x, from__y"
+                                    }
+                                ],
+                                "commands": [
+                                    {
+                                        "command": "rectangle",
+                                        "width": "length",
+                                        "height": "speaker_slot_height"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

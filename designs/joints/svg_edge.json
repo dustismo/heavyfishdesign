@@ -1,0 +1,31 @@
+{
+    "params": {
+        "from": "0,0",
+        "to": "1,1",
+        "svg": "M 0,0 L 1,1"
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type": "draw",
+                    "custom_component": {
+                        "type": "line",
+                        "defaults": {} 
+                    },
+                    "commands": [
+                        {
+                            "command": "move",
+                            "to": "from"
+                        },
+                        {
+                            "command": "svg_scale_to",
+                            "svg": "svg",
+                            "to": "to"
+                        }
+                    ]  
+                }
+            ]
+        }
+    ]
+}

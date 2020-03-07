@@ -1,0 +1,73 @@
+{
+    "params": {
+        "offset": ".007"
+    },
+    "parts": [
+        {
+            "params" : {
+                
+            },
+            "transforms": [
+                {
+                    "type": "join",
+                    "close_path" : "true"
+                },
+                {
+                    "type": "offset",
+                    "distance": "offset"
+                }
+            ],
+            "components": [
+                {
+                    "type": "repeat",
+                    "max_x": 5,
+                    "id": "top_sawtooth",
+                    "component": {
+                        "type" : "draw",
+                        "commands" : [
+                            {
+                                "command" : "line",
+                                "to" : {"x": 0.75,"y":0.5}
+                            },
+                            {
+                                "command" : "line",
+                                "to" : {"x": 0.95,"y":0}
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "move",
+                            "to" : {"x": 5,"y":0}
+                        },
+                        {
+                            "command" : "line",
+                            "to" : {"x": 5,"y":5}
+                        }
+                    ]
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "line",
+                            "to" : {"x": 0,"y":5}
+                        }
+                    ]
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "line",
+                            "to" : {"x": 0,"y":0}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

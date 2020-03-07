@@ -1,0 +1,49 @@
+{
+    "params": {
+        "offset": ".007",
+        "doc_width": 20,
+        "doc_height": 12,
+        "box_width": 3,
+        "box_height": 7,
+        "finger_width": 0.25,
+        "finger_height": 0.5,
+        "finger_space": 0.4
+    },
+    "id": "finger_joint_import_test_doc",
+    "parts": [
+        {
+            "id" : "box_front",
+            "params" : {
+            },
+            "transforms": [],
+            "components": [
+                {
+                    "type": "reference",
+                    "id" : "left",
+                    "filename": "testdata/finger_joint.json",
+                    "component": "@finger_joint",
+                    "side": "plug",
+                    "transforms": [
+                        {
+                            "type" : "mirror",
+                            "axis" : "vertical"
+                        },
+                        {
+                            "type" : "move",
+                            "to" : {"x": 0, "y" : "box_height / 2"},
+                            "handle" : "$MIDDLE_LEFT"
+                        }
+                    ],
+                    "from": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "to" : {
+                        "x": 0,
+                        "y": "box_height"
+                    }
+                }
+            ]
+        }
+    ]
+}

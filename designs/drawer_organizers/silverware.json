@@ -1,0 +1,135 @@
+{
+    "imports": [
+        {"path": "designs/joints/line.json"},
+        {
+            "path": "designs/svg/silverware.svg",
+            "type": "svg",
+            "alias": "layout"
+        },
+        {
+            "path": "designs/svg/silverware_bottom.svg",
+            "type": "svg",
+            "alias": "bottom"
+        }
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 12,
+        "material_height": 11,
+        "material_thickness": 0.25
+    },
+    "parts": [
+        // tray_1 and tray_2 are the same svg, the only difference is the y_offset
+        // which makes the split position different, so we can alternate layers
+        {
+            "id" : "tray_1",
+            "part_transformers": [
+                {
+                    "type": "splitter",
+                    "auto_split": true,
+                    "bleed_top": ".1",
+                    "bleed_bottom": ".1",
+                    "plug_edge": {
+                        "id": "plug_edge",
+                        "type": "line"
+                    },
+                    "socket_edge": {
+                        "type": "line"
+                    }
+                }
+            ],
+            "transforms": [],
+            "components": [
+                {
+                    "type": "draw",
+                    "transforms": [
+                        {
+                            "type":"scale",
+                            "width": "19.75"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "layout"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id" : "tray_bottom",
+            "part_transformers": [
+                {
+                    "type": "splitter",
+                    "auto_split": true,
+                    "bleed_top": ".1",
+                    "bleed_bottom": ".1",
+                    "y_offset": 0.75, // offset the cut lines so they don't overlap with the ones above
+                    "plug_edge": {
+                        "id": "plug_edge",
+                        "type": "line"
+                    },
+                    "socket_edge": {
+                        "type": "line"
+                    }
+                }
+            ],
+            "transforms": [],
+            "components": [
+                {
+                    "type": "draw",
+                    "transforms": [
+                        {
+                            "type":"scale",
+                            "width": "19.75"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "bottom"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id" : "tray_2",
+            "part_transformers": [
+                {
+                    "type": "splitter",
+                    "auto_split": true,
+                    "bleed_top": ".1",
+                    "bleed_bottom": ".1",
+                    "y_offset": 0.80, // offset the cut lines so they don't overlap with the ones above
+                    "plug_edge": {
+                        "id": "plug_edge",
+                        "type": "line"
+                    },
+                    "socket_edge": {
+                        "type": "line"
+                    }
+                }
+            ],
+            "transforms": [],
+            "components": [
+                {
+                    "type": "draw",
+                    "transforms": [
+                        {
+                            "type":"scale",
+                            "width": "19.75"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "layout"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,230 @@
+{
+    "imports": [
+        {"path": "designs/game_cabinet/side_panel.json"},
+        {"path": "designs/game_cabinet/back_panel.json"},
+        {"path": "designs/game_cabinet/top_panel.json"},
+        {"path": "designs/game_cabinet/marquee_panel.json"},
+        {"path": "designs/game_cabinet/front_panel.json"},
+        {"path": "designs/game_cabinet/bottom.json"},
+        {"path": "designs/game_cabinet/joystick_panel.json"},
+        {"path": "designs/game_cabinet/screen_panel.json"},
+        {"path": "designs/game_cabinet/screen_inset_panel.json"},
+        {"path": "designs/game_cabinet/button_layout.json"},
+        {"path": "designs/game_cabinet/button.json"},
+        {"path": "designs/game_cabinet/speaker.json"},
+        {"path": "designs/game_cabinet/joystick.json"},
+        {"path": "designs/common/screw_holes_rect.json"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 18, //50,
+        "material_height": 11, //40,
+        "material_thickness": 0.25,
+        "finger_width": 0.3,
+        "finger_height": "material_thickness",
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness",
+        "marquee_angle": -15,
+        "cabinet_depth": 10.5,  
+        "cabinet_width": 11, // looking at the screen, this is the width 
+        "back_height": 13,
+        "top_width": 4,
+        "marquee_height": 2.5,
+        "front_panel_height":3,
+        "screen_backer_inset": 2,
+        "screen_backer_joystick_join_X": "width / 2",
+        "screen_backer_joystick_join_Y": "(back_height * .75) - .5",
+        "screen_width": 8.75,
+        "screen_height": 5.5,
+        "button_diameter": "mmToInch(30)",
+        "power_button_diameter": "mmToInch(16)",
+        "speaker_slot_spacing": ".15",
+        "speaker_slot_height": ".1",
+        "speaker_diameter": "1.6",
+        "speaker_screw_hole_diameter": "screw_hole_diameter",
+        "speaker_screw_hole_width": "2.35 + (2 * speaker_screw_hole_diameter)",
+        "speaker_screw_hole_height": "1.17 + (2 * speaker_screw_hole_diameter)",
+        "joystick_diameter": 1.0,
+        "joystick_screw_diameter": "screw_hole_diameter",
+        "joystick_screw_distance": 3.225,
+        "screw_hole_diameter": 0.15
+    },
+    "parts": [
+        {
+            "id": "left_side_panel",
+            "components": [
+                {
+                    "type": "side_panel",
+                    "width": "cabinet_depth"
+                },
+                {
+                    "id": "side_button_l",
+                    "type": "button",
+                    "diameter": "button_diameter",
+                    "handle": "$MIDDLE_LEFT",
+                    "to": "cabinet_depth / 2, back_height - (front_panel_height / 2) - material_thickness"
+                }
+            ]
+        },
+        {
+            "id": "right_side_panel",
+            "components": [
+                {
+                    "type": "side_panel",
+                    "width": "cabinet_depth"
+                },
+                {
+                    "id": "side_button_r",
+                    "type": "button",
+                    "diameter": "button_diameter",
+                    "handle": "$MIDDLE_LEFT",
+                    "to": "cabinet_depth / 2, back_height - (front_panel_height / 2) - material_thickness"
+                },
+                {
+                    "id": "power_button_r",
+                    "type": "button",
+                    "diameter": "power_button_diameter",
+                    "handle": "$MIDDLE_RIGHT",
+                    "to": "2, back_height - (front_panel_height / 2)"
+                }
+            ]
+        },
+        {
+            "id": "back_panel",
+            "components": [
+                {
+                    "type": "cabinet_back_panel",
+                    "width": "cabinet_width",
+                    "height": "back_height"
+                }
+            ]
+        },
+        {
+            "id": "top_panel",
+            "components": [
+                {
+                    "type": "cabinet_top_panel",
+                    "width": "cabinet_width",
+                    "height": "top_width"
+                }
+            ]
+        },
+        {
+            "id": "marquee_panel",
+            "components": [
+                {
+                    "type": "cabinet_marquee_panel",
+                    "width": "cabinet_width",
+                    "height": "marquee_height"
+                }
+            ]
+        },
+        {
+            "id": "screen_inset_panel",
+            "components": [
+                {
+                    "type": "cabinet_screen_inset_panel",
+                    "width": "cabinet_width",
+                    "height": "screen_backer_inset"
+                }
+            ]
+        },
+        {
+            "id": "front_panel",
+            "components": [
+                {
+                    "type": "cabinet_front_panel",
+                    "width": "cabinet_width",
+                    "height": "front_panel_height"
+                },
+                {
+                    "type": "button",
+                    "diameter": "button_diameter",
+                    "handle": "$MIDDLE_LEFT",
+                    "to": "1, (front_panel_height / 2)"
+                },
+                {
+                    "type": "button",
+                    "diameter": "button_diameter",
+                    "handle": "$MIDDLE_RIGHT",
+                    "to": "cabinet_width - 1, (front_panel_height / 2)"
+                },
+                {
+                    "type": "speaker",    
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "(cabinet_width / 2), (front_panel_height / 2)",
+                            "handle": "$MIDDLE_MIDDLE"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "bottom",
+            "components": [
+                {
+                    "type": "cabinet_bottom",
+                    "width": "cabinet_width",
+                    "height": "cabinet_depth"
+                }
+            ]
+        },
+        {
+            "id": "joystick_panel",
+            "components": [
+                {
+                    "type": "cabinet_joystick_panel",
+                    "width": "cabinet_width",
+                    "height": "joystick_side_edge__length"
+                },
+                // add joystick
+                {
+                    "type": "joystick",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "2.75, joystick_side_edge__length / 2",
+                            "handle": "$MIDDLE_MIDDLE"
+                        }
+                    ]
+                },
+                //add the button cutouts
+                {
+                    "type": "button_layout",
+                    "transforms":[
+                        {
+                            "type": "move",
+                            "to": "5, joystick_side_edge__length / 2",
+                            "handle": "$MIDDLE_LEFT"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "screen_panel",
+            "components": [
+                {
+                    "type": "cabinet_screen_panel",
+                    "width": "cabinet_width",
+                    "height": "screen_holder_side_edge__length"
+                },
+                {
+                    "type": "screw_holes_rect",
+                    "width": "cabinet_width - 2",
+                    "height": "screen_holder_side_edge__length - (2 * .3)",
+                    "diameter": "screw_hole_diameter",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "cabinet_width / 2, screen_holder_side_edge__length / 2",
+                            "handle": "$MIDDLE_MIDDLE" 
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

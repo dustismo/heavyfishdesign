@@ -1,0 +1,64 @@
+{
+    "params": {
+        
+    },
+    "parts": [
+        {
+            "id" : "simple_square",
+            "params" : {
+                
+            },
+            "transforms": [
+                {
+                    "type": "scale",
+                    "width": "1+index"
+                }
+            ],
+            "repeat": {
+                "total": 2
+            },
+            "components": [
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "move",
+                            "to" : {"x": 0,"y":0}
+                        },
+                        {
+                            "command" : "line",
+                            "to" : {"x": 5,"y":0}
+                        }
+                    ]
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "line",
+                            "to" : {"x": 5,"y":5}
+                        }
+                    ]
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "line",
+                            "to" : {"x": 0,"y":5}
+                        }
+                    ]
+                },
+                {
+                    "type" : "draw",
+                    "commands" : [
+                        {
+                            "command" : "line",
+                            "to" : {"x": 0,"y":0}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

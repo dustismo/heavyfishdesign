@@ -1,0 +1,86 @@
+{
+    "imports": [
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "material_thickness": 0.2,
+        "button_diameter": 0.75
+    },
+    "parts": [
+        {
+            "custom_component" : {
+                "type": "button_layout"
+            },
+            "transforms": [
+                // {
+                //     "type": "offset",
+                //     "distance" : "offset",
+                //     "size_should_be" : "smaller"
+                // }
+            ],
+            "components": [
+                {
+                    "type" : "draw",
+                    "commands": [
+                        // first two buttons
+                        {
+                            "command": "move",
+                            "to": "2,1"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        },
+                        {
+                            "command": "move",
+                            "to": "2,1 + button_diameter + .3"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        },
+
+                        // next two buttons
+                        {
+                            "command": "move",
+                            "to": "2 + button_diameter + .3,.75"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        },
+                        {
+                            "command": "move",
+                            "to": "2 + button_diameter + .3,.75 + button_diameter + .3"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        },
+
+                        // next set
+                        {
+                            "command": "move",
+                            "to": "2 + (2 * (button_diameter + .3)), .75"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        },
+                        {
+                            "command": "move",
+                            "to": "2 + (2 * (button_diameter + .3)), .75 + button_diameter + .3"
+                        },
+                        {
+                            "command": "circle",
+                            "radius": "button_diameter / 2"
+                        }
+
+                    ]
+                }
+            ]
+        }
+    ]
+}

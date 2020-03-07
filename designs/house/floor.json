@@ -1,0 +1,63 @@
+{
+    "imports": [
+        {"path": "designs/joints/finger_joint_holes.json"},
+        {"path": "designs/joints/finger_joint_plug.json"},
+        {"path": "designs/joints/finger_joint_socket.json"},
+        {"path": "designs/joints/line.json"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "material_thickness": 0.2,
+        "width": 5,
+        "height": 6,
+        "finger_width": 0.3,
+        "finger_height": 0.2,
+        "finger_space": 0.2,
+        "finger_padding": 0.5,
+        "finger_depth": "material_thickness"
+    },
+    "parts": [
+        {
+            "id" : "house_floor",
+            "custom_component": {
+                "type": "house_floor"
+            },
+            "finger_padding": "(finger_space + finger_width) / 2",
+            "transforms": [
+                {
+                    "type": "join",
+                    "close_path" : "true"
+                },
+                {
+                    "type": "offset",
+                    "distance" : "offset",
+                    "size_should_be" : "larger"
+                }
+            ],
+            "components": [
+                {
+                    "type": "finger_joint_socket",
+                    "from" : "0,0",
+                    "to" : "width,0"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from" : "width,0",
+                    "to" : "width,height"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from" : "width,height",
+                    "to" : "0,height"
+                },
+                {
+                    "type": "finger_joint_socket",
+                    "from" : "0,height",
+                    "to" : "0,0"
+                }
+            ]
+        }
+    ]
+}

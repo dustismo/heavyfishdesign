@@ -1,0 +1,20 @@
+{
+    "imports": [
+        {"path": "testdata/simple_square.json"}
+    ],
+    "params": {
+        
+    },
+    "parts": [
+        {
+            "id" : "square_Test",
+            "params" : {
+            },
+            "components": [
+                {
+                    "type": "simple_square"
+                }
+            ]
+        }
+    ]
+}

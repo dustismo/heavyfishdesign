@@ -1,0 +1,141 @@
+ {
+    "imports": [
+        {"path": "designs/joints/finger_joint_holes.json"},
+        {"path": "designs/joints/finger_joint_plug.json"},
+        {"path": "designs/joints/finger_joint_socket.json"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "material_thickness": 0.2,
+        "marquee_angle": -15,
+        "width": 8,
+        "finger_width": 0.3,
+        "finger_height": 0.2,
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness",
+        "back_height": 10,
+        "top_width": 3.5,
+        "marquee_height": 2.5,
+        "front_panel_height":2.25,
+        "screen_backer_inset": 1.5,
+        // this is the point where the screen backer meets the 
+        // joystick board
+        "screen_backer_joystick_join_X": "width / 2",
+        "screen_backer_joystick_join_Y": "back_height - (back_height / 4)"
+    },
+    "parts": [
+        {
+            "id" : "cabinet_side_panel",
+            "custom_component": {
+                "type": "side_panel"
+            },
+            "components" :[
+                {
+                    "id" : "screen_backer",
+                    "type" : "group",
+                    "transforms" : [
+                        
+                    ],
+                    "components": [
+                        {
+                            "id": "screen_backer_inset",
+                            "type": "finger_joint_holes",
+                            "from": "top_width,marquee_height",
+                            "to" : "top_width - screen_backer_inset, marquee_height",
+                            "transforms" : [
+                                {
+                                    "type": "rotate",
+                                    "axis": "$ORIGIN",
+                                    "degrees": "marquee_angle"
+                                }
+                            ]
+                        },
+                        {
+                            "id" : "screen_holder",
+                            "type": "finger_joint_holes",
+                            "edge_variable_name": "screen_holder_side_edge",
+                            "to": "screen_backer_joystick_join_X,screen_backer_joystick_join_Y"
+                        },
+                        {
+                            "id": "joystick_panel",
+                            "type": "finger_joint_holes",
+                            "edge_variable_name": "joystick_side_edge",
+                            "from": "screen_backer_joystick_join_X,screen_backer_joystick_join_Y",
+                            "to": "width, back_height - front_panel_height"
+                        }
+                    ]
+                },
+                {
+                    "id" : "side_outline",
+                    "type" : "group",
+                    "params" : {
+                    },
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "id": "side_back",
+                            "type": "finger_joint_socket",
+                            "from": "0,back_height",
+                            "to" : "0,0"
+                        },
+                        {
+                            "type" : "group",
+                            "transforms" : [
+                                {
+                                    "type": "rotate",
+                                    "axis": "$ORIGIN",
+                                    "degrees": "marquee_angle"
+                                }
+                            ],
+                            "components": [
+                                {
+                                    "id": "top",
+                                    "type": "finger_joint_socket",
+                                    "from": "0,0",
+                                    "to" : "top_width, 0"
+                                },
+                                {
+                                    "id": "marquee",
+                                    "type": "finger_joint_socket",
+                                    "to" : "top_width, marquee_height"
+                                }
+                            ]
+                        },
+                        {
+                            "type" : "draw",
+                            "commands" : [
+                                {
+                                    "command" : "svg_scale_to",
+                                    "svg": "M663.771,599.97C663.771,599.97 632.05,680.28 605.907,717.327C579.763,754.373 558.369,790.51 556.507,814.769C554.61,839.494 557.637,866.834 569.976,903.567C575.409,919.74 706.516,1310.08 733.286,1351.35C761.344,1394.6 868.729,1434.56 897.612,1455.71C916.89,1469.83 957.481,1519 990.616,1537.27C1011.92,1549.01 1277,1615.75 1277,1615.75",
+                                    "to": "width,back_height-front_panel_height"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "front_panel",
+                            "type": "finger_joint_socket",
+                            "to" : "width,back_height"
+                        },
+                        {
+                            "id" : "bottom",
+                            "type" : "finger_joint_socket",
+                            "to": "0,back_height"
+                        }                 
+                    ]
+                }
+            ]
+        }
+    ]
+}

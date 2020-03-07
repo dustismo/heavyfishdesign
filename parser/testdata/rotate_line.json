@@ -1,0 +1,55 @@
+{
+    "params": {
+        "offset": ".007",
+        "width": 20,
+        "height": 12,
+        "box_width": 5,
+        "box_height": 5
+    },
+    "parts": [
+        {
+            "params" : {
+                
+            },
+            "transforms": [
+                {
+                    "type": "join",
+                    "close_path" : "true"
+                },
+                {
+                    "type": "offset",
+                    "distance": "offset"
+                }
+            ],
+            "components": [
+                {
+                    "type" : "draw",
+                    "transforms": [
+                        {
+                            "type": "rotate",
+                            "degrees": 20.0
+                        }
+                    ],
+                    "commands" : [
+                        {
+                            "command" : "move",
+                            "to" : {"x": 1,"y":1}
+                        },
+                        {
+                            "command" : "line",
+                            "to" : {"x": 5,"y":1}
+                        },
+                        {
+                            "command" : "line",
+                            "to" : {"x": 5,"y":2}
+                        },
+                        {
+                            "command" : "line",
+                            "to" : {"x": 1,"y":2}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "params": {
+        "width": "2",
+        "height": "2"
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type": "draw",
+                    "custom_component": {
+                        "type": "rectangle"
+                    },
+                    "commands": [
+                        {
+                            "command": "rectangle",
+                            "width": "width",
+                            "height": "height"
+                        }
+                    ]  
+                }
+            ]
+        }
+    ]
+}

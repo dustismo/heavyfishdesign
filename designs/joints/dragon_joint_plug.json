@@ -1,0 +1,131 @@
+{
+    "imports": [
+        {
+            "type": "svg",
+            "path": "designs/svg/dragon.svg",
+            // "path": "designs/svg/part_circle.svg",
+            "alias": "dragon"
+        }
+    ],
+    "params": {
+        
+    },
+    "id": "dragon_butt_doc",
+    "parts": [
+        {
+            "id" : "dragon_butt_joint",
+            "components": [
+                {
+                    "type": "edge",
+                    "id": "dragon_butt_joint",
+                    "custom_component": {
+                        "type": "dragon_joint_plug"
+                    },
+                    "dragon_width": 1,
+                    "to": {
+                        "x": "9",
+                        "y": 0
+                    },
+                    "handle" : "$START_POINT",
+                    "transforms" : [
+                        {
+                            "type" : "join",
+                            "close_path" : false
+                        },
+                        {
+                            "type" : "offset",
+                            "distance" : "0"
+                        }
+                    ],
+                    "repeatable": {
+                        "type": "group",
+                        "components": [
+                            {
+                                "type" : "draw",
+                                "transforms": [
+                                    {
+                                       "type": "cleanup" 
+                                    },
+                                    {
+                                        "type": "trim" 
+                                    },
+                                    {
+                                        "type": "scale",
+                                        "width": "dragon_width"
+                                    },
+                                    {
+                                        "type": "move",
+                                        "to": "$CURSOR",
+                                        "handle": "$START_POINT"
+                                    }
+
+                                ],
+                                "commands": [
+                                    {
+                                        "command": "svg",
+                                        "svg" : "dragon"
+                                    }
+                                ]
+                            },
+                            {
+                                "type" : "draw",
+                                "transforms": [
+                                    {
+                                        "type": "cleanup" 
+                                    },
+                                    {
+                                        "type": "trim" 
+                                    },
+                                    {
+                                        "type": "scale",
+                                        "width": "dragon_width"
+                                    },
+                                    {
+                                        "type": "mirror",
+                                        "axis": "horizontal"
+                                    },
+                                    {
+                                        "type": "move",
+                                        "to": "$CURSOR",
+                                        "handle": "$START_POINT"
+                                    }
+                                ],
+                                "commands": [
+                                    {
+                                        "command": "svg",
+                                        "svg" : "dragon"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "left": {
+                        "type": "draw",
+                        "commands": [
+                          
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "left_width",
+                                    "y": 0
+                                }
+                            }
+                        ]
+                    },
+                    "right": {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "right_width",
+                                    "y": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

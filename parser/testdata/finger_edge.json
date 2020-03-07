@@ -1,0 +1,109 @@
+{
+    "params": {
+        "finger_width": 0.25,
+        "finger_height": 0.2,
+        "finger_space": 0.4
+    },
+    "id": "finger_joint_doc",
+    "parts": [
+        {
+            "id" : "finger_joint_part",
+            "components": [
+                {
+                    "type": "edge",
+                    "id": "finger_joint",
+                    "padding": "(finger_space + finger_width) / 2",
+                    "to": {
+                        "x": "5",
+                        "y": 0
+                    },
+                    "repeatable": {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": {
+                                    "x": 0,
+                                    "y": "finger_height"
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "finger_space / 2",
+                                    "y": 0
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": 0,
+                                    "y": "0-finger_height"
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "finger_width",
+                                    "y": 0
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": 0,
+                                    "y": "finger_height"
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "finger_space / 2",
+                                    "y": 0
+                                }
+                            }
+                        ]
+                    },
+                    "left": {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": {
+                                    "x": 0,
+                                    "y": "finger_height"
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "left_width",
+                                    "y": 0
+                                }
+                            }
+                        ]
+                    },
+                    "right": {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": {
+                                    "x": 0,
+                                    "y": "finger_height"
+                                }
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": {
+                                    "x": "right_width",
+                                    "y": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
