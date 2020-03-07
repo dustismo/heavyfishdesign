@@ -13,19 +13,23 @@ Usage:
 
 The runnable contains a simple server for displaying in the browser, as well as commands for rendering designs on the command line. 
 
+Local Render:
+
+To render an hfd file to the corresponding svg files use:
+
+    $ go run main.go render --path=designs/drawer_organizers/silverware.json --output_file=designs_rendered/silverware
+
 Basic server operation:
 
 go run main.go serve
 
 then open browser to:
-http://localhost:2003/json?file=<path_to_hfd_file>
-ex: http://localhost:2003/json?file=designs/box/box_three_sided.json
 
-Local Render:
+    http://localhost:2003/json?file=<path_to_hfd_file>
 
-To render an hfd file to the corresponding svg files use:
+ex: 
+    http://localhost:2003/json?file=designs/box/box_three_sided.json
 
-$ go run main.go render --path=designs/drawer_organizers/silverware.json --output_file=designs_rendered/silverware
 
 
 Runbook
@@ -35,12 +39,12 @@ Runbook
 
 When making code changes, first run the unit tests then the comparison of all local designs (this will compare all the local designs to the last render)
 
-$ go test ./...
-$ go run main.go diff_test
+    $ go test ./...
+    $ go run main.go diff_test
 
 This will output any rendering differences your change causes.  Double check that changes are expected.  if so, run:
 
-$ go run main.go designs_updated
+    $ go run main.go designs_updated
 
 and commit
 
