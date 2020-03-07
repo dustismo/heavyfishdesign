@@ -1,9 +1,5 @@
-.. Heavy Fish Design documentation master file, created by
-   sphinx-quickstart on Fri Dec 27 13:31:11 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Heavy Fish Design's documentation
+Heavy Fish Design
+documentation
 =================================
 
 For Designers
