@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Custom Components &#8212; Heavy Fish Design  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Expressions" href="expressions.html" />
+    <link rel="prev" title="Path Transforms" href="transforms.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="custom-components">
+<h1>Custom Components<a class="headerlink" href="#custom-components" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="creating-components-via-markup">
+<h2>Creating Components via Markup<a class="headerlink" href="#creating-components-via-markup" title="Permalink to this headline">¶</a></h2>
+<p>It’s easy to create custom components via the HFD markup language.  Simply add a
+<code class="docutils literal notranslate"><span class="pre">custom_component</span></code> attribute to any component.  The new component will be available
+via the <code class="docutils literal notranslate"><span class="pre">import</span></code> attribute on the document</p>
+<p>Example:</p>
+<p>here is a simple line component in file <code class="docutils literal notranslate"><span class="pre">designs/common/line.json</span></code>
+It uses attributes <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code></p>
+<div class="highlight-JSON notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="p">{</span>
+     <span class="nt">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+         <span class="p">{</span>
+             <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="p">{</span>
+                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span>
+<span class="hll">                     <span class="nt">&quot;custom_component&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="hll">                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span>
+</span><span class="hll">                     <span class="p">},</span>
+</span><span class="hll">                     <span class="nt">&quot;commands&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class="hll">                         <span class="p">{</span>
+</span><span class="hll">                             <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;move&quot;</span><span class="p">,</span>
+</span><span class="hll">                             <span class="nt">&quot;to&quot;</span><span class="p">:</span> <span class="s2">&quot;from&quot;</span>
+</span>                         <span class="p">},</span>
+                         <span class="p">{</span>
+                             <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+                             <span class="nt">&quot;to&quot;</span><span class="p">:</span> <span class="s2">&quot;to&quot;</span>
+                         <span class="p">}</span>
+                     <span class="p">]</span>
+                 <span class="p">}</span>
+             <span class="p">]</span>
+         <span class="p">}</span>
+     <span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then to access the new component, simply import it and use it.</p>
+<div class="highlight-JSON notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="p">{</span>
+     <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="hll">         <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;designs/common/line.json&quot;</span><span class="p">}</span>
+</span>     <span class="p">],</span>
+     <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+         <span class="nt">&quot;material_width&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+         <span class="nt">&quot;material_height&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+         <span class="nt">&quot;material_thickness&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+         <span class="nt">&quot;width&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+         <span class="nt">&quot;height&quot;</span> <span class="mi">3</span>
+     <span class="p">},</span>
+     <span class="nt">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+         <span class="p">{</span>
+             <span class="nt">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;line_example&quot;</span><span class="p">,</span>
+             <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="hll">                 <span class="p">{</span>
+</span><span class="hll">                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+</span><span class="hll">                     <span class="nt">&quot;from&quot;</span> <span class="p">:</span> <span class="s2">&quot;width,height&quot;</span><span class="p">,</span>
+</span><span class="hll">                     <span class="nt">&quot;to&quot;</span> <span class="p">:</span> <span class="s2">&quot;width / 2,height / 2&quot;</span>
+</span><span class="hll">                 <span class="p">}</span>
+</span>             <span class="p">]</span>
+         <span class="p">}</span>
+     <span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/hfd_logo1.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=dustismo&repo=svg&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="transforms.html" title="previous chapter">Path Transforms</a></li>
+      <li>Next: <a href="expressions.html" title="next chapter">Expressions</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Dustin Norlander.
+      
+      |
+      <a href="_sources/custom_components.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

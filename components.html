@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Components &#8212; Heavy Fish Design  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Path Transforms" href="transforms.html" />
+    <link rel="prev" title="Part" href="parts.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="components">
+<h1>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h1>
+<p>Below are the set of built-in components.  Additional custom components are available
+via <code class="docutils literal notranslate"><span class="pre">custom</span> <span class="pre">components</span></code></p>
+<div class="section" id="draw">
+<h2>draw<a class="headerlink" href="#draw" title="Permalink to this headline">¶</a></h2>
+<p>The draw component provides the basic drawing primitives to make shapes.  The draw commands
+mostly correspond to svg path commands, but there are some useful additions.</p>
+<p>Draw component should be in the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;my_drawing&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;draw&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;commands&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;move&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to&quot;</span><span class="p">:</span> <span class="s2">&quot;2,2&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Commands</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">move</span></code> Move the cursor to this position</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> Point where to move to</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">rel_move</span></code> Move, with relative position.  This means that if the current position is</dt><dd><blockquote>
+<div><p>3,4 and <code class="docutils literal notranslate"><span class="pre">to</span></code> is 1,1 then the final position will be 4,5.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> Relative point</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">line</span></code> Draw a line to the requested point</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> Point to draw a line to</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">rel_line</span></code> Same as line only using relative coords</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> relative point</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">line_by_angle</span></code> Draw a line from current position by an angle and length</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">angle</span></code> angle in degrees</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">length</span></code> length of the line</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">curve</span></code> Draw a cubic bezier curve.</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_start</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_end</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rel_curve</span></code> Same as curve, but all points are relative</p></li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">smooth_curve</span></code> A curve where the start control point is reflected from the</dt><dd><blockquote>
+<div><p>end control point of the previous curve</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl_end</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rel_smooth_curve</span></code> Same as <code class="docutils literal notranslate"><span class="pre">smooth_curve</span></code> with points relative</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">circle</span></code> Draw a circle</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">rectangle</span></code> Draw a rectangle</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">round_corner</span></code> Draws a 90 degree rounded corner</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> The endpoint of the corner</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code> the radius of the curve</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">corner</span></code> The point where the corner would appear</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rel_round_corner</span></code></p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">svg</span></code> Draws an svg ‘Path’</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">svg</span></code> The svg path string, (ex: “M 2,2 L 0,0”).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">svg_scale_to</span></code> Similiar to <code class="docutils literal notranslate"><span class="pre">svg</span></code> command. This is a special draw command which scales</dt><dd><blockquote>
+<div><p>the svg x and y so that the start point aligns with the previous endpoint and the endpoint
+aligns to ‘to’.  Note, this does not rotate the shape, it only scales in x and y.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">svg</span></code> The svg path string, (ex: “M 2,2 L 0,0”).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> Where to draw the svg to.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse</span></code> if true this will reverse the path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rel_svg_scale_to</span></code> Samce as <code class="docutils literal notranslate"><span class="pre">svg_scale_to</span></code> but <code class="docutils literal notranslate"><span class="pre">to</span></code> is using relative coodrdinates</p></li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">svg_connect_to</span></code> Similiar to <code class="docutils literal notranslate"><span class="pre">svg_scale_to</span></code> command. This is a special draw command which scales</dt><dd><blockquote>
+<div><p>and rotates the svg x and y so that the start point aligns with the previous endpoint and the endpoint
+aligns to ‘to’.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">svg</span></code> The svg path string, (ex: “M 2,2 L 0,0”).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code> Where to draw the svg to.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse</span></code> if true this will reverse the path</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rel_svg_connect_to</span></code> Same as <code class="docutils literal notranslate"><span class="pre">svg_connect_to</span></code> but <code class="docutils literal notranslate"><span class="pre">to</span></code> is using relative coodrdinates</p></li>
+</ul>
+</div>
+<div class="section" id="edge">
+<h2>edge<a class="headerlink" href="#edge" title="Permalink to this headline">¶</a></h2>
+<p>an edge is some form of a line from x to y.  Typically these are used for
+joints.  Each edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
+Each of the subcomponents should be drawn horizontally from origin 0,0.  The component
+will stitch them together to make a continuous edge, and handle automatically handle
+moving and rotating.</p>
+<p>Typically an edge will be written to be reused, where the <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code> params are
+passed in.</p>
+<p>Attributes</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">padding_left</span></code>: Additional amount that should be used on the left side before</dt><dd><p>the repeatable starts</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">padding_right</span></code>: see <code class="docutils literal notranslate"><span class="pre">padding_left</span></code></p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">handle</span></code>: When moving the edge what point should be considered the start.  Defaults</dt><dd><p>to $ORIGIN</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">to</span></code>: The point the edge should be drawn to</dt><dd><p>The to point can take the following forms:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">6</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;angle&quot;</span> <span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="s2">&quot;length&quot;</span> <span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">angle</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">degrees</span> <span class="n">where</span> <span class="mi">0</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">straight</span> <span class="n">line</span> <span class="n">to</span>
+<span class="o">//</span> <span class="n">the</span> <span class="n">right</span><span class="p">,</span> <span class="ow">and</span> <span class="mi">90</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">line</span> <span class="n">pointing</span> <span class="n">to</span> <span class="n">positive</span> <span class="n">Y</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span></code>: The point the edge should be drawn from.  Defaults to current position</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">left</span></code>: This should be a renderable component. it is the left most part of the edge.</dt><dd><p>this should be stretchable and contains a special param
+called <code class="docutils literal notranslate"><span class="pre">left_width</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: This should be a renderable component. it is the middle section, which will be repeated as many times as needed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">right</span></code>: Same as left, but has <code class="docutils literal notranslate"><span class="pre">right_width</span></code> special param</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">edge_variable_name</span></code>: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. If set the following attributes will be available:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{variable_name}__length</span></code>: length of this edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{variable_name}__angle</span></code>: the angle of this edge</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="xintercept">
+<h2>xintercept<a class="headerlink" href="#xintercept" title="Permalink to this headline">¶</a></h2>
+<p>xintercept is a special component that allows you to render a repeatable shape horizontally
+into another shape.</p>
+<p>This is best described visually.  Here we have an outline of a dala horse, and
+we are drawing rectangles within it.</p>
+<a class="reference internal image-reference" href="_images/xintercept_dala_horse_1.png"><img alt="_images/xintercept_dala_horse_1.png" src="_images/xintercept_dala_horse_1.png" style="width: 150px;" /></a>
+<p>And here it is if the outline were drawn in.</p>
+<a class="reference internal image-reference" href="_images/xintercept_dala_horse_3.png"><img alt="_images/xintercept_dala_horse_3.png" src="_images/xintercept_dala_horse_3.png" style="width: 150px;" /></a>
+<p>Attributes</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">outline</span></code>: &lt;component&gt; The shape that the repeatable should be drawn into</p></li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: &lt;component&gt; The shape that should be repeated.  The repeatable</dt><dd><p>shape will have the following params passed down to allow it to render the
+proper size.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to__x</span></code> The point to draw to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to__y</span></code> The point to draw to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from__x</span></code> The point to start from</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from__y</span></code> The point to start from</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">length</span></code> the horizontal length</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_spacing</span></code>: how much initial vertical space to add before drawing the first repeatable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repeat_spacing</span></code>: how much vertical space between each repeatable.</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/hfd_logo1.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=dustismo&repo=svg&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="parts.html" title="previous chapter">Part</a></li>
+      <li>Next: <a href="transforms.html" title="next chapter">Path Transforms</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Dustin Norlander.
+      
+      |
+      <a href="_sources/components.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

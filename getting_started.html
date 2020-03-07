@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting Started &#8212; Heavy Fish Design  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Part" href="parts.html" />
+    <link rel="prev" title="Heavy Fish Design’s documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="hfd">
+<h2>HFD<a class="headerlink" href="#hfd" title="Permalink to this headline">¶</a></h2>
+<p>Every design is based on one or more HFD files.  HFD is syntactically JSON but allows
+comments.</p>
+<p>Every HFD file has the following structure</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;some/custom_component.json&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;another/custom/component.json&quot;</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="s2">&quot;.0035&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;material_width&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;material_height&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="nt">&quot;measurement_units&quot;</span><span class="p">:</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;material_thickness&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="nt">&quot;some_param1&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;another_param&quot;</span><span class="p">:</span> <span class="mf">3.25</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;some_identifier&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;stem_with_topper&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;stem_height&quot;</span> <span class="p">:</span> <span class="s2">&quot;material_thickness * ((num_layers * 2) + num_stem_layers + 2)&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;stem_topper_svg&quot;</span><span class="p">:</span> <span class="s2">&quot;star_svg&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;spacer&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;repeat&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;total&quot;</span> <span class="p">:</span> <span class="s2">&quot;num_layers + num_stem_layers&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;spacer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;stem_width * 2&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Each document is divided into sections:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> Imports allows importing custom components from other documents as well as importing siple SVG files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">params</span></code> List of parameters which impact the design.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parts</span></code> The individual parts of the design. Each part is expected to be a descrete item that can be cut out of the material.</p></li>
+</ul>
+<div class="section" id="imports">
+<h3>imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>Imports allows importing custom components from other documents
+as well as importing siple SVG files. See docs for custom components</p>
+<p>Import options:</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
+    &quot;path&quot;: //&lt;required&gt; &lt;string&gt; the path to the component or svg being imported.
+            // currently this must be a file path, but should
+            // eventually support urls
+    &quot;type&quot;: //&lt;optional&gt; &lt;string&gt; default is `component` the other option is `svg`
+    &quot;alias&quot;: // &lt;optional&gt; &lt;map&gt;
+        // this is a map used to rename custom component imports
+        // for instance:
+        // &quot;box_side&quot;: &quot;house_front&quot;
+        // would rename the imported component &quot;box_side&quot; so it could
+        // be referenced in this document as &quot;house_front&quot;
+        // this can be useful for clarity, or to resolve naming conflicts
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/hfd_logo1.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=dustismo&repo=svg&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Heavy Fish Design’s documentation</a></li>
+      <li>Next: <a href="parts.html" title="next chapter">Part</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Dustin Norlander.
+      
+      |
+      <a href="_sources/getting_started.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

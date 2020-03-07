@@ -1,0 +1,254 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Path Transforms &#8212; Heavy Fish Design  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Custom Components" href="custom_components.html" />
+    <link rel="prev" title="Components" href="components.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="path-transforms">
+<h1>Path Transforms<a class="headerlink" href="#path-transforms" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="join">
+<h2>join<a class="headerlink" href="#join" title="Permalink to this headline">¶</a></h2>
+<p>the join transform will join all segments into a continuous path.  It will make a
+best effort to rearrange segments to make the smoothest path.  For breaks in paths, the
+segments are extended until they meet.</p>
+<p>Attributes</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">close_path</span></code>:</dt><dd><ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">true</span></code> should the final segment be extended to</dt><dd><p>the meet the beginning of the path?</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;join&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;close_path&quot;</span> <span class="p">:</span> <span class="n">false</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mirror">
+<h2>mirror<a class="headerlink" href="#mirror" title="Permalink to this headline">¶</a></h2>
+<p>Mirror will flip the path on either the horizontal or vertical axis</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">axis</span></code>:</dt><dd><ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">horizontal</span></code> will rotate around a horizontal line. Note that this means</dt><dd><p>the bottom of the shape will become the top.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">vertical</span></code> rotate around a vertical line. This means the</dt><dd><p>left of the shape will become the right</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>: Defines where on the shape the axis should pass through</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;mirror&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;axis&quot;</span> <span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;handle&quot;</span> <span class="p">:</span> <span class="s2">&quot;$TOP_LEFT&quot;</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rotate">
+<h2>rotate<a class="headerlink" href="#rotate" title="Permalink to this headline">¶</a></h2>
+<p>rotate will rotate by the specified amount</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">degrees</span></code>: amount to rotate in degrees</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: The axis point. This will be one of the HANDLE constants. Default is <code class="docutils literal notranslate"><span class="pre">$TOP_LEFT</span></code></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;rotate&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;degrees&quot;</span> <span class="p">:</span> <span class="mi">30</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+<p>BEFORE:</p>
+<a class="reference internal image-reference" href="_images/rotate_before.png"><img alt="_images/rotate_before.png" src="_images/rotate_before.png" style="width: 150px;" /></a>
+<p>AFTER:</p>
+<a class="reference internal image-reference" href="_images/rotate_after.png"><img alt="_images/rotate_after.png" src="_images/rotate_after.png" style="width: 150px;" /></a>
+</div>
+<div class="section" id="scale">
+<h2>scale<a class="headerlink" href="#scale" title="Permalink to this headline">¶</a></h2>
+<p>Scale will shrink or expand the path</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">width</span></code>: Will scale to the requested width.  if <code class="docutils literal notranslate"><span class="pre">height</span></code> is not provided then the scaling</dt><dd><p>will be proportional</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">height</span></code>: Will scale to the requested height.  if <code class="docutils literal notranslate"><span class="pre">width</span></code> is not provided then the scaling</dt><dd><p>will be proportional</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale_x</span></code>: Percentage to scale in the x direction, where 1 is no change, and .5 would be 50%</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale_y</span></code>: Percentage to scale in the y direction, where 1 is no change, and .5 would be 50%</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;width&quot;</span> <span class="p">:</span> <span class="mf">2.1</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slice">
+<h2>slice<a class="headerlink" href="#slice" title="Permalink to this headline">¶</a></h2>
+<p>Slice will slice the component horizontally at the requested Y value and discard everything
+below that.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">y</span></code>: The Y value to remove all segments below this line.</dt><dd><p>(Note below here means with a Y value &gt; y, but appears below)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;slice&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;y&quot;</span> <span class="p">:</span> <span class="mi">119</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+<p>BEFORE:</p>
+<a class="reference internal image-reference" href="_images/slice_before.png"><img alt="_images/slice_before.png" src="_images/slice_before.png" style="width: 150px;" /></a>
+<p>AFTER:</p>
+<a class="reference internal image-reference" href="_images/slice_after.png"><img alt="_images/slice_after.png" src="_images/slice_after.png" style="width: 150px;" /></a>
+</div>
+<div class="section" id="trim">
+<h2>trim<a class="headerlink" href="#trim" title="Permalink to this headline">¶</a></h2>
+<p>trim will remove any surrounding whitespace and move the bounding box
+of the path to 0,0</p>
+</div>
+<div class="section" id="cleanup">
+<h2>cleanup<a class="headerlink" href="#cleanup" title="Permalink to this headline">¶</a></h2>
+<p>Some basic path cleanup, the rendered path should not change in any way.
+This will remove redundant Move operations and some other tasks</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/hfd_logo1.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=dustismo&repo=svg&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Path Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="components.html" title="previous chapter">Components</a></li>
+      <li>Next: <a href="custom_components.html" title="next chapter">Custom Components</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Dustin Norlander.
+      
+      |
+      <a href="_sources/transforms.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
