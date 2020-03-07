@@ -33,11 +33,10 @@ then open browser to:
 ex: 
     http://localhost:2003/json?file=designs/box/box_three_sided.json
 
-
+*****
 
 Runbook
 ========
-
 
 
 When making code changes, first run the unit tests then the comparison of all local designs (this will compare all the local designs to the last render)
@@ -50,6 +49,12 @@ This will output any rendering differences your change causes.  Double check tha
     $ go run main.go designs_updated
 
 and commit
+
+Build the docs:
+
+    $ cd docs && make html && cd ..
+
+*****
 
 The Code
 ========

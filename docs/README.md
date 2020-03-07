@@ -3,11 +3,11 @@ Documentation for HFD lives here.  It is written in ReStructured Text and built 
 To build:
 
 ```
-$ make html
+$ cd docs && make html && cd ..
 ```
 
 then open the local file in your browser
 
 ```
-$ open build/html/index.html
+$ open ../heavyfishdesign-docs/html/index.html
 ```

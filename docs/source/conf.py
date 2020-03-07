@@ -64,6 +64,6 @@ html_sidebars = {
 html_theme_options = {
     'logo': 'hfd_logo1.png',
     'github_user': 'dustismo',
-    'github_repo': 'svg',
+    'github_repo': 'heavyfishdesign',
     'show_powered_by' : False,
 }
