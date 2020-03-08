@@ -15,11 +15,17 @@ type Part struct {
 	PartTransformers []PartTransformer
 }
 
+type Label struct {
+	Text     string
+	Position path.PathAttr
+}
+
 type RenderedPart struct {
 	Part   *Part
 	Path   path.Path
 	Width  float64
 	Height float64
+	Label  Label
 }
 
 type PartTransformer interface {
@@ -97,11 +103,20 @@ func (p *Part) RenderPart(ctx RenderContext) ([]*RenderedPart, error) {
 		width := br.X - tl.X
 		height := br.Y - tl.Y
 
+		label := Label{
+			Text:     p.Attr().MustString("label.text", ""),
+			Position: p.Attr().MustHandle("label.position", path.BottomMiddle),
+		}
+		if repeat > 1 && len(label.Text) > 0 {
+			// append the index to the label
+			label.Text = fmt.Sprintf("%s:%d", label.Text, i)
+		}
 		renderedParts = append(renderedParts, &RenderedPart{
 			Part:   p,
 			Path:   pth,
 			Width:  width,
 			Height: height,
+			Label:  label,
 		})
 	}
 

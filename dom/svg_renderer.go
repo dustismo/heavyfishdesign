@@ -70,7 +70,8 @@ type SVGDocument struct {
 	renderables      []*docRenderable
 	SegmentOperators path.SegmentOperators
 
-	CutStyle string
+	CutStyle   string
+	LabelStyle string
 }
 
 func (dr *docRenderable) GetWidth() float64 {
@@ -100,13 +101,30 @@ func (dr *docRenderable) render(d *SVGDocument, ctx RenderContext, writer io.Wri
 	// svgItem is guarenteed to be available
 
 	pth := dr.renderedPart.Path
-	// do we really need to rerender?
-	// pth, _, err := dr.part.Render(ctx)
-	// if err != nil {
-	// 	return err
-	// }
-	svg := fmt.Sprintf("<path id=\"%s\" d=\"%s\" style=\"%s\" />", dr.renderedPart.Part.Id(), path.SvgString(pth, d.Precision), d.CutStyle)
+
+	svg := fmt.Sprintf("<path id=\"%s\" d=\"%s\" style=\"%s\" />",
+		dr.renderedPart.Part.Id(),
+		path.SvgString(pth, d.Precision),
+		d.CutStyle)
 	d.writeSVG(writer, svg)
+
+	// Now render the label
+	if len(dr.renderedPart.Label.Text) > 0 {
+		// position and render
+		textPos, err := path.PointPathAttribute(
+			dr.renderedPart.Label.Position,
+			pth,
+			dr.segmentOperators)
+		if err != nil {
+			return err
+		}
+		labelSvg := fmt.Sprintf("<text x=\"%.3f\" y=\"%.3f\" style=\"%s\">%s</text>",
+			textPos.X, textPos.Y,
+			d.LabelStyle,
+			dr.renderedPart.Label.Text)
+		d.writeSVG(writer, labelSvg)
+	}
+
 	d.writeSVG(writer, "</g>")
 
 	return nil
@@ -137,6 +155,7 @@ func NewSVGDocument(w float64, h float64, unit Units) *SVGDocument {
 		layoutContainer: binpacking.NewContainer(0, 0, w, h),
 		Precision:       3,
 		CutStyle:        fmt.Sprintf("fill:none;stroke:black;stroke-width:%.3f", unit.FromMM(.3)),
+		LabelStyle:      fmt.Sprintf("font: %.3fpt serif; fill: blue", unit.FromMM(3)),
 	}
 	return d
 }
@@ -202,8 +221,9 @@ func (d *SVGDocument) Add(p *RenderedPart, ctx RenderContext) (bool, error) {
 	}
 
 	r := &docRenderable{
-		renderedPart: p,
-		rotate:       false,
+		renderedPart:     p,
+		rotate:           false,
+		segmentOperators: d.SegmentOperators,
 	}
 	inserted, bin := d.layoutContainer.InsertWithPadding(r, r, d.Padding)
 	if !inserted && d.layoutContainer.IsEmpty() {
@@ -221,9 +241,10 @@ func (d *SVGDocument) Add(p *RenderedPart, ctx RenderContext) (bool, error) {
 		return false, nil
 	}
 	r = &docRenderable{
-		renderedPart: p,
-		position:     path.NewPoint(bin.X, bin.Y),
-		rotate:       bin.Rotated,
+		renderedPart:     p,
+		position:         path.NewPoint(bin.X, bin.Y),
+		rotate:           bin.Rotated,
+		segmentOperators: d.SegmentOperators,
 	}
 
 	d.renderables = append(d.renderables, r)
