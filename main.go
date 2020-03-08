@@ -131,12 +131,12 @@ func main() {
 func CompareDirectories(left string, right string, extension string, logger *util.HfdLog) {
 	filesLeft, err := FileList(left, extension)
 	if err != nil {
-		logger.Errorf("Unable to list files in directory %s: ", left, err.Error())
+		logger.Errorf("Unable to list files in directory %s: %s", left, err.Error())
 		return
 	}
 	filesRight, err := FileList(right, extension)
 	if err != nil {
-		logger.Errorf("Unable to list files in directory %s: ", right, err.Error())
+		logger.Errorf("Unable to list files in directory %s: %s", right, err.Error())
 		return
 	}
 

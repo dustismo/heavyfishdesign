@@ -23,7 +23,9 @@ func TestSvg1(t *testing.T) {
 		SegmentOperators: path.NewSegmentOperators(),
 	}.PathTransform(p)
 
-	t.Errorf(path.SvgString(p, 3))
+	if len(p.Segments()) != 31 {
+		t.Errorf("Expected %d path segments, but got %d", 31, len(p.Segments()))
+	}
 }
 
 func TestParser3(t *testing.T) {
@@ -77,7 +79,10 @@ func TestParser3(t *testing.T) {
 	if err != nil {
 		t.Errorf("ERRP %s", err)
 	}
-	t.Errorf("RESULT: \n%s\n", path.SvgString(p, 3))
+
+	if len(p.Segments()) != 247 {
+		t.Errorf("Expected %d path segments, but got %d", 247, len(p.Segments()))
+	}
 }
 
 func TestParser1(t *testing.T) {
@@ -134,10 +139,6 @@ func TestParser1(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
-			"",
-			Element{},
 		},
 	}
 
