@@ -38,6 +38,7 @@ func InitContext() {
 
 	pf := []dom.PartTransformerFactory{
 		dom.PartSplitterTransformerFactory{},
+		dom.PartLatheTransformerFactory{},
 	}
 	docParser := NewDocumentParser()
 	dom.AppContext().Init(
