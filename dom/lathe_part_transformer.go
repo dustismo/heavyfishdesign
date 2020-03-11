@@ -37,6 +37,8 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 	repeat.SetParent(part.Part)
 
 	renderedParts := []*RenderedPart{}
+	topLength := 0.0
+	bottomLength := 0.0
 	index := 0
 	totalHeight := 0.0
 	for y := outlineTopLeft.Y; y <= outlineBottomRight.Y; y = y + thickness {
@@ -46,7 +48,8 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		}
 
 		if len(points) < 2 {
-			return nil, fmt.Errorf("unable to calculate intercepts for lathe")
+			// we just skip missing pieces
+			continue
 		}
 
 		// render the component
@@ -63,7 +66,7 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		repeat.SetLocalVariable("to", to)
 		repeat.SetLocalVariable("to__x", to.X)
 		repeat.SetLocalVariable("to__y", to.Y)
-		repeat.SetLocalVariable("length", length)
+		repeat.SetLocalVariable("width", length)
 		repeat.SetLocalVariable("part_index", index)
 		p, _, err := repeat.Render(ctx)
 		if err != nil {
@@ -83,6 +86,10 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 			label.Text = fmt.Sprintf("%s:%d", label.Text, index)
 		}
 
+		if index == 0 {
+			topLength = length
+		}
+		bottomLength = length
 		renderedParts = append(renderedParts, &RenderedPart{
 			Part:   part.Part,
 			Path:   p,
@@ -94,7 +101,12 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		totalHeight = totalHeight + thickness
 	}
 
-	// TODO: add total height to the globals
+	varName := attr.MustString("lathe_variable_name", "")
+	if len(varName) > 0 {
+		part.Part.SetGlobalVariable(fmt.Sprintf("%s__total_height", varName), totalHeight)
+		part.Part.SetGlobalVariable(fmt.Sprintf("%s__top_width", varName), topLength)
+		part.Part.SetGlobalVariable(fmt.Sprintf("%s__bottom_width", varName), bottomLength)
+	}
 
 	return renderedParts, nil
 }

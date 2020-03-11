@@ -81,18 +81,20 @@ Lathe takes a component outline and 'turns' a set of stackable parts.
 Parameters
 ~~~~~~~~~~
 
-* ``repeat``: The component which is going to be repeated. This component should use the ``length`` variable. 
+* ``repeat``: The component which is going to be repeated. This component should use the ``width`` variable. 
 * ``material_thickness``
-* ``lathe_variable_name`` If supplied, then the rendering of this will provide some global 
-    variables to any subsequently rendered parts.  See Global Variables
+* ``lathe_variable_name`` If supplied, then the rendering of this will provide some global variables to any subsequently rendered parts.  See Global Variables
 
 Local Variables
 ~~~~~~~~~~~~~~~
 
-* ``part_index`` The index of the parts within this Lathe.  the top most piece is part_index 0.
-* ``length`` The length of the current piece.
+* ``part_index`` The index of the parts within this Lathe.  The top most piece is part_index 0.
+* ``width`` The width of the current piece.
 
 Global Variables
 ~~~~~~~~~~~~~~~
 
 * ``<lathe_variable_name>__total_height`` The hieght of all the lathe parts stacked
+* ``<lathe_variable_name>__top_width`` The width of the top piece
+* ``<lathe_variable_name>__bottom_width`` The width of the bottom piece
+
