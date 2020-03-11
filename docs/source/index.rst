@@ -7,9 +7,9 @@ For Designers
    :maxdepth: 1
 
    getting_started
-   parts
    components
    transforms
+   part_transformers
    custom_components
    expressions
 

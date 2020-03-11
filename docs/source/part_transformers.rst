@@ -1,11 +1,5 @@
-Part
-==================
-
-
-
-
 Part Transformers
---------------------
+==================
 
 Each Part can have one or more transformers.  Transformers are different from 
 path transforms in that the part transformers may result in more than one 
@@ -36,6 +30,8 @@ This is especially useful for parts that are too large to fit on a single materi
 Each edge is passed ``from`` and ``to`` Point params to tell the edges where to render.  
 The ``bleed_top`` and ``bleed_bottom`` params allow the lines to bleed over
 
+Parameters
+~~~~~~~~~~
 
 * ``y``: The y position where the split should happen. Note, if ``y`` is set, autosplit 
     must be false or unset.
@@ -75,3 +71,28 @@ The ``bleed_top`` and ``bleed_bottom`` params allow the lines to bleed over
             "type": "line"
         }
     }
+
+
+Lathe
+--------------------
+
+Lathe takes a component outline and 'turns' a set of stackable parts.  
+
+Parameters
+~~~~~~~~~~
+
+* ``repeat``: The component which is going to be repeated. This component should use the ``length`` variable. 
+* ``material_thickness``
+* ``lathe_variable_name`` If supplied, then the rendering of this will provide some global 
+    variables to any subsequently rendered parts.  See Global Variables
+
+Local Variables
+~~~~~~~~~~~~~~~
+
+* ``part_index`` The index of the parts within this Lathe.  the top most piece is part_index 0.
+* ``length`` The length of the current piece.
+
+Global Variables
+~~~~~~~~~~~~~~~
+
+* ``<lathe_variable_name>__total_height`` The hieght of all the lathe parts stacked
