@@ -59,7 +59,17 @@
                     "id": "stem",
                     "type": "rectangle",
                     "width": "material_thickness",
-                    "height": "lathe_pawn__total_height"
+                    "height": "lathe_pawn__total_height - material_thickness"
+                }
+            ]
+        },
+        {
+            "components": [
+                {
+                    "id": "stem",
+                    "type": "rectangle",
+                    "width": "lathe_pawn__top_width",
+                    "height": "lathe_pawn__top_width"
                 }
             ]
         }
