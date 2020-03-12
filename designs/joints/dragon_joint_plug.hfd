@@ -16,7 +16,7 @@
             "id" : "dragon_butt_joint",
             "components": [
                 {
-                    "type": "edge",
+                    "type": "repeat_edge",
                     "id": "dragon_butt_joint",
                     "custom_component": {
                         "type": "dragon_joint_plug"

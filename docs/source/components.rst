@@ -76,7 +76,7 @@ Commands
 * ``rel_svg_connect_to`` Same as ``svg_connect_to`` but ``to`` is using relative coodrdinates
 
 
-edge
+repeat_edge
 ------------------------------------------------------------------------------------------
 
 
@@ -86,7 +86,10 @@ edge
 
 
 an edge is some form of a connection from x1,y1 to x2,y2.  Edges are specifically designed to be useful
-for joints, but can easily be used for other things.  Each edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
+for joints, but can easily be used for other things.  
+
+The repeat edge is a special variety of edge, that contains some repeatable element.
+Each repeat edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
 Each of the subcomponents should be drawn horizontally from origin 0,0.  The component
 will stitch them together to make a continuous edge, and handle automatically handle 
 moving and rotating. 
@@ -94,7 +97,8 @@ moving and rotating.
 Typically an edge will be written to be reused, where the ``to`` and ``from`` params are 
 passed in. 
 
-Attributes
+Parameters
+~~~~~~~~~~
 
 * ``padding_left``: Additional amount that should be used on the left side before
     the repeatable starts
@@ -131,10 +135,15 @@ Attributes
 	called ``left_width``.  
 * ``repeatable``: This should be a renderable component. it is the middle section, which will be repeated as many times as needed
 * ``right``: Same as left, but has ``right_width`` special param
-* ``edge_variable_name``: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. If set the following attributes will be available:
-        * ``{variable_name}__length``: length of this edge
-        * ``{variable_name}__angle``: the angle of this edge
-        
+* ``edge_variable_name``: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. See Global Variables
+
+
+Global Variables
+~~~~~~~~~~~~~~~
+
+* ``<edge_variable_name>__length``: length of this edge
+* ``<edge_variable_name>__angle``: the angle of this edge
+
 
 xintercept
 ------------------------------------------------------------------------------------------
@@ -158,7 +167,8 @@ And here it is if the outline were drawn in.
 .. image:: _static/xintercept_dala_horse_3.png
   :width: 150
 
-Attributes
+Parameters
+~~~~~~~~~~
 
 * ``outline``: <component> The shape that the repeatable should be drawn into 
 * ``repeatable``: <component> The shape that should be repeated.  The repeatable

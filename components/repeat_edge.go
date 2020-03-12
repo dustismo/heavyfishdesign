@@ -20,7 +20,7 @@ type EdgeComponentFactory struct{}
 // right -> the right side, similar to Left
 //
 // Each component should be drawn horizontally with an origin of 0,0
-type EdgeComponent struct {
+type RepeatEdgeComponent struct {
 	*dom.BasicComponent
 	Repeatable dom.Component // the thing to be repeated
 	Left       dom.Component
@@ -54,7 +54,7 @@ func (ccf EdgeComponentFactory) CreateComponent(componentType string, mp *dynmap
 
 	bc := factory.MakeBasicComponent(dm)
 
-	rc := &EdgeComponent{
+	rc := &RepeatEdgeComponent{
 		BasicComponent: bc,
 		Repeatable:     repeat,
 		Left:           left,
@@ -71,10 +71,10 @@ func (ccf EdgeComponentFactory) CreateComponent(componentType string, mp *dynmap
 
 // The list of component types this Factory should be used for
 func (ccf EdgeComponentFactory) ComponentTypes() []string {
-	return []string{"edge"}
+	return []string{"repeat_edge"}
 }
 
-func (rc *EdgeComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderContext, error) {
+func (rc *RepeatEdgeComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderContext, error) {
 	rc.RenderStart(ctx)
 	attr := rc.Attr()
 	startPoint := attr.MustPoint("from", ctx.Cursor)

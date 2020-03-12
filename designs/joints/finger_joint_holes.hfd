@@ -11,7 +11,7 @@
             "id" : "finger_joint_part",
             "components": [
                 {
-                    "type": "edge",
+                    "type": "repeat_edge",
                     "id": "finger_joint",
                     "custom_component": {
                         "type": "finger_joint_holes",
