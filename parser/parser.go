@@ -20,6 +20,7 @@ func InitContext() {
 		dom.RepeatComponentFactory{},
 		dom.GroupComponentFactory{},
 		components.EdgeComponentFactory{},
+		components.BasicEdgeComponentFactory{},
 		components.XInterceptComponentFactory{},
 	}
 	tf := []dom.TransformFactory{

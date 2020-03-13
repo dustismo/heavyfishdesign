@@ -31,6 +31,10 @@ func main() {
 	outputDirectory := flag.String("output_dir", "", "The Directory to render into")
 	compareDirectory := flag.String("compare_dir", "designs_rendered", "The Directory to compare the current render to")
 
+	if len(os.Args) < 2 {
+		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated]\n")
+		return
+	}
 	command := os.Args[1]
 	err := flag.CommandLine.Parse(os.Args[2:])
 	if err != nil {

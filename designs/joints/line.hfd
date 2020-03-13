@@ -4,25 +4,31 @@
         "to": "1,1"
     },
     "parts": [
-        {
+        {   
             "components": [
                 {
-                    "type": "draw",
+                    "type": "basic_edge",
                     "custom_component": {
-                        "type": "line",
-                        "defaults": {} 
+                        "type": "line"
                     },
-                    "commands": [
+                    "components" : [
                         {
-                            "command": "move",
-                            "to": "from"
-                        },
-                        {
-                            "command": "line",
-                            "to": "to"
+                            "type": "draw",
+                            "commands": [
+                                {
+                                    "command": "move",
+                                    "to": "0,0"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "width,0"
+                                }
+                            ]  
                         }
-                    ]  
+                    ]
                 }
+
+                
             ]
         }
     ]
