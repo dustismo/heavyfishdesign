@@ -76,13 +76,67 @@ Commands
 * ``rel_svg_connect_to`` Same as ``svg_connect_to`` but ``to`` is using relative coodrdinates
 
 
+basic_edge
+------------------------------------------------------------------------------------------
+
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/line.hfd>`_
+
+
+an edge is some form of a connection from x1,y1 to x2,y2.  
+
+Typically an edge will be written to be reused as a custom component, where the ``to`` and ``from`` params are 
+passed in. 
+
+Parameters
+~~~~~~~~~~
+
+* ``handle``: When moving the edge what point should be considered the start.  Defaults
+    to $ORIGIN
+* ``to``: The point the edge should be drawn to
+    The to point can take the following forms:
+
+        .. code-block::
+
+            x, y
+
+        .. code-block::
+
+            {
+                "x": 5,
+                "y": 6
+            }
+
+        .. code-block::
+
+
+            {
+                "angle" : 90,
+                "length" : 5
+            }
+            // angle is in degrees where 0 is a straight line to
+            // the right, and 90 is a line pointing to positive Y
+   
+* ``from``: The point the edge should be drawn from.  Defaults to current position
+* ``edge_variable_name``: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. See Global Variables
+
+
+Global Variables
+~~~~~~~~~~~~~~~
+
+* ``<edge_variable_name>__length``: length of this edge
+* ``<edge_variable_name>__angle``: the angle of this edge
+
+
 repeat_edge
 ------------------------------------------------------------------------------------------
 
 
 .. topic:: Examples
 
-    * `<https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints>`_
+    * `<https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/finger_joint_plug.hfd>`_
 
 
 an edge is some form of a connection from x1,y1 to x2,y2.  Edges are specifically designed to be useful
