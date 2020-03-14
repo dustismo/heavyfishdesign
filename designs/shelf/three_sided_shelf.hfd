@@ -1,6 +1,7 @@
 {
     "imports": [
         {"path": "designs/joints/line.hfd"},
+        {"path": "designs/joints/svg_edge.hfd"},
         {"path": "designs/joints/finger_joint_plug.hfd"},
         {"path": "designs/joints/finger_joint_socket.hfd"},
         {"path": "designs/common/screw_holes_pair.hfd"},
@@ -15,17 +16,19 @@
         "material_width": 12,
         "material_height": 11,
         "material_thickness": 0.25,
-        "shelf_width": 6,
+        "shelf_width": 5,
         "shelf_front_height": 1,
-        "shelf_back_height": 3,
-        "shelf_depth": 5, //11.5,
+        "shelf_back_height": 1.8,
+        "shelf_depth": 3, //11.5,
         "finger_width": 0.4,
         "finger_height": "material_thickness",
         "finger_space": 0.3,
         "finger_depth": "material_thickness",
         "finger_padding" : 0.2,
         "side_screw_hole": 0.2,
-        "back_screw_hole": 0.2  
+        "back_screw_hole": 0.2,  
+        "side_svg_edge": "squiggle_line",
+        "back_svg_edge": "squiggle_line"
     },
     "parts": [
         {
@@ -46,14 +49,9 @@
                     ],
                     "components": [
                         {
-                            "type": "draw",
-                            "commands": [
-                                {
-                                    "command": "svg_connect_to",
-                                    "to": "shelf_width,0",
-                                    "svg": "squiggle_line"
-                                }
-                            ]
+                            "type": "svg_edge",
+                            "to": "shelf_width,0",
+                            "svg": "back_svg_edge"
                         },
                         {
                             "type": "finger_joint_socket",
@@ -106,14 +104,9 @@
                     ],
                     "components": [
                         {
-                            "type": "draw",
-                            "commands": [
-                                {
-                                    "command": "svg_connect_to",
-                                    "to": "shelf_depth,shelf_back_height-shelf_front_height",
-                                    "svg": "squiggle_line"
-                                }
-                            ]
+                            "type": "svg_edge",
+                            "to": "shelf_depth,shelf_back_height-shelf_front_height",
+                            "svg": "side_svg_edge"
                         },
                         {
                             "type": "line",
