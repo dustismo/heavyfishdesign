@@ -3,6 +3,8 @@ package path
 import (
 	"fmt"
 	"strings"
+
+	"github.com/dustismo/heavyfishdesign/dynmap"
 )
 
 // defines the special points on a box
@@ -61,6 +63,11 @@ var enumAttr = map[string]PathAttr{
 }
 
 func ToPathAttr(str string) (PathAttr, error) {
+	if strings.Contains(str, ",") {
+		_, err := parsePoint(str)
+		return PathAttr(str), err
+	}
+
 	v, ok := enumAttr[str]
 	if !ok {
 		return TopLeft, fmt.Errorf("Error unknown path attr %s", str)
@@ -82,7 +89,30 @@ func PointPathAttribute(pos PathAttr, p Path, so SegmentOperators) (Point, error
 	}
 }
 
+func parsePoint(attr string) (Point, error) {
+	commaPoint := strings.Split(attr, ",")
+	if len(commaPoint) == 2 {
+		// this is a X,Y handle
+		x, err := dynmap.ToFloat64(commaPoint[0])
+		if err != nil {
+			return NewPoint(0, 0), err
+		}
+		y, err := dynmap.ToFloat64(commaPoint[1])
+		if err != nil {
+			return NewPoint(0, 0), err
+		}
+		return NewPoint(x, y), nil
+	}
+	return NewPoint(0, 0), fmt.Errorf("%s is not parsable to a Point", attr)
+}
+
 func PathAttribute(attr string, p Path, so SegmentOperators) (interface{}, error) {
+
+	point, err := parsePoint(attr)
+	if err == nil {
+		return point, err
+	}
+
 	dots := strings.Split(attr, ".")
 
 	tl, br, err := BoundingBoxTrimWhitespace(p, so)
