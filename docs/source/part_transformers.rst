@@ -83,6 +83,8 @@ Parameters
 
 * ``repeat``: The component which is going to be repeated. This component should use the ``width`` variable. 
 * ``material_thickness``
+* ``padding_top`` Amount of space before rendering the first slice.  
+* ``padding_bottom`` Amount of space from the bottom that will be the last slice
 * ``lathe_variable_name`` If supplied, then the rendering of this will provide some global variables to any subsequently rendered parts.  See Global Variables
 
 Local Variables

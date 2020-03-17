@@ -33,6 +33,9 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		return nil, err
 	}
 
+	paddingTop := attr.MustFloat64("padding_top", 0)
+	paddingBottom := attr.MustFloat64("padding_bottom", 0)
+
 	// set the parent
 	repeat.SetParent(part.Part)
 
@@ -41,7 +44,7 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 	bottomLength := 0.0
 	index := 0
 	totalHeight := 0.0
-	for y := outlineTopLeft.Y; y <= outlineBottomRight.Y; y = y + thickness {
+	for y := outlineTopLeft.Y + paddingTop; y <= outlineBottomRight.Y-paddingBottom; y = y + thickness {
 		points, err := path.HorizontalIntercepts(outline, y, AppContext().SegmentOperators())
 		if err != nil {
 			return nil, err
