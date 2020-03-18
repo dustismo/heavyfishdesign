@@ -62,6 +62,10 @@ var enumAttr = map[string]PathAttr{
 	string(Cursor):        Cursor,
 }
 
+func ToPathAttrFromPoint(point Point, precision int) PathAttr {
+	return PathAttr(fmt.Sprintf(precisionStr("%.3f,%.3f", precision), point.X, point.Y))
+}
+
 func ToPathAttr(str string) (PathAttr, error) {
 	if strings.Contains(str, ",") {
 		_, err := parsePoint(str)
