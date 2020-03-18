@@ -49,3 +49,13 @@ func TestLineAngle(t *testing.T) {
 		t.Errorf("Expected angle %.3f but got %.3f\n", expected, angle)
 	}
 }
+
+func TestLineByAngle(t *testing.T) {
+	startPoint := NewPoint(0, 0)
+	length := 2.0
+	angle := 18.0
+	l := NewLineSegmentAngle(startPoint, length, angle)
+	if !PrecisionEquals(l.Angle(), angle, 3) {
+		t.Errorf("Expected angle %.3f but got %.3f\n", angle, l.Angle())
+	}
+}
