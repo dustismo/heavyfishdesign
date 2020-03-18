@@ -11,9 +11,10 @@ import (
 type LogLevel int
 
 const (
-	Debug LogLevel = iota
-	Info  LogLevel = iota
-	Error LogLevel = iota
+	Debug LogLevel = 0
+	Info  LogLevel = 1
+	Error LogLevel = 2
+	Fatal LogLevel = 3
 )
 
 func (ll LogLevel) String() string {
@@ -24,6 +25,8 @@ func (ll LogLevel) String() string {
 		return "info"
 	case Error:
 		return "error"
+	case Fatal:
+		return "fatal"
 	}
 	return ""
 }
@@ -51,7 +54,7 @@ type HfdLog struct {
 	// True if there are is least one error message
 	hasErrors bool
 	// should we also write messages to std out?
-	LogToStdOut bool
+	LogToStdOut LogLevel
 	Messages    []LogMessage
 	// these fields will be added to all log messages
 	StaticFields *dynmap.DynMap
@@ -61,7 +64,7 @@ type HfdLog struct {
 func NewLog() *HfdLog {
 	return &HfdLog{
 		hasErrors:    false,
-		LogToStdOut:  true,
+		LogToStdOut:  Error,
 		Messages:     []LogMessage{},
 		StaticFields: dynmap.New(),
 	}
@@ -147,7 +150,8 @@ func (logger *HfdLog) Logf(level LogLevel, fields *dynmap.DynMap, format string,
 	if logger.parent != nil {
 		logger.parent.logFromChild(message)
 	}
-	if logger.LogToStdOut {
+
+	if logger.LogToStdOut <= level {
 		fmt.Printf("%s:: %s\n", strings.ToUpper(level.String()), message.Message)
 	}
 }

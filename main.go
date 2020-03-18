@@ -90,7 +90,7 @@ func main() {
 		}
 	} else if command == "diff_test" {
 		logger := util.NewLog()
-		logger.LogToStdOut = false
+		logger.LogToStdOut = util.Fatal
 
 		if outputDirectory == nil || len(*outputDirectory) == 0 {
 			od, err := ioutil.TempDir("", "hfd_diff_test")
