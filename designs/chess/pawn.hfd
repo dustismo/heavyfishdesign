@@ -2,7 +2,6 @@
     "imports": [
         {"path": "designs/common/rectangle_with_center_hole.hfd"},
         {"path": "designs/common/rectangle.hfd"},
-
         {
             "path": "designs/svg/lathe_pawn.svg",
             "type": "svg",
@@ -52,7 +51,6 @@
                 }
             ]
         },
-        
         {
             "components": [
                 {
@@ -66,13 +64,12 @@
         {
             "components": [
                 {
-                    "id": "stem",
+                    "id": "pawn_topper",
                     "type": "rectangle",
                     "width": "lathe_pawn__top_width",
                     "height": "lathe_pawn__top_width"
                 }
             ]
         }
-        
     ]
 }
