@@ -1,0 +1,37 @@
+{
+    "imports": [
+        {"path": "designs/common/rectangle.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "around_radius": 2,
+        "around_num_edges": 9
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type" : "around", 
+                    "num_edges": "around_num_edges",
+                    "radius": "around_radius",
+                    "repeatable": {                        
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "rectangle",
+                                "width": "around__length",
+                                // height is negative, since we want the rectangle to
+                                // extend away from the center.
+                                // alternatively we could draw the rect then move to 0,0
+                                // with handle as $BOTTOM_LEFT
+                                "height": "-0.3"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

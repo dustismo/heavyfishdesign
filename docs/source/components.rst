@@ -235,3 +235,33 @@ Parameters
         * ``length`` the horizontal length 
 * ``initial_spacing``: how much initial vertical space to add before drawing the first repeatable.
 * ``repeat_spacing``: how much vertical space between each repeatable.
+
+
+
+around
+------------------------------------------------------------------------------------------
+
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/around.hfd>`_
+
+around is a component that allows you to render a repeatable shape N number of times around a circle.
+
+Here we have a rectangle repeated nine times with a radius of 2.  
+
+.. image:: _static/around.png
+  :width: 150
+
+
+Parameters
+~~~~~~~~~~
+
+* ``repeatable``: <component> The shape that should be repeated.  The shape should 
+    be rendered horizontally.  The component will automatically move and rotate into the 
+    proper position. The repeatable
+    shape will have the following params passed down to allow it to render the 
+    proper size.
+        * ``around__length`` the horizontal length 
+* ``num_edges``: the number of edges to draw.  (i.e. 5 edges would be a pentagon)
+* ``radius``: The radius of the circle.  Note the start and end of the repeatable will be this distance from the center point
