@@ -69,8 +69,8 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		repeat.SetLocalVariable("to", to)
 		repeat.SetLocalVariable("to__x", to.X)
 		repeat.SetLocalVariable("to__y", to.Y)
-		repeat.SetLocalVariable("width", length)
-		repeat.SetLocalVariable("part_index", index)
+		repeat.SetLocalVariable("lathe__width", length)
+		repeat.SetLocalVariable("lathe__index", index)
 		p, _, err := repeat.Render(ctx)
 		if err != nil {
 			return nil, err

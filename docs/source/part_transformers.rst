@@ -90,8 +90,8 @@ Parameters
 Local Variables
 ~~~~~~~~~~~~~~~
 
-* ``part_index`` The index of the parts within this Lathe.  The top most piece is part_index 0.
-* ``width`` The width of the current piece.
+* ``lathe__index`` The index of the parts within this Lathe.  The top most piece is part_index 0.
+* ``lathe__width`` The width of the current piece.
 
 Global Variables
 ~~~~~~~~~~~~~~~

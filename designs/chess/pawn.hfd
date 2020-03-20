@@ -26,8 +26,8 @@
                     "lathe_variable_name": "lathe_pawn",
                     "repeat": {
                         "type": "rectangle_with_center_hole",
-                        "width": "width",
-                        "height": "width",
+                        "width": "lathe__width",
+                        "height": "lathe__width",
                         "hole_width": "material_thickness",
                         "hole_height": "material_thickness"
                     }
