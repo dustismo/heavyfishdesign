@@ -89,15 +89,14 @@ func (rc *AroundComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderC
 	rCtx := ctx.Clone()
 	rc.SetLocalVariable("around__length", line.Length())
 	rCtx.Cursor = startPoint
-	p, c, err := rc.Repeatable.Render(rCtx)
-	if err != nil {
-		return p, c, err
-	}
+	paths := []path.Path{}
+	for i := 0; i < numEdges; i++ {
+		rc.SetLocalVariable("around__index", 0)
+		p, c, err := rc.Repeatable.Render(rCtx)
+		if err != nil {
+			return p, c, err
+		}
 
-	paths := []path.Path{
-		p,
-	}
-	for i := 1; i < numEdges; i++ {
 		pth, err := transforms.RotateTransform{
 			Degrees:          degrees * float64(i),
 			Axis:             path.ToPathAttrFromPoint(centerPoint, dom.AppContext().Precision()),
@@ -108,7 +107,7 @@ func (rc *AroundComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderC
 		}
 		paths = append(paths, pth)
 	}
-	p = transforms.SimpleJoin{}.JoinPaths(paths...)
+	p := transforms.SimpleJoin{}.JoinPaths(paths...)
 
-	return p, c, err
+	return p, rCtx, nil
 }

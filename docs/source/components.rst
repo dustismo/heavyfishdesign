@@ -265,3 +265,10 @@ Parameters
         * ``around__length`` the horizontal length 
 * ``num_edges``: the number of edges to draw.  (i.e. 5 edges would be a pentagon)
 * ``radius``: The radius of the circle.  Note the start and end of the repeatable will be this distance from the center point
+
+
+Local Variables
+~~~~~~~~~~~~~~~
+
+* ``around__length`` The horizontal length of this peice
+* ``around__index`` The index of this piece. 0 to num_edges-1
