@@ -88,7 +88,7 @@ func (rc *AroundComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderC
 	// now render a single path (this is the horizontal top path)
 	rCtx := ctx.Clone()
 	rc.SetLocalVariable("around__length", line.Length())
-	rCtx.Cursor = startPoint
+	rCtx.Cursor = path.NewPoint(0, 0)
 	paths := []path.Path{}
 	for i := 0; i < numEdges; i++ {
 		rc.SetLocalVariable("around__index", 0)
@@ -96,12 +96,19 @@ func (rc *AroundComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderC
 		if err != nil {
 			return p, c, err
 		}
-
-		pth, err := transforms.RotateTransform{
-			Degrees:          degrees * float64(i),
-			Axis:             path.ToPathAttrFromPoint(centerPoint, dom.AppContext().Precision()),
-			SegmentOperators: dom.AppContext().SegmentOperators(),
-		}.PathTransform(p)
+		pth, err := path.MultiTransform(
+			p,
+			transforms.MoveTransform{
+				Point:            startPoint,
+				Handle:           path.Origin,
+				SegmentOperators: dom.AppContext().SegmentOperators(),
+			},
+			transforms.RotateTransform{
+				Degrees:          degrees * float64(i),
+				Axis:             path.ToPathAttrFromPoint(centerPoint, dom.AppContext().Precision()),
+				SegmentOperators: dom.AppContext().SegmentOperators(),
+			},
+		)
 		if err != nil {
 			return pth, ctx, err
 		}
