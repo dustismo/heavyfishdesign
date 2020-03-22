@@ -18,15 +18,19 @@
                     "radius": "around_radius",
                     "repeatable": {                        
                         "type": "draw",
+                        "transforms": [
+                            // move to the center of the length                           
+                            {
+                                "type" : "move",
+                                "to" : "around__length / 2, 0",
+                                "handle" : "$BOTTOM_MIDDLE"
+                            }
+                        ],
                         "commands": [
                             {
                                 "command": "rectangle",
-                                "width": "around__length",
-                                // height is negative, since we want the rectangle to
-                                // extend away from the center.
-                                // alternatively we could draw the rect then move to 0,0
-                                // with handle as $BOTTOM_LEFT
-                                "height": "-0.3"
+                                "width": "around__length - .3",
+                                "height": ".2"
                             }
                         ]
                     }

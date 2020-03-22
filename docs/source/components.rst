@@ -256,7 +256,7 @@ Here we have a rectangle repeated nine times with a radius of 2.
 
 Parameters
 ~~~~~~~~~~
-
+* ``center_point``: Where the center of the circle should be
 * ``repeatable``: <component> The shape that should be repeated.  The shape should 
     be rendered horizontally.  The component will automatically move and rotate into the 
     proper position. The repeatable
