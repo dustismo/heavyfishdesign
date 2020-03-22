@@ -14,8 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Part" href="parts.html" />
-    <link rel="prev" title="For Designers" href="index.html" />
+    <link rel="prev" title="Heavy Fish Design (the docs)" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -43,48 +42,40 @@
 <p>Every design is based on one or more HFD files.  HFD is syntactically JSON but allows
 comments.</p>
 <p>Every HFD file has the following structure</p>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;some/custom_component.json&quot;</span><span class="p">},</span>
-        <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;another/custom/component.json&quot;</span><span class="p">}</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="s2">&quot;.0035&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;material_width&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="nt">&quot;material_height&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
-        <span class="nt">&quot;measurement_units&quot;</span><span class="p">:</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;material_thickness&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
-        <span class="nt">&quot;some_param1&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;another_param&quot;</span><span class="p">:</span> <span class="mf">3.25</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;some_identifier&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;stem_with_topper&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;stem_height&quot;</span> <span class="p">:</span> <span class="s2">&quot;material_thickness * ((num_layers * 2) + num_stem_layers + 2)&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;stem_topper_svg&quot;</span><span class="p">:</span> <span class="s2">&quot;star_svg&quot;</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;spacer&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;repeat&quot;</span> <span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;total&quot;</span> <span class="p">:</span> <span class="s2">&quot;num_layers + num_stem_layers&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;spacer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;stem_width * 2&quot;</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
+    &quot;imports&quot;: [
+        {&quot;path&quot;: &quot;some/custom_component.hfd&quot;},
+        {&quot;path&quot;: &quot;another/custom/component.hfd&quot;}
+    ],
+    &quot;params&quot;: {
+        // These fields are recommended for all designs
+        &quot;offset&quot;: &quot;.0035&quot;,          // the cutting kerf / 2
+        &quot;material_width&quot;: 18,       // size of the material we are cutting from
+        &quot;material_height&quot;: 11,      // size of material
+        &quot;material_thickness&quot;: 0.2,  // thickness of material
+        &quot;measurement_units&quot;: &quot;in&quot;,  // either &quot;in&quot; or &quot;mm&quot;
+
+        // more design specific params
+        &quot;some_param1&quot;: &quot;0&quot;,
+        &quot;another_param&quot;: 3.25,
+    },
+    &quot;parts&quot;: [
+        // One or more parts
+        {
+            &quot;id&quot;: &quot;some_identifier&quot;,
+            &quot;components&quot;: [
+                {
+                    &quot;type&quot;: &quot;stem_with_topper&quot;,
+                    &quot;stem_height&quot; : &quot;material_thickness * ((num_layers * 2) + num_stem_layers + 2)&quot;,
+                    &quot;stem_topper_svg&quot;: &quot;star_svg&quot;
+                }
+            ]
+        }
+    ]
+}
 </pre></div>
 </div>
-<p>Each document is divided into sections:</p>
+<p>Each document is divided into the following sections:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> Imports allows importing custom components from other documents as well as importing siple SVG files.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">params</span></code> List of parameters which impact the design.</p></li>
@@ -145,7 +136,6 @@ as well as importing siple SVG files. See docs for custom components</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
@@ -159,8 +149,7 @@ as well as importing siple SVG files. See docs for custom components</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">For Designers</a></li>
-      <li>Next: <a href="parts.html" title="next chapter">Part</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Heavy Fish Design (the docs)</a></li>
   </ul></li>
 </ul>
 </div>

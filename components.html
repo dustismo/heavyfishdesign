@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Path Transforms" href="transforms.html" />
-    <link rel="prev" title="Part" href="parts.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -178,16 +178,80 @@ aligns to ‘to’.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">rel_svg_connect_to</span></code> Same as <code class="docutils literal notranslate"><span class="pre">svg_connect_to</span></code> but <code class="docutils literal notranslate"><span class="pre">to</span></code> is using relative coodrdinates</p></li>
 </ul>
 </div>
-<div class="section" id="edge">
-<h2>edge<a class="headerlink" href="#edge" title="Permalink to this headline">¶</a></h2>
-<p>an edge is some form of a line from x to y.  Typically these are used for
-joints.  Each edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
+<div class="section" id="basic-edge">
+<h2>basic_edge<a class="headerlink" href="#basic-edge" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/line.hfd">https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/line.hfd</a></p></li>
+</ul>
+</div>
+<p>an edge is some form of a connection from x1,y1 to x2,y2.</p>
+<p>Typically an edge will be written to be reused as a custom component, where the <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code> params are
+passed in.</p>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">handle</span></code>: When moving the edge what point should be considered the start.  Defaults</dt><dd><p>to $ORIGIN</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">to</span></code>: The point the edge should be drawn to</dt><dd><p>The to point can take the following forms:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">6</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;angle&quot;</span> <span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="s2">&quot;length&quot;</span> <span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">angle</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">degrees</span> <span class="n">where</span> <span class="mi">0</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">straight</span> <span class="n">line</span> <span class="n">to</span>
+<span class="o">//</span> <span class="n">the</span> <span class="n">right</span><span class="p">,</span> <span class="ow">and</span> <span class="mi">90</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">line</span> <span class="n">pointing</span> <span class="n">to</span> <span class="n">positive</span> <span class="n">Y</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span></code>: The point the edge should be drawn from.  Defaults to current position</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edge_variable_name</span></code>: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. See Global Variables</p></li>
+</ul>
+</div>
+<div class="section" id="global-variables">
+<h3>Global Variables<a class="headerlink" href="#global-variables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;edge_variable_name&gt;__length</span></code>: length of this edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;edge_variable_name&gt;__angle</span></code>: the angle of this edge</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="repeat-edge">
+<h2>repeat_edge<a class="headerlink" href="#repeat-edge" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/finger_joint_plug.hfd">https://github.com/dustismo/heavyfishdesign/tree/master/designs/joints/finger_joint_plug.hfd</a></p></li>
+</ul>
+</div>
+<p>an edge is some form of a connection from x1,y1 to x2,y2.  Edges are specifically designed to be useful
+for joints, but can easily be used for other things.</p>
+<p>The repeat edge is a special variety of edge, that contains some repeatable element.
+Each repeat edge contains three subcomponents left, repeatable, right.  (i.e. beginning, middle, end).
 Each of the subcomponents should be drawn horizontally from origin 0,0.  The component
 will stitch them together to make a continuous edge, and handle automatically handle
 moving and rotating.</p>
 <p>Typically an edge will be written to be reused, where the <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code> params are
 passed in.</p>
-<p>Attributes</p>
+<div class="section" id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">padding_left</span></code>: Additional amount that should be used on the left side before</dt><dd><p>the repeatable starts</p>
@@ -233,18 +297,25 @@ called <code class="docutils literal notranslate"><span class="pre">left_width</
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: This should be a renderable component. it is the middle section, which will be repeated as many times as needed</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">right</span></code>: Same as left, but has <code class="docutils literal notranslate"><span class="pre">right_width</span></code> special param</p></li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">edge_variable_name</span></code>: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. If set the following attributes will be available:</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">{variable_name}__length</span></code>: length of this edge</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">{variable_name}__angle</span></code>: the angle of this edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edge_variable_name</span></code>: This is a special feature, if you set this name then certain Attributes of this edge will be available to all subsequently rendered components. See Global Variables</p></li>
 </ul>
-</dd>
-</dl>
-</li>
+</div>
+<div class="section" id="id2">
+<h3>Global Variables<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;edge_variable_name&gt;__length</span></code>: length of this edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;edge_variable_name&gt;__angle</span></code>: the angle of this edge</p></li>
 </ul>
+</div>
 </div>
 <div class="section" id="xintercept">
 <h2>xintercept<a class="headerlink" href="#xintercept" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/speaker.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/speaker.hfd</a></p></li>
+</ul>
+</div>
 <p>xintercept is a special component that allows you to render a repeatable shape horizontally
 into another shape.</p>
 <p>This is best described visually.  Here we have an outline of a dala horse, and
@@ -252,27 +323,65 @@ we are drawing rectangles within it.</p>
 <a class="reference internal image-reference" href="_images/xintercept_dala_horse_1.png"><img alt="_images/xintercept_dala_horse_1.png" src="_images/xintercept_dala_horse_1.png" style="width: 150px;" /></a>
 <p>And here it is if the outline were drawn in.</p>
 <a class="reference internal image-reference" href="_images/xintercept_dala_horse_3.png"><img alt="_images/xintercept_dala_horse_3.png" src="_images/xintercept_dala_horse_3.png" style="width: 150px;" /></a>
-<p>Attributes</p>
-<ul>
+<div class="section" id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">outline</span></code>: &lt;component&gt; The shape that the repeatable should be drawn into</p></li>
-<li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: &lt;component&gt; The shape that should be repeated.  The repeatable</dt><dd><p>shape will have the following params passed down to allow it to render the
-proper size.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">to__x</span></code> The point to draw to</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">to__y</span></code> The point to draw to</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">from__x</span></code> The point to start from</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">from__y</span></code> The point to start from</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">length</span></code> the horizontal length</p></li>
-</ul>
-</div></blockquote>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: &lt;component&gt; The shape that should be repeated.  The repeatable</dt><dd><p>shape will have params passed down to allow it to render the
+proper size (see Local Variables).</p>
 </dd>
 </dl>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial_spacing</span></code>: how much initial vertical space to add before drawing the first repeatable.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">repeat_spacing</span></code>: how much vertical space between each repeatable.</p></li>
 </ul>
+</div>
+<div class="section" id="local-variables">
+<h3>Local Variables<a class="headerlink" href="#local-variables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">xintercept__length</span></code> The horizontal length of this piece</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xintercept__to__x</span></code> The point to draw to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xintercept__to__y</span></code> The point to draw to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xintercept__from__x</span></code> The point to start from</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xintercept__from__y</span></code> The point to start from</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="around">
+<h2>around<a class="headerlink" href="#around" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/around.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/around.hfd</a></p></li>
+</ul>
+</div>
+<p>around is a component that allows you to render a repeatable shape N number of times around a circle.</p>
+<p>Here we have a rectangle repeated nine times with a radius of 2.</p>
+<a class="reference internal image-reference" href="_images/around.png"><img alt="_images/around.png" src="_images/around.png" style="width: 150px;" /></a>
+<div class="section" id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">center_point</span></code>: Where the center of the circle should be</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: &lt;component&gt; The shape that should be repeated.  The shape should</dt><dd><p>be rendered horizontally.  The component will automatically move and rotate into the
+proper position. The repeatable
+shape will have params passed down to allow it to render the
+proper size. (see Local Variables)</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_edges</span></code>: the number of edges to draw.  (i.e. 5 edges would be a pentagon)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code>: The radius of the circle.  Note the start and end of the repeatable will be this distance from the center point</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3>Local Variables<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">around__length</span></code> The horizontal length of this peice</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">around__index</span></code> The index of this piece. 0 to num_edges-1</p></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -307,9 +416,9 @@ proper size.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part_transformers.html">Part Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
 </ul>
@@ -321,7 +430,7 @@ proper size.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="parts.html" title="previous chapter">Part</a></li>
+      <li>Previous: <a href="getting_started.html" title="previous chapter">Getting Started</a></li>
       <li>Next: <a href="transforms.html" title="next chapter">Path Transforms</a></li>
   </ul></li>
 </ul>

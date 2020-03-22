@@ -40,8 +40,11 @@
 <code class="docutils literal notranslate"><span class="pre">custom_component</span></code> attribute to any component.  The new component will be available
 via the <code class="docutils literal notranslate"><span class="pre">import</span></code> attribute on the document</p>
 <p>Example:</p>
-<p>here is a simple line component in file <code class="docutils literal notranslate"><span class="pre">designs/common/line.json</span></code>
-It uses attributes <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code></p>
+<p>Here is a simple line component:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/joints/line.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/joints/line.hfd</a></p>
+</div></blockquote>
+<p>It requires the attributes <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span></code> when being imported</p>
 <div class="highlight-JSON notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -117,7 +120,7 @@ It uses attributes <code class="docutils literal notranslate"><span class="pre">
 23
 24</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="p">{</span>
      <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span>
-<span class="hll">         <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;designs/common/line.json&quot;</span><span class="p">}</span>
+<span class="hll">         <span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;designs/common/line.hfd&quot;</span><span class="p">}</span>
 </span>     <span class="p">],</span>
      <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
          <span class="nt">&quot;material_width&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
@@ -175,7 +178,6 @@ It uses attributes <code class="docutils literal notranslate"><span class="pre">
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="parts.html">Part</a></li>
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Components</a></li>

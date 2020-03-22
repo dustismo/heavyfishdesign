@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Part Transformers &#8212; Heavy Fish Design  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Custom Components" href="custom_components.html" />
+    <link rel="prev" title="Path Transforms" href="transforms.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="part-transformers">
+<h1>Part Transformers<a class="headerlink" href="#part-transformers" title="Permalink to this headline">¶</a></h1>
+<p>Each Part can have one or more transformers.  Transformers are different from
+path transforms in that the part transformers may result in more than one
+part.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
+    &quot;id&quot;: &quot;my_part1&quot;,
+    &quot;part_transformers&quot;: [
+        {
+            &quot;type&quot; : &quot;splitter&quot;
+            ...
+        }
+    ],
+    &quot;components&quot;: [
+        ...
+    ]
+}
+</pre></div>
+</div>
+<div class="section" id="splitter">
+<h2>Splitter<a class="headerlink" href="#splitter" title="Permalink to this headline">¶</a></h2>
+<p>Splitter will break a part into 2 pieces, a top and bottom, with using two edges.
+This is especially useful for parts that are too large to fit on a single material.
+Each edge is passed <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> Point params to tell the edges where to render.
+The <code class="docutils literal notranslate"><span class="pre">bleed_top</span></code> and <code class="docutils literal notranslate"><span class="pre">bleed_bottom</span></code> params allow the lines to bleed over</p>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">y</span></code>: The y position where the split should happen. Note, if <code class="docutils literal notranslate"><span class="pre">y</span></code> is set, autosplit</dt><dd><p>must be false or unset.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">auto_split</span></code>: &lt;true|false&gt; If true, the splitter will activate if the part does</dt><dd><p>not fit with the material. Splits will be in half horizontally or vertically.
+This will perform as many individual splits as needed to fit the material size.
+Note that if auto_split is on, then any value of <code class="docutils literal notranslate"><span class="pre">y</span></code> will be ignored</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">y_offset</span></code>: this will add an extra amount to the split location (either the</dt><dd><p>value of <code class="docutils literal notranslate"><span class="pre">y</span></code> or the auto_split location.  <code class="docutils literal notranslate"><span class="pre">y_offset</span></code> is useful for dynamically
+moving the split point when multiple identical layers are stacked on top of each other
+so the break points are not aligned</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">bleed_top</span></code>: The extra amount of bleed the top piece should have.  This is useful</dt><dd><p>for butt joints that extend into the top and bottom pieces.
+Note that if the bleed amount is not supplied, it will be calculated automatically,
+this is sufficient for most usecases.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">bleed_bottom</span></code>: The extra amount of bleed the bottom piece should have.  This is useful</dt><dd><p>for butt joints that extend into the top and bottom pieces.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">plug_edge</span></code>: Each connector edge is expected to have a plug side and a socket side.</dt><dd><p>(though some edge types might not). The plug edge is always the bottom edge of the top piece.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">socket_edge</span></code>: The socket edge is always the top edge of the bottom piece.</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">max_width</span></code>: if auto split is true this will be the max width a component can have before</dt><dd><p>it is split.  If max_width is not supplied, material_width will be used</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">max_height</span></code>: if auto split is true this will be the max height a component can have before</dt><dd><p>it is split.  If max_height is not supplied, material_height will be used</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;splitter&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plug_edge&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;plug_edge&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;socket_edge&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="lathe">
+<h2>Lathe<a class="headerlink" href="#lathe" title="Permalink to this headline">¶</a></h2>
+<p>Lathe takes a component outline and ‘turns’ a set of stackable parts.</p>
+<div class="section" id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: The component which is going to be repeated. This component should use the <code class="docutils literal notranslate"><span class="pre">width</span></code> variable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">material_thickness</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">padding_top</span></code> Amount of space before rendering the first slice.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">padding_bottom</span></code> Amount of space from the bottom that will be the last slice</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lathe_variable_name</span></code> If supplied, then the rendering of this will provide some global variables to any subsequently rendered parts.  See Global Variables</p></li>
+</ul>
+</div>
+<div class="section" id="local-variables">
+<h3>Local Variables<a class="headerlink" href="#local-variables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lathe__index</span></code> The index of the parts within this Lathe.  The top most piece is part_index 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lathe__width</span></code> The width of the current piece.</p></li>
+</ul>
+</div>
+<div class="section" id="global-variables">
+<h3>Global Variables<a class="headerlink" href="#global-variables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;lathe_variable_name&gt;__total_height</span></code> The hieght of all the lathe parts stacked</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;lathe_variable_name&gt;__top_width</span></code> The width of the top piece</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;lathe_variable_name&gt;__bottom_width</span></code> The width of the bottom piece</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/hfd_logo1.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=dustismo&repo=heavyfishdesign&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Part Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="transforms.html" title="previous chapter">Path Transforms</a></li>
+      <li>Next: <a href="custom_components.html" title="next chapter">Custom Components</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Dustin Norlander.
+      
+      |
+      <a href="_sources/part_transformers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
