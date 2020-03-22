@@ -96,14 +96,12 @@ func (rc *XInterceptComponent) Render(ctx dom.RenderContext) (path.Path, dom.Ren
 
 			// if length is zero then don't render
 			if !path.PrecisionEquals(length, 0, dom.AppContext().Precision()) {
+				rc.SetLocalVariable("xintercept__length", length)
+				rc.SetLocalVariable("xintercept__from__x", from.X)
+				rc.SetLocalVariable("xintercept__from__y", from.Y)
 
-				rc.Repeatable.Params().Put("from__x", from.X)
-				rc.Repeatable.Params().Put("from__y", from.Y)
-
-				rc.Repeatable.Params().Put("to", to)
-				rc.Repeatable.Params().Put("to__x", to.X)
-				rc.Repeatable.Params().Put("to__y", to.Y)
-				rc.Repeatable.Params().Put("length", length)
+				rc.SetLocalVariable("xintercept__to__x", to.X)
+				rc.SetLocalVariable("xintercept__to__y", to.Y)
 				p, _, err := rc.Repeatable.Render(ctx)
 				if err != nil {
 					return nil, ctx, nil

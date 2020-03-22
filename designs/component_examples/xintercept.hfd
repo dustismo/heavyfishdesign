@@ -39,13 +39,13 @@
                         "transforms": [
                             { 
                                 "type" : "move",
-                                "to": "from__x, from__y"
+                                "to": "xintercept__from__x, xintercept__from__y"
                             }
                         ],
                         "commands": [
                             {
                                 "command": "rectangle",
-                                "width": "length",
+                                "width": "xintercept__length",
                                 "height": "slot_height"
                             }
                         ]

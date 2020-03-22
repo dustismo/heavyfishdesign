@@ -226,16 +226,19 @@ Parameters
 
 * ``outline``: <component> The shape that the repeatable should be drawn into 
 * ``repeatable``: <component> The shape that should be repeated.  The repeatable
-    shape will have the following params passed down to allow it to render the 
-    proper size.
-        * ``to__x`` The point to draw to
-        * ``to__y`` The point to draw to
-        * ``from__x`` The point to start from
-        * ``from__y`` The point to start from
-        * ``length`` the horizontal length 
+    shape will have params passed down to allow it to render the 
+    proper size (see Local Variables). 
 * ``initial_spacing``: how much initial vertical space to add before drawing the first repeatable.
 * ``repeat_spacing``: how much vertical space between each repeatable.
 
+Local Variables
+~~~~~~~~~~~~~~~
+
+* ``xintercept__length`` The horizontal length of this piece
+* ``xintercept__to__x`` The point to draw to
+* ``xintercept__to__y`` The point to draw to
+* ``xintercept__from__x`` The point to start from
+* ``xintercept__from__y`` The point to start from
 
 
 around
