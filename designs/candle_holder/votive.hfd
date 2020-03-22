@@ -1,0 +1,176 @@
+{
+    "imports": [
+        {"path": "designs/common/rectangle.hfd"},
+        {
+            "path": "designs/svg/votive_1.svg",
+            "type": "svg",
+            "alias": "side_view_outline_svg"
+        }
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "material_thickness": 0.2,
+        "candle_radius": 1,
+        "candle_height": 0.5,
+        "votive_height": 2,
+        "strut_width": "material_thickness",
+        "num_struts": 6,
+        "side_view_outline": "side_view_outline_svg"
+    },
+    "parts": [
+        {
+            "label": {
+                "text": "votive_top"
+            },
+            "part_transformers": [
+                {
+                    "type" : "lathe",
+                    "padding_bottom": "votive_height - candle_height",
+                    "lathe_variable_name": "top_lathe_votive",
+                    "repeat": {
+                        "type": "group",
+                        "components": [
+                            {
+                                "type": "draw",
+                                "commands": [
+                                    {
+                                        "command": "circle",
+                                        "radius": "lathe__width / 2"
+                                    },
+                                    // cut out the candle hole
+                                    {
+                                        "command": "move",
+                                        "to": "(lathe__width / 2) - candle_radius, (lathe__width / 2) - candle_radius"
+                                    },
+                                    {
+                                        "command": "circle",
+                                        "radius": "candle_radius"
+                                    }
+                                ]
+                            },
+                            // cut the holes for the support sticks
+                            {
+                                "type": "around",
+                                "num_edges" : "num_struts",
+                                "radius" : "candle_radius + material_thickness + material_thickness",
+                                "center_point" : "lathe__width / 2, lathe__width / 2",
+                                "repeatable": {
+                                    "type" : "rectangle",
+                                    "transforms": [
+                                        // move to the center of the length                           
+                                        {
+                                            "type" : "move",
+                                            "to" : "around__length / 2, 0",
+                                            "handle" : "$BOTTOM_MIDDLE"
+                                        }
+                                    ],
+                                    "width" : "material_thickness",
+                                    "height" : "strut_width"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "components": [
+                // Here we draw the outline
+                {
+                    "transforms": [
+                        {
+                            "type": "scale",
+                            "height": "votive_height"
+                        }
+                    ],
+                    "type": "draw",
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "side_view_outline"
+                        }
+                    ]
+                }
+            ]
+        },
+        // draw the bottom, 
+        // this is a copy paste of the top, only padding change and this
+        // does not have the candle hole cutout
+        {
+            "label": {
+                "text": "votive_bottom"
+            },
+            "part_transformers": [
+                {
+                    "type" : "lathe",
+                    "padding_top" : "candle_height",
+                    "lathe_variable_name": "bottom_lathe_votive",
+                    "repeat": {
+                        "type": "group",
+                        "components": [
+                            {
+                                "type": "draw",
+                                "commands": [
+                                    {
+                                        "command": "circle",
+                                        "radius": "lathe__width / 2"
+                                    }
+                                ]
+                            },
+                            // cut the holes for the support sticks
+                            {
+                                "type": "around",
+                                "num_edges" : "num_struts",
+                                "radius" : "candle_radius + material_thickness + material_thickness",
+                                "center_point" : "lathe__width / 2, lathe__width / 2",
+                                "repeatable": {
+                                    "type" : "rectangle",
+                                    "transforms": [
+                                        // move to the center of the length                           
+                                        {
+                                            "type" : "move",
+                                            "to" : "around__length / 2, 0",
+                                            "handle" : "$BOTTOM_MIDDLE"
+                                        }
+                                    ],
+                                    "width" : "material_thickness",
+                                    "height" : "strut_width"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "components": [
+                // Here we draw the outline
+                {
+                    "transforms": [
+                        {
+                            "type": "scale",
+                            "height": "votive_height"
+                        }
+                    ],
+                    "type": "draw",
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "side_view_outline"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "repeat": {
+                "total" : "num_struts"
+            },
+            "components":[
+                {
+                    "type": "rectangle",
+                    "width": "strut_width",
+                    "height" :"top_lathe_votive__total_height + bottom_lathe_votive__total_height"
+                }
+            ]
+        }
+    ]
+}
