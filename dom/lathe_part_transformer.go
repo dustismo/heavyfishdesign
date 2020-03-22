@@ -109,6 +109,7 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		part.Part.SetGlobalVariable(fmt.Sprintf("%s__total_height", varName), totalHeight)
 		part.Part.SetGlobalVariable(fmt.Sprintf("%s__top_width", varName), topLength)
 		part.Part.SetGlobalVariable(fmt.Sprintf("%s__bottom_width", varName), bottomLength)
+		part.Part.SetGlobalVariable(fmt.Sprintf("%s__num_layers", varName), index)
 	}
 
 	return renderedParts, nil
