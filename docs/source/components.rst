@@ -124,7 +124,7 @@ Parameters
 
 
 Global Variables
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 * ``<edge_variable_name>__length``: length of this edge
 * ``<edge_variable_name>__angle``: the angle of this edge
@@ -193,7 +193,7 @@ Parameters
 
 
 Global Variables
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 * ``<edge_variable_name>__length``: length of this edge
 * ``<edge_variable_name>__angle``: the angle of this edge
@@ -263,9 +263,8 @@ Parameters
 * ``repeatable``: <component> The shape that should be repeated.  The shape should 
     be rendered horizontally.  The component will automatically move and rotate into the 
     proper position. The repeatable
-    shape will have the following params passed down to allow it to render the 
-    proper size.
-        * ``around__length`` the horizontal length 
+    shape will have params passed down to allow it to render the 
+    proper size. (see Local Variables) 
 * ``num_edges``: the number of edges to draw.  (i.e. 5 edges would be a pentagon)
 * ``radius``: The radius of the circle.  Note the start and end of the repeatable will be this distance from the center point
 
