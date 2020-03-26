@@ -1,11 +1,15 @@
+==========
 Components
-===============
+==========
 
 Below are the set of built-in components.  Additional custom components are available
 via ``custom components``
 
+
+----------------------------------------------------------------
+
 draw
-------------------------------------------------------------------------------------------
+=====
 The draw component provides the basic drawing primitives to make shapes.  The draw commands
 mostly correspond to svg path commands, but there are some useful additions.
 
@@ -25,6 +29,7 @@ Draw component should be in the form:
     }
 
 Commands
+^^^^^^^^
 
 * ``move`` Move the cursor to this position
     * ``to`` Point where to move to
@@ -75,10 +80,11 @@ Commands
     * ``reverse`` if true this will reverse the path        
 * ``rel_svg_connect_to`` Same as ``svg_connect_to`` but ``to`` is using relative coodrdinates
 
+                         
+----------------------------------------------------------------
 
 basic_edge
-------------------------------------------------------------------------------------------
-
+==========
 
 .. topic:: Examples
 
@@ -91,7 +97,7 @@ Typically an edge will be written to be reused as a custom component, where the 
 passed in. 
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
 
 * ``handle``: When moving the edge what point should be considered the start.  Defaults
     to $ORIGIN
@@ -124,15 +130,16 @@ Parameters
 
 
 Global Variables
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 * ``<edge_variable_name>__length``: length of this edge
 * ``<edge_variable_name>__angle``: the angle of this edge
 
 
-repeat_edge
-------------------------------------------------------------------------------------------
+----------------------------------------------------------------
 
+repeat_edge
+===========
 
 .. topic:: Examples
 
@@ -152,7 +159,7 @@ Typically an edge will be written to be reused, where the ``to`` and ``from`` pa
 passed in. 
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
 
 * ``padding_left``: Additional amount that should be used on the left side before
     the repeatable starts
@@ -193,15 +200,17 @@ Parameters
 
 
 Global Variables
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 * ``<edge_variable_name>__length``: length of this edge
 * ``<edge_variable_name>__angle``: the angle of this edge
 
 
-xintercept
+
 ------------------------------------------------------------------------------------------
 
+xintercept
+==========
 
 .. topic:: Examples
 
@@ -222,7 +231,7 @@ And here it is if the outline were drawn in.
   :width: 150
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
 
 * ``outline``: <component> The shape that the repeatable should be drawn into 
 * ``repeatable``: <component> The shape that should be repeated.  The repeatable
@@ -232,7 +241,7 @@ Parameters
 * ``repeat_spacing``: how much vertical space between each repeatable.
 
 Local Variables
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 * ``xintercept__length`` The horizontal length of this piece
 * ``xintercept__to__x`` The point to draw to
@@ -241,9 +250,10 @@ Local Variables
 * ``xintercept__from__y`` The point to start from
 
 
-around
 ------------------------------------------------------------------------------------------
 
+around
+======
 
 .. topic:: Examples
 
@@ -258,7 +268,8 @@ Here we have a rectangle repeated nine times with a radius of 2.
 
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
+
 * ``center_point``: Where the center of the circle should be
 * ``repeatable``: <component> The shape that should be repeated.  The shape should 
     be rendered horizontally.  The component will automatically move and rotate into the 
@@ -270,7 +281,7 @@ Parameters
 
 
 Local Variables
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 * ``around__length`` The horizontal length of this peice
 * ``around__index`` The index of this piece. 0 to num_edges-1
