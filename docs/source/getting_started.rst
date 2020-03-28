@@ -22,7 +22,7 @@ Open a terminal (these instructions for mac, but should be similar on windows):
 The easiest way to get started to modify one of the existing designs. Start by changing some of the top level params and seeing how that impacts the rendered SVG. 
 
 HFD
-----------------
+===
 
 Every design is based on one or more HFD files.  HFD is syntactically JSON but allows
 comments.
