@@ -37,20 +37,21 @@
 <p>Each Part can have one or more transformers.  Transformers are different from
 path transforms in that the part transformers may result in more than one
 part.</p>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
-    &quot;id&quot;: &quot;my_part1&quot;,
-    &quot;part_transformers&quot;: [
-        {
-            &quot;type&quot; : &quot;splitter&quot;
-            ...
-        }
-    ],
-    &quot;components&quot;: [
-        ...
-    ]
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;my_part1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;part_transformers&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;splitter&quot;</span>
+            <span class="o">...</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;components&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
+<hr class="docutils" />
 <div class="section" id="splitter">
 <h2>Splitter<a class="headerlink" href="#splitter" title="Permalink to this headline">¶</a></h2>
 <p>Splitter will break a part into 2 pieces, a top and bottom, with using two edges.
@@ -123,6 +124,7 @@ this is sufficient for most usecases.</p>
 </div>
 </div>
 </div>
+<hr class="docutils" />
 <div class="section" id="lathe">
 <h2>Lathe<a class="headerlink" href="#lathe" title="Permalink to this headline">¶</a></h2>
 <p>Lathe takes a component outline and ‘turns’ a set of stackable parts.</p>
@@ -190,9 +192,6 @@ this is sufficient for most usecases.</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Part Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
 <div class="relations">

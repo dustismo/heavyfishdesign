@@ -1,3 +1,4 @@
+==================
 Part Transformers
 ==================
 
@@ -6,7 +7,7 @@ path transforms in that the part transformers may result in more than one
 part.  
 
 
-.. code-block:: JSON
+.. code-block::
 
     {
         "id": "my_part1",
@@ -22,8 +23,10 @@ part.
     }
 
 
+------------------------------------------------------------------------------------------
+
 Splitter
---------------------
+========
 
 Splitter will break a part into 2 pieces, a top and bottom, with using two edges.  
 This is especially useful for parts that are too large to fit on a single material. 
@@ -73,8 +76,11 @@ Parameters
     }
 
 
+------------------------------------------------------------------------------------------
+
+
 Lathe
---------------------
+=====
 
 Lathe takes a component outline and 'turns' a set of stackable parts.  
 

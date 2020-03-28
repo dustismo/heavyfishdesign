@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Components" href="components.html" />
     <link rel="prev" title="Heavy Fish Design (the docs)" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -34,11 +35,19 @@
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="installation">
-<h2>installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>HFD is a command line tool with available binaries for mac and windows (and simple to build for anyone with golang experience).  Simply download the package, and open a terminal to render your first design.  The zip file contains many example designs, which are easily customizable by changing any of the parameters near the top of the .hfd file.</p>
+<p><a class="reference external" href="https://dustismo.github.io/heavyfishdesign/_static/heavyfishdesign.zip">DOWNLOAD NOW</a></p>
+<p>Open a terminal (these instructions for mac, but should be similar on windows):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd ~/Downloads
+$ unzip heavyfishdesign.zip
+$ cd heavyfishdesign
+$ ./hfd-mac render designs/xmas_tree/nadia.hfd
+</pre></div>
 </div>
+<p>The easiest way to get started to modify one of the existing designs. Start by changing some of the top level params and seeing how that impacts the rendered SVG.</p>
 <div class="section" id="hfd">
-<h2>HFD<a class="headerlink" href="#hfd" title="Permalink to this headline">¶</a></h2>
+<h3>HFD<a class="headerlink" href="#hfd" title="Permalink to this headline">¶</a></h3>
 <p>Every design is based on one or more HFD files.  HFD is syntactically JSON but allows
 comments.</p>
 <p>Every HFD file has the following structure</p>
@@ -82,7 +91,7 @@ comments.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">parts</span></code> The individual parts of the design. Each part is expected to be a descrete item that can be cut out of the material.</p></li>
 </ul>
 <div class="section" id="imports">
-<h3>imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<h4>imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h4>
 <p>Imports allows importing custom components from other documents
 as well as importing siple SVG files. See docs for custom components</p>
 <p>Import options:</p>
@@ -100,6 +109,7 @@ as well as importing siple SVG files. See docs for custom components</p>
         // this can be useful for clarity, or to resolve naming conflicts
 }
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -138,11 +148,9 @@ as well as importing siple SVG files. See docs for custom components</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transforms.html">Path Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part_transformers.html">Part Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
 <div class="relations">
@@ -150,6 +158,7 @@ as well as importing siple SVG files. See docs for custom components</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Heavy Fish Design (the docs)</a></li>
+      <li>Next: <a href="components.html" title="next chapter">Components</a></li>
   </ul></li>
 </ul>
 </div>
