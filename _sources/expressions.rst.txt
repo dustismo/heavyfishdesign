@@ -1,11 +1,14 @@
+=================
 Expressions
 =================
 
 HFD has a built in expression language that handles parameters, math and a handful of 
 useful functions. 
 
-Available functionality in expressions
 ------------------------------------------------------------------------------------------
+
+Available functionality in expressions
+======================================
 
 * ``+-*/()`` Normal arithmetic operators.
 * ``sqrt(arg)`` Square Root of arg
@@ -15,7 +18,7 @@ Available functionality in expressions
 * ``inchToMM(arg)`` Converts to mm from inches
 
 Parameters
--------------
+==========
 
 Parameters in any expression are looked up based on the current context. 
 

@@ -1,8 +1,10 @@
+===============
 Path Transforms 
 ===============
 
+
 join
-------------------------------------------------------------------------------------------
+====
 the join transform will join all segments into a continuous path.  It will make a 
 best effort to rearrange segments to make the smoothest path.  For breaks in paths, the 
 segments are extended until they meet. 
@@ -24,9 +26,11 @@ Attributes
                     }
                 ]
 
+------------------------------------------------------------------------------------------
 
 mirror
-------------------------------------------------------------------------------------------
+======
+
 Mirror will flip the path on either the horizontal or vertical axis
 
 * ``axis``: 
@@ -47,9 +51,11 @@ Mirror will flip the path on either the horizontal or vertical axis
                     }
                 ]
 
+------------------------------------------------------------------------------------------
 
 rotate
-------------------------------------------------------------------------------------------
+======
+
 rotate will rotate by the specified amount
 
 * ``degrees``: amount to rotate in degrees
@@ -75,9 +81,11 @@ AFTER:
 .. image:: _static/rotate_after.png
   :width: 150
 
+------------------------------------------------------------------------------------------
 
 scale
-------------------------------------------------------------------------------------------
+=====
+
 Scale will shrink or expand the path
 
 * ``width``: Will scale to the requested width.  if ``height`` is not provided then the scaling
@@ -97,8 +105,11 @@ Scale will shrink or expand the path
                     }
                 ]
 
-slice
 ------------------------------------------------------------------------------------------
+
+slice
+=====
+
 Slice will slice the component horizontally at the requested Y value and discard everything
 below that.
 
@@ -124,13 +135,18 @@ AFTER:
 .. image:: _static/slice_after.png
   :width: 150
 
+------------------------------------------------------------------------------------------
 
 trim
-------------------------------------------------------------------------------------------
+====
+
 trim will remove any surrounding whitespace and move the bounding box
 of the path to 0,0
 
-cleanup
 ------------------------------------------------------------------------------------------
+
+cleanup
+=======
+
 Some basic path cleanup, the rendered path should not change in any way.
 This will remove redundant Move operations and some other tasks

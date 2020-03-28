@@ -2,8 +2,9 @@
 Custom Components
 =================
 
+
 Creating Components via Markup
-------------------------------------------------------------------------------------------
+==============================
 
 It's easy to create custom components via the HFD markup language.  Simply add a 
 ``custom_component`` attribute to any component.  The new component will be available
