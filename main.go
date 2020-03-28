@@ -53,19 +53,23 @@ func main() {
 		}
 	} else if command == "render" {
 		logger := util.NewLog()
-
-		planset, err := renderPlanSet(*renderFilename, dynmap.New(), logger)
-		if err != nil {
-			log.Fatalf("Error during planset render: %s\n", err.Error())
-			return
+		rfn := os.Args[2]
+		if len(*renderFilename) > 0 {
+			rfn = *renderFilename
 		}
-		rf := *renderFilename
-		if len(rf) == 0 {
+
+		if len(rfn) == 0 {
 			log.Fatalf("Render filename is required")
 			return
 		}
 
-		outFile := createFilename(*outputFile, rf)
+		planset, err := renderPlanSet(rfn, dynmap.New(), logger)
+		if err != nil {
+			log.Fatalf("Error during planset render: %s\n", err.Error())
+			return
+		}
+
+		outFile := createFilename(*outputFile, rfn)
 		err = save(planset, outFile, logger)
 		if err != nil {
 			fmt.Printf("Error during save: %s\n", err.Error())
@@ -317,15 +321,16 @@ func DirectoryList(directory string) ([]string, error) {
 // docuPath = "/home/designs/box_name.hfd"
 // = /home/my_document/box_name_000.svg
 func createFilename(filePath string, documentPath string) string {
+	_, dcFn := filepath.Split(documentPath)
+
 	// if no filePath is specified then use the documentpath
 	if len(filePath) == 0 {
 		// take document filename, strip suffix, then use that.
 		// local directory in that case.
-		return strings.TrimSuffix(documentPath, filepath.Ext(documentPath))
+		return strings.TrimSuffix(dcFn, filepath.Ext(documentPath))
 	}
 
 	fpDir, fpFn := filepath.Split(filePath)
-	_, dcFn := filepath.Split(documentPath)
 
 	if IsDir(filePath) {
 		// need to make sure fbFn is not a directory
