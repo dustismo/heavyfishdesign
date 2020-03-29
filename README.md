@@ -26,7 +26,9 @@ To render an hfd file to the corresponding svg files use:
 
     $ go run main.go render --path=designs/drawer_organizers/silverware.hfd --output_file=designs_rendered/silverware
 
-Basic server operation:
+### Basic server operation:
+
+To run a local server to see svg's rendered in the browser, do this.  This is useful to use during design, but note that by default, the server only displays the first rendered svg document (i.e. if your document spans multiple pages only the first is desplayed)
 
     go run main.go serve
 
@@ -68,4 +70,3 @@ To set the .hfd file associations edit settings.hfd and add:
     }
 
 
-*****
