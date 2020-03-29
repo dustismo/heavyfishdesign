@@ -11,6 +11,23 @@ import (
 // transform factories live here.
 // when adding new factories, remember to update DefaultFactories in parser.go
 
+func createMissingAttributeError(attribute string, transformType string, dm *dynmap.DynMap) error {
+	if dm.Contains(attribute) {
+		return fmt.Errorf(
+			"unable to parse %s value (%s) for %s transform\n%s",
+			attribute,
+			dm.MustString(attribute, "unknown"),
+			transformType,
+			dm.ToJSON())
+	}
+	return fmt.Errorf(
+		"%s must be specified for %s transform\n%s",
+		attribute,
+		transformType,
+		dm.ToJSON(),
+	)
+}
+
 type CleanupTransformFactory struct {
 }
 
@@ -33,7 +50,7 @@ func (tf RotateTransformFactory) CreateTransform(transformType string, dm *dynma
 	attr := NewAttr(element, dm)
 	degrees, ok := attr.Float64("degrees")
 	if !ok {
-		return nil, fmt.Errorf("Error, degrees must be specified for rotate transform")
+		return nil, createMissingAttributeError("degrees", transformType, dm)
 	}
 	handle := attr.MustHandle("axis", path.TopLeft)
 	return transforms.RotateTransform{
@@ -99,8 +116,7 @@ func (tf OffsetTransformFactory) CreateTransform(transformType string, dm *dynma
 	attr := NewAttr(element, dm)
 	distance, ok := attr.Float64("distance")
 	if !ok {
-		fmt.Printf("%+v \n", element)
-		return nil, fmt.Errorf("Error, distance must be specified for offset transform")
+		return nil, createMissingAttributeError("distance", transformType, dm)
 	}
 
 	sizeShouldBeStr, ok := attr.String("size_should_be")
@@ -135,7 +151,7 @@ func (tf MoveTransformFactory) CreateTransform(transformType string, dm *dynmap.
 
 	to, ok := attr.Point("to")
 	if !ok {
-		return nil, fmt.Errorf("Error, 'to' must be specified for move transform")
+		return nil, createMissingAttributeError("to", transformType, dm)
 	}
 	handle := attr.MustHandle("handle", path.TopLeft)
 	return transforms.MoveTransform{
@@ -175,7 +191,7 @@ func (tf SliceTransformFactory) CreateTransform(transformType string, dm *dynmap
 	attr := NewAttr(element, dm)
 	y, ok := attr.Float64("y")
 	if !ok {
-		return nil, fmt.Errorf("Error, 'y' must be specified for slice transform")
+		return nil, createMissingAttributeError("y", transformType, dm)
 	}
 	return transforms.HSliceTransform{
 		Y:                y,
