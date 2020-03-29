@@ -27,6 +27,8 @@ Highlights include:
 Examples
 ========
 
+There are loads of examples available in the repo. See `HERE <https://github.com/dustismo/heavyfishdesign/blob/master/designs>`_ for the various HFD files, and to see `HERE <https://github.com/dustismo/heavyfishdesign/blob/master/designs_rendered>`_ for the rendered output.
+
 Game Cabinet
 ------------
 
