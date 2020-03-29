@@ -54,12 +54,24 @@
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
 </ul>
 </div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>HFD is a command line tool with available binaries for mac and windows (and simple to build for anyone with golang experience).  Simply download the package, and open a terminal to render your first design.  The zip file contains many example designs, which are easily customizable by changing any of the parameters near the top of the .hfd file.</p>
+<p><a class="reference external" href="https://dustismo.github.io/heavyfishdesign/_static/heavyfishdesign.zip">DOWNLOAD NOW</a></p>
+<p>Open a terminal (these instructions for mac, but should be similar on windows):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd ~/Downloads
+$ unzip heavyfishdesign.zip
+$ cd heavyfishdesign
+$ ./hfd-mac render designs/xmas_tree/nadia.hfd
+</pre></div>
+</div>
+<p>You may have to override the security settings (usually, just navigate to the hfd-mac file and <cite>control+click</cite> and select <cite>open</cite> then <cite>allow</cite> – after that the command line should work)</p>
 </div>
 <div class="section" id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>There are loads of examples available in the repo. See <a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs">HERE</a> for the various HFD files, and to see <a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs_rendered">HERE</a> for the rendered output.</p>
 <div class="section" id="game-cabinet">
-<h2>Game Cabinet<a class="headerlink" href="#game-cabinet" title="Permalink to this headline">¶</a></h2>
+<h3>Game Cabinet<a class="headerlink" href="#game-cabinet" title="Permalink to this headline">¶</a></h3>
 <p>Designed by: Dustin Norlander, Gus Norlander</p>
 <p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/game_cabinet/cabinet.hfd">HFD File</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hfd</span><span class="o">-</span><span class="n">mac</span> <span class="n">render</span> <span class="n">designs</span><span class="o">/</span><span class="n">game_cabinet</span><span class="o">/</span><span class="n">cabinet</span><span class="o">.</span><span class="n">hfd</span>
@@ -69,7 +81,7 @@
 <a class="reference internal image-reference" href="_images/game_cab.jpg"><img alt="_images/game_cab.jpg" src="_images/game_cab.jpg" style="width: 400px;" /></a>
 </div>
 <div class="section" id="christmas-tree">
-<h2>Christmas Tree<a class="headerlink" href="#christmas-tree" title="Permalink to this headline">¶</a></h2>
+<h3>Christmas Tree<a class="headerlink" href="#christmas-tree" title="Permalink to this headline">¶</a></h3>
 <p>Designed by: Nadia Swift</p>
 <p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/xmas_tree/nadia.hfd">HFD File</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hfd</span><span class="o">-</span><span class="n">mac</span> <span class="n">render</span> <span class="n">designs</span><span class="o">/</span><span class="n">xmas_tree</span><span class="o">/</span><span class="n">nadia</span><span class="o">.</span><span class="n">hfd</span>
@@ -77,6 +89,7 @@
 </div>
 <p>Christmas tree design, demonstrates a repeatable element that changes based on index.  Easily customizable by providing your own branch and star designs.</p>
 <a class="reference internal image-reference" href="_images/xmas_tree.jpg"><img alt="_images/xmas_tree.jpg" src="_images/xmas_tree.jpg" style="width: 400px;" /></a>
+</div>
 </div>
 </div>
 

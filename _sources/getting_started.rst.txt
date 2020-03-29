@@ -2,22 +2,6 @@
 Getting Started
 ===============
 
-Installation
-============
-
-HFD is a command line tool with available binaries for mac and windows (and simple to build for anyone with golang experience).  Simply download the package, and open a terminal to render your first design.  The zip file contains many example designs, which are easily customizable by changing any of the parameters near the top of the .hfd file.
-
-`DOWNLOAD NOW <https://dustismo.github.io/heavyfishdesign/_static/heavyfishdesign.zip>`_
-
-Open a terminal (these instructions for mac, but should be similar on windows):
-
-.. code-block::
-
-    $ cd ~/Downloads
-    $ unzip heavyfishdesign.zip
-    $ cd heavyfishdesign
-    $ ./hfd-mac render designs/xmas_tree/nadia.hfd
-
 
 The easiest way to get started to modify one of the existing designs. Start by changing some of the top level params and seeing how that impacts the rendered SVG. 
 
