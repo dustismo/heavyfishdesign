@@ -1,8 +1,9 @@
 {
     "imports": [
         {"path": "designs/common/rectangle.hfd"},
+        {"path": "designs/common/circle_with_center_rectangle.hfd"},
         {
-            "path": "designs/svg/votive_1.svg",
+            "path": "designs/svg/candle_holder_gus.svg",
             "type": "svg",
             "alias": "side_view_outline_svg"
         }
@@ -10,13 +11,12 @@
     "params": {
         "offset": ".0035",
         "material_width": 20,
-        "material_height": 12,
+        "material_height": 11,
         "material_thickness": 0.2,
-        "candle_radius": 1,
-        "candle_height": 0.5,
-        "votive_height": 2,
-        "strut_width": "material_thickness",
-        "num_struts": 6,
+        "candle_radius": 0.75,
+        "candle_height": 0.6,
+        "votive_height": 5,
+        "strut_width": ".3",
         "side_view_outline": "side_view_outline_svg"
     },
     "parts": [
@@ -49,26 +49,6 @@
                                         "radius": "candle_radius"
                                     }
                                 ]
-                            },
-                            // cut the holes for the support sticks
-                            {
-                                "type": "around",
-                                "num_edges" : "num_struts",
-                                "radius" : "candle_radius + material_thickness + material_thickness",
-                                "center_point" : "lathe__width / 2, lathe__width / 2",
-                                "repeatable": {
-                                    "type" : "rectangle",
-                                    "transforms": [
-                                        // move to the center of the length                           
-                                        {
-                                            "type" : "move",
-                                            "to" : "around__length / 2, 0",
-                                            "handle" : "$BOTTOM_MIDDLE"
-                                        }
-                                    ],
-                                    "width" : "material_thickness",
-                                    "height" : "strut_width"
-                                }
                             }
                         ]
                     }
@@ -109,33 +89,10 @@
                         "type": "group",
                         "components": [
                             {
-                                "type": "draw",
-                                "commands": [
-                                    {
-                                        "command": "circle",
-                                        "radius": "lathe__width / 2"
-                                    }
-                                ]
-                            },
-                            // cut the holes for the support sticks
-                            {
-                                "type": "around",
-                                "num_edges" : "num_struts",
-                                "radius" : "candle_radius + material_thickness + material_thickness",
-                                "center_point" : "lathe__width / 2, lathe__width / 2",
-                                "repeatable": {
-                                    "type" : "rectangle",
-                                    "transforms": [
-                                        // move to the center of the length                           
-                                        {
-                                            "type" : "move",
-                                            "to" : "around__length / 2, 0",
-                                            "handle" : "$BOTTOM_MIDDLE"
-                                        }
-                                    ],
-                                    "width" : "material_thickness",
-                                    "height" : "strut_width"
-                                }
+                                "type": "circle_with_center_rectangle",
+                                "radius": "lathe__width / 2",
+                                "hole_width": "strut_width",
+                                "hole_height": "material_thickness"
                             }
                         ]
                     }
@@ -162,13 +119,13 @@
         },
         {
             "repeat": {
-                "total" : "num_struts"
+                "total" : "1"
             },
             "components":[
                 {
                     "type": "rectangle",
                     "width": "strut_width",
-                    "height" :"top_lathe_votive__total_height + bottom_lathe_votive__total_height"
+                    "height" :"bottom_lathe_votive__total_height"
                 }
             ]
         }
