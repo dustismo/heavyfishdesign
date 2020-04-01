@@ -50,6 +50,18 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 
 	yPos := y + attr.MustFloat64("y_offset", 0)
 
+	// trying to split below the bounding box, just return
+	if yPos >= br.Y {
+		return []*RenderedPart{
+			&RenderedPart{
+				Part:   part.Part,
+				Path:   originalPath,
+				Width:  br.X - tl.X,
+				Height: br.Y - tl.Y,
+			},
+		}, nil
+	}
+
 	// draw the plug edge
 	// we swap from and to, so that the edge faces downward
 	plugEdge.SetLocalVariable("from", path.NewPoint(br.X, yPos).ToDynMap())
@@ -219,6 +231,7 @@ func (ps *PartSplitter) TransformPart(part *RenderedPart, ctx RenderContext) ([]
 		// do nothing
 		return []*RenderedPart{part}, nil
 	}
+
 	parts, err := ps.transformPart(part, yPos, ctx)
 	if err != nil || len(parts) <= 1 || !autoSplit {
 		return parts, err

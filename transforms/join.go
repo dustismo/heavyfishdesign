@@ -167,8 +167,8 @@ func (sj SimpleJoin) JoinPaths(paths ...path.Path) path.Path {
 	for i := 1; i < len(paths); i++ {
 		for index, s := range paths[i].Segments() {
 			if index == 0 {
-				prev := newPath.Segments()[len(newPath.Segments())-1]
-				if !prev.End().Equals(s.End()) {
+				prev := path.Tail(newPath.Segments())
+				if prev != nil && !prev.End().Equals(s.End()) {
 					// add a move segment to the start point
 					newPath.AddSegments(path.MoveSegment{
 						StartPoint: prev.End(),
