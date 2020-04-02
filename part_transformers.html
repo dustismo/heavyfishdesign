@@ -127,7 +127,20 @@ this is sufficient for most usecases.</p>
 <hr class="docutils" />
 <div class="section" id="lathe">
 <h2>Lathe<a class="headerlink" href="#lathe" title="Permalink to this headline">¶</a></h2>
-<p>Lathe takes a component outline and ‘turns’ a set of stackable parts.</p>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/chess/pawn.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/chess/pawn.hfd</a></p></li>
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/candle_holder/votive_center_struts.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/candle_holder/votive_center_struts.hfd</a></p></li>
+</ul>
+</div>
+<p>Lathe takes a component outline and ‘turns’ a set of stackable parts.  Given a side view outline shape, and the shape of the piece, the lathe will calculate all the parts to stack to make the shape.</p>
+<p>for instance:</p>
+<a class="reference internal image-reference" href="_images/pawn_outline.png"><img alt="_images/pawn_outline.png" src="_images/pawn_outline.png" style="width: 150px;" /></a>
+<p>with repeatable:</p>
+<a class="reference internal image-reference" href="_images/square.png"><img alt="_images/square.png" src="_images/square.png" style="width: 150px;" /></a>
+<p>Results in:</p>
+<a class="reference internal image-reference" href="_images/pawn.jpg"><img alt="_images/pawn.jpg" src="_images/pawn.jpg" style="width: 150px;" /></a>
 <div class="section" id="id1">
 <h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">

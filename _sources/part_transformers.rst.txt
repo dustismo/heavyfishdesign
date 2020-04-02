@@ -82,7 +82,29 @@ Parameters
 Lathe
 =====
 
-Lathe takes a component outline and 'turns' a set of stackable parts.  
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/chess/pawn.hfd>`_
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/candle_holder/votive_center_struts.hfd>`_
+
+
+Lathe takes a component outline and 'turns' a set of stackable parts.  Given a side view outline shape, and the shape of the piece, the lathe will calculate all the parts to stack to make the shape. 
+
+for instance:
+
+.. image:: _static/pawn_outline.png
+  :width: 150
+
+with repeatable:
+
+.. image:: _static/square.png
+  :width: 150
+
+Results in:
+
+.. image:: _static/pawn.jpg
+  :width: 150
+
 
 Parameters
 ~~~~~~~~~~
@@ -100,7 +122,7 @@ Local Variables
 * ``lathe__width`` The width of the current piece.
 
 Global Variables
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 * ``<lathe_variable_name>__total_height`` The hieght of all the lathe parts stacked
 * ``<lathe_variable_name>__top_width`` The width of the top piece
