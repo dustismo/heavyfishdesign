@@ -275,6 +275,12 @@ func ParseDocument(dm *dynmap.DynMap, logger *util.HfdLog) (*Document, error) {
 			return nil, err
 		}
 		dm.Remove("filename")
+		// merge imports special like.
+		for _, imp := range dm.MustDynMapSlice("imports", []*dynmap.DynMap{}) {
+			d1.AddToSlice("imports", imp)
+		}
+		dm.Remove("imports")
+
 		return ParseDocument(d1.Merge(dm), logger)
 	}
 
