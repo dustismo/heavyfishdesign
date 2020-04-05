@@ -67,8 +67,8 @@
                 },
                 {
                     "type": "finger_joint_holes",
-                    "from": "divider_1_position, 0",
-                    "to": "divider_1_position, box_height",
+                    "from": "divider_1_position + material_thickness, 0",
+                    "to": "divider_1_position + material_thickness, box_height",
                     "padding_left": "finger_padding",
                     "padding_right": "finger_padding + material_thickness"
                 }
