@@ -64,10 +64,7 @@ func (mt MirrorTransform) PathTransform(p path.Path) (path.Path, error) {
 		segments = append(segments, s)
 	}
 
-	pth, err := path.NewPathFromSegments(segments), nil
-	if err != nil {
-		return pth, err
-	}
+	pth := path.NewPathFromSegments(segments)
 
 	// now move back to the original origin
 	pth, err = ShiftTransform{

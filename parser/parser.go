@@ -32,6 +32,7 @@ func InitContext() {
 		dom.OffsetTransformFactory{},
 		dom.MoveTransformFactory{},
 		dom.TrimTransformFactory{},
+		dom.MatrixTransformFactory{},
 		dom.MirrorTransformFactory{},
 		dom.ScaleTransformFactory{},
 		dom.SliceTransformFactory{},

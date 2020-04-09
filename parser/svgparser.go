@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"regexp"
 	"strings"
 
+	"github.com/dustismo/heavyfishdesign/dom"
 	"github.com/dustismo/heavyfishdesign/dynmap"
 	"github.com/dustismo/heavyfishdesign/transforms"
 	"github.com/dustismo/heavyfishdesign/util"
@@ -42,6 +44,88 @@ type Element struct {
 
 // convert this element to a path
 func ElementToPath(elem *Element, log *util.HfdLog) (path.Path, error) {
+	pth, err := elementToPathNoTransforms(elem, log)
+	if err != nil {
+		return pth, err
+	}
+
+	// process any transforms
+	transformsStr := elem.Attributes.MustString("transform", "")
+	if len(transformsStr) == 0 {
+		return pth, nil
+	}
+
+	// now pull out the actual transforms, in the form
+	// transform1(p1,p2) transform2(p1,p2)
+	ts := strings.Split(transformsStr, ") ")
+	re := regexp.MustCompile(`([a-z]+)\s*\(([0-9,\s]+)$`)
+
+	for _, t := range ts {
+		matches := re.FindAllStringSubmatch("t", -1)
+		if matches == nil || len(matches) != 1 || len(matches[0]) != 3 {
+			continue
+		}
+
+		transformName := matches[0][1]
+		println(transformName)
+
+		inputs := []float64{}
+
+		for _, arg := range strings.Split(matches[0][2], ",") {
+			v, err := dynmap.ToFloat64(arg)
+			if err != nil {
+				log.Errorf("error parsing transform %s) argument %s was not a number, skipping", t, arg)
+				return pth, err
+			}
+			inputs = append(inputs, v)
+		}
+
+		// now we have the inputs and the transform name
+		switch transformName {
+		case "matrix":
+			if len(inputs) < 6 {
+				return pth, fmt.Errorf("matrix transform should have 6 argument %s)", t)
+			}
+			return transforms.MatrixTransform{
+				SegmentOperators: dom.AppContext().SegmentOperators(),
+				A:                inputs[0],
+				B:                inputs[1],
+				C:                inputs[2],
+				D:                inputs[3],
+				E:                inputs[4],
+				F:                inputs[5],
+			}.PathTransform(pth)
+		case "scale":
+			if len(inputs) < 1 {
+				return pth, fmt.Errorf("scale transform should have 1 or 2 argument %s)", t)
+			}
+			return pth, nil
+		case "rotate":
+			// degrees
+			if len(inputs) != 1 {
+				return pth, fmt.Errorf("rotate transform should have 1 argument %s)", t)
+			}
+			return pth, nil
+		case "scewX":
+			// degrees
+			if len(inputs) != 1 {
+				return pth, fmt.Errorf("scewX transform should have 1 argument %s)", t)
+			}
+			return pth, nil
+		case "scewY":
+			// degrees
+			if len(inputs) != 1 {
+				return pth, fmt.Errorf("scewX transform should have 1 argument %s)", t)
+			}
+			return pth, nil
+		}
+
+		println(t)
+	}
+	return pth, nil
+}
+
+func elementToPathNoTransforms(elem *Element, log *util.HfdLog) (path.Path, error) {
 	// see https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Basic_Shapes
 	switch elem.Name {
 	case "path":
@@ -257,29 +341,4 @@ func Parse(source io.Reader, validate bool) (*Element, error) {
 		return nil, err
 	}
 	return element, nil
-}
-
-// FindID finds the first child with the specified ID.
-func (e *Element) FindID(id string) *Element {
-	for _, child := range e.Children {
-		if childID, ok := child.Attributes.GetString("id"); ok && childID == id {
-			return child
-		}
-		if element := child.FindID(id); element != nil {
-			return element
-		}
-	}
-	return nil
-}
-
-// FindAll finds all children with the given name.
-func (e *Element) FindAll(name string) []*Element {
-	var elements []*Element
-	for _, child := range e.Children {
-		if child.Name == name {
-			elements = append(elements, child)
-		}
-		elements = append(elements, child.FindAll(name)...)
-	}
-	return elements
 }

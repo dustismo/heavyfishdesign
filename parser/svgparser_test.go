@@ -69,9 +69,7 @@ func TestParser3(t *testing.T) {
             <rect id="cut_line3" serif:id="cut_line" x="60" y="1008" width="1044.87" height="948" style="fill:none;stroke:black;stroke-width:1.33px;"/>
         </g>
     </g>
-</svg>
-
-	`
+</svg>`
 
 	element, err := Parse(strings.NewReader(svg), true)
 

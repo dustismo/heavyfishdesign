@@ -109,7 +109,7 @@ Results in:
 Parameters
 ~~~~~~~~~~
 
-* ``repeatable``: The component which is going to be repeated. This component should use the ``width`` variable. 
+* ``repeatable``: The component which is going to be repeated. This component should use the ``lathe__width`` local variable. 
 * ``material_thickness``
 * ``padding_top`` Amount of space before rendering the first slice.  
 * ``padding_bottom`` Amount of space from the bottom that will be the last slice

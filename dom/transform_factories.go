@@ -270,3 +270,52 @@ func (tf RotateScaleTransformFactory) CreateTransform(transformType string, dm *
 		SegmentOperators: AppContext().SegmentOperators(),
 	}, nil
 }
+
+type MatrixTransformFactory struct {
+	Values []float64
+}
+
+func (tf MatrixTransformFactory) CreateTransform(transformType string, dm *dynmap.DynMap, element Element) (path.PathTransform, error) {
+	attr := NewAttr(element, dm)
+
+	a, ok := attr.Float64("a")
+	if !ok {
+		return nil, createMissingAttributeError("a", transformType, dm)
+	}
+	b, ok := attr.Float64("b")
+	if !ok {
+		return nil, createMissingAttributeError("b", transformType, dm)
+	}
+	c, ok := attr.Float64("c")
+	if !ok {
+		return nil, createMissingAttributeError("c", transformType, dm)
+	}
+	d, ok := attr.Float64("d")
+	if !ok {
+		return nil, createMissingAttributeError("d", transformType, dm)
+	}
+
+	e, ok := attr.Float64("e")
+	if !ok {
+		return nil, createMissingAttributeError("e", transformType, dm)
+	}
+	f, ok := attr.Float64("f")
+	if !ok {
+		return nil, createMissingAttributeError("f", transformType, dm)
+	}
+
+	return transforms.MatrixTransform{
+		A:                a,
+		B:                b,
+		C:                c,
+		D:                d,
+		E:                e,
+		F:                f,
+		SegmentOperators: AppContext().SegmentOperators(),
+	}, nil
+}
+
+// // The list of component types this Factory should be used for
+func (tf MatrixTransformFactory) TransformTypes() []string {
+	return []string{"matrix"}
+}
