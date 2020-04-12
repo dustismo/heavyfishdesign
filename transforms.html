@@ -64,6 +64,32 @@ segments are extended until they meet.</p>
 </div>
 </div>
 <hr class="docutils" />
+<div class="section" id="matrix">
+<h2>matrix<a class="headerlink" href="#matrix" title="Permalink to this headline">¶</a></h2>
+<p>A matrix transform.  Performs an affine transform on all the points within the path.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">b</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">e</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;transforms&quot;</span> <span class="p">:</span> <span class="p">[</span>
+                  <span class="p">{</span>
+                      <span class="s2">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;matrix&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;a&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="s2">&quot;b&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s2">&quot;c&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s2">&quot;d&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="s2">&quot;e&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="mi">1</span>
+                  <span class="p">}</span>
+              <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
 <div class="section" id="mirror">
 <h2>mirror<a class="headerlink" href="#mirror" title="Permalink to this headline">¶</a></h2>
 <p>Mirror will flip the path on either the horizontal or vertical axis</p>

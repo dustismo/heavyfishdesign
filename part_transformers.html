@@ -135,7 +135,7 @@ this is sufficient for most usecases.</p>
 </ul>
 </div>
 <p>Lathe takes a component outline and ‘turns’ a set of stackable parts.  Given a side view outline shape, and the shape of the piece, the lathe will calculate all the parts to stack to make the shape.</p>
-<p>for instance:</p>
+<p>for instance, this outline:</p>
 <a class="reference internal image-reference" href="_images/pawn_outline.png"><img alt="_images/pawn_outline.png" src="_images/pawn_outline.png" style="width: 150px;" /></a>
 <p>with repeatable:</p>
 <a class="reference internal image-reference" href="_images/square.png"><img alt="_images/square.png" src="_images/square.png" style="width: 150px;" /></a>
@@ -144,7 +144,7 @@ this is sufficient for most usecases.</p>
 <div class="section" id="id1">
 <h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: The component which is going to be repeated. This component should use the <code class="docutils literal notranslate"><span class="pre">width</span></code> variable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repeatable</span></code>: The component which is going to be repeated. This component should use the <code class="docutils literal notranslate"><span class="pre">lathe__width</span></code> local variable.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">material_thickness</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">padding_top</span></code> Amount of space before rendering the first slice.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">padding_bottom</span></code> Amount of space from the bottom that will be the last slice</p></li>
