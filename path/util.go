@@ -425,3 +425,11 @@ func StringElipses(str string, maxChars int) string {
 	}
 	return inStr
 }
+
+func DegreesToRadians(degrees float64) float64 {
+	return (math.Pi / 180) * degrees
+}
+
+func PolarToCartesian(r, theta float64) Point {
+	return NewPoint(r*math.Sin(theta), r*math.Cos(theta))
+}

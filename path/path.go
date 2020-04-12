@@ -86,15 +86,11 @@ func NewPathFromSegments(segments []Segment) Path {
 	}
 }
 
-func toRadian(degrees float64) float64 {
-	return (math.Pi / 180) * degrees
-}
-
 // creates a line segment based on start point, length and angle
 // where a positive horizontal line is 0 degrees
 func NewLineSegmentAngle(start Point, length, angle float64) LineSegment {
-	y := (length * math.Sin(toRadian(angle))) + start.Y
-	x := (length * math.Cos(toRadian(angle))) + start.X
+	y := (length * math.Sin(DegreesToRadians(angle))) + start.Y
+	x := (length * math.Cos(DegreesToRadians(angle))) + start.X
 	return LineSegment{
 		StartPoint: start,
 		EndPoint:   NewPoint(x, y),

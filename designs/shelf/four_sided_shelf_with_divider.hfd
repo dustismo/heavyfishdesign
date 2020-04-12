@@ -1,0 +1,296 @@
+{
+    "imports": [
+        {"path": "designs/joints/line.hfd"},
+        {"path": "designs/joints/svg_edge.hfd"},
+        {"path": "designs/joints/finger_joint_plug.hfd"},
+        {"path": "designs/joints/finger_joint_socket.hfd"},
+        {"path": "designs/joints/finger_joint_holes.hfd"},
+        {"path": "designs/common/screw_holes_pair.hfd"},
+        {
+            "path": "designs/svg/squiggle_line.svg",
+            "type": "svg",
+            "alias": "squiggle_line"
+        },
+        {
+            "path": "designs/svg/line.svg",
+            "type": "svg",
+            "alias": "straight_line"
+        }
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 12,
+        "material_height": 11,
+        "material_thickness": 0.25,
+        "shelf_width": 3,
+        "shelf_front_height": 1,
+        "shelf_back_height": 2,
+        "shelf_depth": 5, //11.5,
+        "finger_width": 0.2,
+        "finger_height": "material_thickness",
+        "finger_space": 0.2,
+        "finger_depth": "material_thickness",
+        "finger_padding" : 0.2,
+        "side_screw_hole": 0.2,
+        "back_screw_hole": 0.2, 
+        "back_screw_distance_to_edge": 0.75, 
+        "side_svg_edge": "squiggle_line",
+        "back_svg_edge": "straight_line",
+        "divider_1_position": "shelf_width / 2 + (material_thickness / 2)"
+    },
+    "parts": [
+        {
+            "id": "back",
+            "components": [
+                {
+                    "type": "group",
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "type": "svg_edge",
+                            "to": "shelf_width,0",
+                            "svg": "back_svg_edge"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "shelf_width,0",
+                            "to" : "shelf_width,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_width,shelf_back_height",
+                            "to" : "0,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "0,shelf_back_height",
+                            "to" : "0,0"
+                        }
+                    ]
+                },
+                {
+                    "type": "screw_holes_pair",
+                    "width": "shelf_width-(back_screw_distance_to_edge * 2)",
+                    "diameter": "back_screw_hole",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "back_screw_distance_to_edge, shelf_back_height * .3"
+                        }
+                    ]
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "divider_1_position, 0",
+                    "to": "divider_1_position, shelf_back_height"
+                }
+            ]
+        },
+        {
+            "id": "side",
+            "repeat": {
+                "total": 2
+            },
+            "components": [
+                {
+                    "type" : "group",
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "type": "svg_edge",
+                            "to": "shelf_depth,shelf_back_height-shelf_front_height",
+                            "svg": "side_svg_edge"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_depth,shelf_back_height-shelf_front_height",
+                            "to" : "shelf_depth,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_depth,shelf_back_height",
+                            "to" : "0,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "0,shelf_back_height",
+                            "to" : "0,0"
+                        }
+                    ]
+                },
+                {
+                    "type": "screw_holes_pair",
+                    "width": "shelf_depth-1.5",
+                    "diameter": "side_screw_hole",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": ".75, (shelf_back_height - shelf_front_height + material_thickness)"
+                        }
+                    ]
+                }
+
+            ]
+        },
+        // divider same as sides, but no screw holes
+        {
+            "id": "divider",
+            "repeat": {
+                "total": 1
+            },
+            "components": [
+                {
+                    "type" : "group",
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "type": "svg_edge",
+                            "to": "shelf_depth,shelf_back_height-shelf_front_height",
+                            "svg": "side_svg_edge"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_depth,shelf_back_height-shelf_front_height",
+                            "to" : "shelf_depth,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_depth,shelf_back_height",
+                            "to" : "0,shelf_back_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "0,shelf_back_height",
+                            "to" : "0,0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "front",
+            "repeat": {
+                "total": 1
+            },
+            "components": [
+                {
+                    "type" : "group",
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "type": "line",
+                            "from": "0,0",
+                            "to": "shelf_width, 0"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "shelf_width, 0",
+                            "to" : "shelf_width,shelf_front_height"
+                        },
+                        {
+                            "type": "finger_joint_plug",
+                            "from": "shelf_width, shelf_front_height",
+                            "to" : "0,shelf_front_height"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "0, shelf_front_height",
+                            "to" : "0,0"
+                        }
+                    ]
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "divider_1_position, 0",
+                    "to": "divider_1_position, shelf_front_height"
+                }
+            ]
+        },
+        {
+            "id": "bottom",
+            "components": [
+                {
+                    "type" : "group",    
+                    "transforms": [
+                        {
+                            "type": "join",
+                            "close_path" : "true"
+                        },
+                        {
+                            "type": "offset",
+                            "distance" : "offset",
+                            "size_should_be" : "larger"
+                        }
+                    ],
+                    "components": [
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "0,0",
+                            "to" : "shelf_width,0"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "shelf_width,0",
+                            "to" : "shelf_width,shelf_depth"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "shelf_width,shelf_depth",
+                            "to" : "0,shelf_depth"
+                        },
+                        {
+                            "type": "finger_joint_socket",
+                            "from": "0,shelf_depth",
+                            "to" : "0,0"
+                        }
+                    ]
+                },
+                {
+                    "type": "finger_joint_holes",
+                    "from": "divider_1_position, 0",
+                    "to": "divider_1_position, shelf_depth"
+                }
+            ]
+        }
+    ]
+}
