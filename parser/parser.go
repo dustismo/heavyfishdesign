@@ -23,6 +23,7 @@ func InitContext() {
 		components.BasicEdgeComponentFactory{},
 		components.XInterceptComponentFactory{},
 		components.AroundComponentFactory{},
+		components.GearComponentFactory{},
 	}
 	tf := []dom.TransformFactory{
 		dom.CleanupTransformFactory{},

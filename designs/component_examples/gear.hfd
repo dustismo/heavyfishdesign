@@ -1,0 +1,23 @@
+{
+    "imports": [
+        {"path": "designs/common/rectangle.hfd"}
+    ],
+    "params": {
+        "offset": ".0035",
+        "material_width": 20,
+        "material_height": 12,
+        "around_radius": 2,
+        "around_num_edges": 9
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type" : "gear",
+                    "teeth" : 25,
+                    "tooth_width" : 0.2
+                }
+            ]
+        }
+    ]
+}

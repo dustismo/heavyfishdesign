@@ -285,3 +285,32 @@ Local Variables
 
 * ``around__length`` The horizontal length of this peice
 * ``around__index`` The index of this piece. 0 to num_edges-1
+
+
+------------------------------------------------------------------------------------------
+
+gear
+======
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/gear.hfd>`_
+
+Renders a basic involute gear, suitable for most things.  
+
+Parameters
+^^^^^^^^^^
+
+* ``teeth``: number of teeth on the gear
+* ``tooth_width``: the width of a single tooth.
+* ``pressure_angle``: defaults to 20 
+* ``clearance``: defaults to 0.01
+* ``backlash``: defaults to 0.01
+* ``gear_variable_name``: if you set this name then certain Attributes of this gear will be available to all subsequently rendered components. See Global Variables
+
+
+Global Variables
+^^^^^^^^^^^^^^^^
+
+* ``<gear_variable_name>__outer_radius``: The radius from center to tooth tip
+* ``<gear_variable_name>__inner_radius``: The radius from center to lowest valley
