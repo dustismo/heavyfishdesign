@@ -69,6 +69,10 @@ func AppContext() *Factories {
 	return appContext
 }
 
+func (c *Factories) SetFileLoader(fl FileLoader) {
+	c.fileLoader = fl
+}
+
 func (c *Factories) Init(componentFactories []ComponentFactory,
 	transformFactories []TransformFactory,
 	partTransformerFactories []PartTransformerFactory,
