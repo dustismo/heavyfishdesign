@@ -86,7 +86,7 @@ func main() {
 	} else if command == "designs_updated" {
 		logger := util.NewLog()
 		// clear out the designs rendered directory
-		ClearDir("designs_rendered", "svg")
+		util.ClearDir("designs_rendered", "svg")
 		err := RenderAll("designs", "designs_rendered", logger)
 		if err != nil {
 			logger.Errorf("error %s", err.Error())
@@ -137,12 +137,12 @@ func main() {
 }
 
 func CompareDirectories(left string, right string, extension string, logger *util.HfdLog) {
-	filesLeft, err := FileList(left, extension)
+	filesLeft, err := util.FileList(left, extension)
 	if err != nil {
 		logger.Errorf("Unable to list files in directory %s: %s", left, err.Error())
 		return
 	}
-	filesRight, err := FileList(right, extension)
+	filesRight, err := util.FileList(right, extension)
 	if err != nil {
 		logger.Errorf("Unable to list files in directory %s: %s", right, err.Error())
 		return
@@ -210,7 +210,7 @@ func CreateDir(dir string) error {
 }
 
 func RenderAll(renderDir, outputDir string, logger *util.HfdLog) error {
-	filenames, err := FileList(renderDir, FileExtension)
+	filenames, err := util.FileList(renderDir, FileExtension)
 	if err != nil {
 		logger.Errorf("Error during render_all: %s\n", err.Error())
 		return err
@@ -265,54 +265,6 @@ func renderPlanSet(filename string, params *dynmap.DynMap, logger *util.HfdLog) 
 
 	err = planset.Init(context)
 	return planset, err
-}
-
-// deletes all files of the given type from the requested directory
-// this operates recursively, but does not remove the empty directories
-func ClearDir(directory, extension string) error {
-	files, err := FileList(directory, extension)
-	if err != nil {
-		return err
-	}
-	for _, fn := range files {
-		err = os.Remove(fn)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// recursively search for files of the given extension
-func FileList(directory string, extension string) ([]string, error) {
-	filenames := []string{}
-	err := filepath.Walk(directory,
-		func(p string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if strings.HasSuffix(p, extension) {
-				filenames = append(filenames, p)
-			}
-			return nil
-		})
-	return filenames, err
-}
-
-// recursively list the directories
-func DirectoryList(directory string) ([]string, error) {
-	directories := []string{}
-	err := filepath.Walk(directory,
-		func(p string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if !info.IsDir() {
-				directories = append(directories, p)
-			}
-			return nil
-		})
-	return directories, err
 }
 
 // construct a suitable saveFile name from the give path + document name
