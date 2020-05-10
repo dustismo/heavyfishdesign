@@ -7,13 +7,10 @@
             "alias": "dragon"
         }
     ],
-    "params": {
-        
-    },
-    "id": "dragon_butt_doc",
+    "params": {},
     "parts": [
         {
-            "id" : "dragon_butt_joint",
+            "id": "dragon_butt_joint",
             "components": [
                 {
                     "type": "repeat_edge",
@@ -26,28 +23,28 @@
                         "x": "9",
                         "y": 0
                     },
-                    "handle" : "$START_POINT",
-                    "transforms" : [
+                    "handle": "$START_POINT",
+                    "transforms": [
                         {
-                            "type" : "join",
-                            "close_path" : false
+                            "type": "join",
+                            "close_path": false
                         },
                         {
-                            "type" : "offset",
-                            "distance" : "0"
+                            "type": "offset",
+                            "distance": "0"
                         }
                     ],
                     "repeatable": {
                         "type": "group",
                         "components": [
                             {
-                                "type" : "draw",
+                                "type": "draw",
                                 "transforms": [
                                     {
-                                       "type": "cleanup" 
+                                        "type": "cleanup"
                                     },
                                     {
-                                        "type": "trim" 
+                                        "type": "trim"
                                     },
                                     {
                                         "type": "scale",
@@ -58,23 +55,22 @@
                                         "to": "$CURSOR",
                                         "handle": "$START_POINT"
                                     }
-
                                 ],
                                 "commands": [
                                     {
                                         "command": "svg",
-                                        "svg" : "dragon"
+                                        "svg": "dragon"
                                     }
                                 ]
                             },
                             {
-                                "type" : "draw",
+                                "type": "draw",
                                 "transforms": [
                                     {
-                                        "type": "cleanup" 
+                                        "type": "cleanup"
                                     },
                                     {
-                                        "type": "trim" 
+                                        "type": "trim"
                                     },
                                     {
                                         "type": "scale",
@@ -93,7 +89,7 @@
                                 "commands": [
                                     {
                                         "command": "svg",
-                                        "svg" : "dragon"
+                                        "svg": "dragon"
                                     }
                                 ]
                             }
@@ -102,7 +98,6 @@
                     "left": {
                         "type": "draw",
                         "commands": [
-                          
                             {
                                 "command": "rel_line",
                                 "to": {

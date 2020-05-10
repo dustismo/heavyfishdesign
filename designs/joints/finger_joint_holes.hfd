@@ -5,10 +5,9 @@
         "finger_space": 0.4,
         "finger_depth": 0.2 // this is the depth of the material.
     },
-    "id": "finger_joint_doc",
     "parts": [
         {
-            "id" : "finger_joint_part",
+            "id": "finger_joint_part",
             "components": [
                 {
                     "type": "repeat_edge",
@@ -22,8 +21,8 @@
                     "to": {
                         "x": "5",
                         "y": 0
-                    }, 
-                    "handle" : "$ORIGIN",
+                    },
+                    "handle": "$ORIGIN",
                     "repeatable": {
                         "type": "draw",
                         "commands": [

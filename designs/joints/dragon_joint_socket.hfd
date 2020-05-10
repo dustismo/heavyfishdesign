@@ -5,16 +5,17 @@
             "path": "designs/svg/dragon.svg",
             "alias": "dragon"
         },
-        { "path": "designs/joints/dragon_joint_plug.hfd" }
+        {
+            "path": "designs/joints/dragon_joint_plug.hfd"
+        }
     ],
     "params": {
         "dragon_width": 1,
         "dragon_space": 0.4
     },
-    "id": "dragon_butt_doc",
     "parts": [
         {
-            "id" : "dragon_butt_joint",
+            "id": "dragon_butt_joint",
             "components": [
                 {
                     "type": "dragon_joint_plug",

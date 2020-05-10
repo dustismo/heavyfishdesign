@@ -4,10 +4,9 @@
         "finger_height": 0.2,
         "finger_space": 0.4
     },
-    "id": "finger_joint_doc",
     "parts": [
         {
-            "id" : "finger_joint_part",
+            "id": "finger_joint_part",
             "components": [
                 {
                     "type": "repeat_edge",
@@ -22,11 +21,11 @@
                         "x": "5",
                         "y": 0
                     },
-                    "handle" : "$START_POINT",
-                    "transforms" : [
+                    "handle": "$START_POINT",
+                    "transforms": [
                         {
-                            "type" : "join",
-                            "close_path" : false
+                            "type": "join",
+                            "close_path": false
                         }
                     ],
                     "repeatable": {

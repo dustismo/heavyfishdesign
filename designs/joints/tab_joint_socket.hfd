@@ -6,14 +6,14 @@
         "tab_width": ".5"
     },
     "parts": [
-        {   
+        {
             "components": [
                 {
                     "type": "basic_edge",
                     "custom_component": {
                         "type": "tab_joint_plug"
                     },
-                    "components" : [
+                    "components": [
                         {
                             "type": "draw",
                             "commands": [
@@ -41,7 +41,7 @@
                                     "command": "rel_line",
                                     "to": "(width - tab_width) / 2,0"
                                 }
-                            ]  
+                            ]
                         }
                     ]
                 }
