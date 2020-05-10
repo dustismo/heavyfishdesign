@@ -258,8 +258,15 @@ func ParseDocumentFromPath(path string, logger *util.HfdLog) (*Document, error) 
 	return ParseDocumentFromJson(json, logger)
 }
 
+// parses to an HFDMap.  This should be used instead of parse json directly as
+// we may want to change the encoding in the future.
+func ParseToHFDMap(raw string, logger *util.HfdLog) (*dynmap.DynMap, error) {
+	dm, err := dynmap.ParseJSON(raw)
+	return dm, err
+}
+
 func ParseDocumentFromJson(json string, logger *util.HfdLog) (*Document, error) {
-	dm, err := dynmap.ParseJSON(json)
+	dm, err := ParseToHFDMap(json, logger)
 	if err != nil {
 		return nil, err
 	}
