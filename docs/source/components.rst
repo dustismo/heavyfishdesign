@@ -296,7 +296,7 @@ gear
 
     * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/gear.hfd>`_
 
-Renders a basic involute gear, suitable for most things.  
+Renders a basic involute gear, suitable for most things. By default the Gear is rendered where 0,0 is the center point. 
 
 Parameters
 ^^^^^^^^^^

@@ -1,21 +1,56 @@
 {
     "imports": [
-        {"path": "designs/common/rectangle.hfd"}
+        {
+            "path": "designs/common/rectangle.hfd"
+        }
     ],
     "params": {
         "offset": ".0035",
         "material_width": 20,
         "material_height": 12,
-        "around_radius": 2,
-        "around_num_edges": 9
+        "tooth_size": 0.2,
+        "hole_radius": 0.2
     },
     "parts": [
         {
             "components": [
                 {
-                    "type" : "gear",
-                    "teeth" : 25,
-                    "tooth_width" : 0.2
+                    "transforms": [
+                        {
+                            "type": "offset",
+                            "distance": "offset",
+                            "size_should_be": "larger"
+                        }
+                    ],
+                    "type": "gear",
+                    "teeth": 25,
+                    "tooth_width": "tooth_size",
+                    "gear_variable_name": "gear_25"
+                },
+                {
+                    "type": "draw",
+                    "id": "handle_hole",
+                    "transforms": [
+                        {
+                            "type": "offset",
+                            "distance": "offset",
+                            "size_should_be": "smaller"
+                        },
+                        {
+                            "type": "move",
+                            "to": {
+                                "x": "0",
+                                "y": "0"
+                            },
+                            "handle": "$MIDDLE_MIDDLE"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "circle",
+                            "radius": "hole_radius"
+                        }
+                    ]
                 }
             ]
         }
