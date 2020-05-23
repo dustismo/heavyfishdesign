@@ -83,8 +83,8 @@ func (gc *GearComponent) Render(ctx dom.RenderContext) (path.Path, dom.RenderCon
 	}
 	pth := path.NewDraw()
 	for i := 0; i < int(numTeeth); i++ {
+		angle := float64(-i) * 2.0 * math.Pi / numTeeth
 		for ix, p := range points {
-			angle := float64(-i) * 2.0 * math.Pi / numTeeth
 			xr := p.X*math.Cos(angle) - p.Y*math.Sin(angle)
 			yr := p.Y*math.Cos(angle) + p.X*math.Sin(angle)
 			if i == 0 && ix == 0 {

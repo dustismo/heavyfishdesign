@@ -9,7 +9,7 @@
         "material_width": 20,
         "material_height": 12,
         "tooth_size": 0.2,
-        "hole_radius": 0.2
+        "hole_radius": "0.25 / 2"
     },
     "parts": [
         {
