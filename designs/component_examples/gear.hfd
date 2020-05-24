@@ -1,9 +1,5 @@
 {
-    "imports": [
-        {
-            "path": "designs/common/rectangle.hfd"
-        }
-    ],
+    "imports": [],
     "params": {
         "offset": ".0035",
         "material_width": 20,
@@ -19,7 +15,8 @@
                         {
                             "type": "offset",
                             "distance": "offset",
-                            "size_should_be": "larger"
+                            "size_should_be": "larger",
+                            "precision": 6
                         }
                     ],
                     "type": "gear",
