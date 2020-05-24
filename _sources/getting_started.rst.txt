@@ -77,3 +77,21 @@ Import options:
             // this can be useful for clarity, or to resolve naming conflicts
     }
 
+parts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Each document is comprised of a set of Parts.  Each part should be considered a single unit that can be created independently of the rest.  The document will automagically move parts around to fit within the material size.
+
+Each Part has the following properties
+
+* ``id`` Unique id, not required, but can help with debugging sometimes.  If an id is not supplied a unique id will be randomly assigned 
+* ``components`` List of the individual components
+* ``repeat`` This is useful to repeat the part multiple times.  Each rendered part will have an additional variable called ``part_index`` which could be used to change each part based on index.
+    repeat is structured like:
+
+ .. code-block:: JSON
+
+    "repeat" : {
+        "total" : "num_layers"
+    }
+
+* ``part_transforms`` part specific transforms, which may or may not split the part into multiple parts.  See part_transformers.rst

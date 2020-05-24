@@ -28,7 +28,7 @@ part.
 Splitter
 ========
 
-Splitter will break a part into 2 pieces, a top and bottom, with using two edges.  
+Splitter will break a part into 2 pieces, a top and bottom, using two edges.  
 This is especially useful for parts that are too large to fit on a single material. 
 Each edge is passed ``from`` and ``to`` Point params to tell the edges where to render.  
 The ``bleed_top`` and ``bleed_bottom`` params allow the lines to bleed over

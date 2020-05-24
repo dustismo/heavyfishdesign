@@ -390,6 +390,35 @@ proper size. (see Local Variables)</p>
 </ul>
 </div>
 </div>
+<hr class="docutils" />
+<div class="section" id="gear">
+<h2>gear<a class="headerlink" href="#gear" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">Examples</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/gear.hfd">https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/gear.hfd</a></p></li>
+</ul>
+</div>
+<p>Renders a basic involute gear, suitable for most things. By default the Gear is rendered where 0,0 is the center point.</p>
+<div class="section" id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">teeth</span></code>: number of teeth on the gear</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tooth_width</span></code>: the width of a single tooth.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pressure_angle</span></code>: defaults to 20</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clearance</span></code>: defaults to 0.01</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backlash</span></code>: defaults to 0.01</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gear_variable_name</span></code>: if you set this name then certain Attributes of this gear will be available to all subsequently rendered components. See Global Variables</p></li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h3>Global Variables<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;gear_variable_name&gt;__outer_radius</span></code>: The radius from center to tooth tip</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;gear_variable_name&gt;__inner_radius</span></code>: The radius from center to lowest valley</p></li>
+</ul>
+</div>
+</div>
 </div>
 
 
@@ -428,9 +457,6 @@ proper size. (see Local Variables)</p>
 <li class="toctree-l1"><a class="reference internal" href="part_transformers.html">Part Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_components.html">Custom Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Expressions</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
 <div class="relations">

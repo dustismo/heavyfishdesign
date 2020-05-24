@@ -100,6 +100,30 @@ as well as importing siple SVG files. See docs for custom components</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="parts">
+<h3>parts<a class="headerlink" href="#parts" title="Permalink to this headline">¶</a></h3>
+<p>Each document is comprised of a set of Parts.  Each part should be considered a single unit that can be created independently of the rest.  The document will automagically move parts around to fit within the material size.</p>
+<p>Each Part has the following properties</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code> Unique id, not required, but can help with debugging sometimes.  If an id is not supplied a unique id will be randomly assigned</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">components</span></code> List of the individual components</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">repeat</span></code> This is useful to repeat the part multiple times.  Each rendered part will have an additional variable called <code class="docutils literal notranslate"><span class="pre">part_index</span></code> which could be used to change each part based on index.</dt><dd><p>repeat is structured like:</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>&quot;repeat&quot; : {
+    &quot;total&quot; : &quot;num_layers&quot;
+}
+</pre></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">part_transforms</span></code> part specific transforms, which may or may not split the part into multiple parts.  See part_transformers.rst</p></li>
+</ul>
+</div>
 </div>
 </div>
 
