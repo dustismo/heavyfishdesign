@@ -5,22 +5,27 @@
         "material_width": 20,
         "material_height": 12,
         "tooth_size": 0.2,
-        "hole_radius": "0.25 / 2"
+        "hole_radius": "0.25 / 2",
+        "num_teeth": 22,
+        "num_gears": 1
     },
     "parts": [
         {
+            "repeat": {
+                "total": "num_gears"
+            },
             "components": [
                 {
                     "transforms": [
-                        {
-                            "type": "offset",
-                            "distance": "offset",
-                            "size_should_be": "larger",
-                            "precision": 6
-                        }
+                        // {
+                        //     "type": "offset",
+                        //     "distance": "offset",
+                        //     "size_should_be": "larger",
+                        //     "precision": 6
+                        // }
                     ],
                     "type": "gear",
-                    "teeth": 25,
+                    "teeth": "num_teeth",
                     "tooth_width": "tooth_size",
                     "gear_variable_name": "gear_25"
                 },

@@ -88,7 +88,7 @@ Each Part has the following properties
 * ``repeat`` This is useful to repeat the part multiple times.  Each rendered part will have an additional variable called ``part_index`` which could be used to change each part based on index.
     repeat is structured like:
 
-    .. code-block:: JSON
+ .. code-block:: JSON
 
     "repeat" : {
         "total" : "num_layers"
