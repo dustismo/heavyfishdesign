@@ -9,6 +9,11 @@ import (
 const MaxInt = int(^uint(0) >> 1)
 const MinInt = -MaxInt - 1
 
+// returns true if this point is at 0,0
+func IsPoint00(p Point) bool {
+	return p.X == 0.0 && p.Y == 0.0
+}
+
 // will split the segment wherever the knife segment intersects
 func KnifeCut(seg Segment, knife Segment, so SegmentOperators) ([]Segment, error) {
 	pnts, err := so.Intersect(knife, seg)

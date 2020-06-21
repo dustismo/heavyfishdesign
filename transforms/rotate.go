@@ -10,24 +10,16 @@ type RotateTransform struct {
 	SegmentOperators path.SegmentOperators
 }
 
-func (rt RotateTransform) PathTransform(p path.Path) (path.Path, error) {
-	segments := []path.Segment{}
-	if len(rt.Axis) == 0 {
-		// handle should be TOP_LEFT by default..
-		rt.Axis = path.TopLeft
-	}
-	axisPoint, err := path.PointPathAttribute(rt.Axis, p, rt.SegmentOperators)
-	if err != nil {
-		return p, err
-	}
+func (rt RotateTransform) PathTransformWithAxis(pth path.Path, axisPoint path.Point) (path.Path, error) {
 
+	segments := []path.Segment{}
 	// first move to 0,0 then rotate then move back.
 
-	p, err = MoveTransform{
+	p, err := MoveTransform{
 		Point:            path.NewPoint(0, 0),
 		Handle:           rt.Axis,
 		SegmentOperators: rt.SegmentOperators,
-	}.PathTransform(p)
+	}.PathTransform(pth)
 
 	if err != nil {
 		return p, err
@@ -43,7 +35,7 @@ func (rt RotateTransform) PathTransform(p path.Path) (path.Path, error) {
 		segments = append(segments, s)
 	}
 
-	pth, err := path.NewPathFromSegments(segments), nil
+	pth, err = path.NewPathFromSegments(segments), nil
 	if err != nil {
 		return pth, err
 	}
@@ -56,4 +48,16 @@ func (rt RotateTransform) PathTransform(p path.Path) (path.Path, error) {
 	}.PathTransform(pth)
 
 	return pth, err
+}
+
+func (rt RotateTransform) PathTransform(p path.Path) (path.Path, error) {
+	if len(rt.Axis) == 0 {
+		// handle should be TOP_LEFT by default..
+		rt.Axis = path.TopLeft
+	}
+	axisPoint, err := path.PointPathAttribute(rt.Axis, p, rt.SegmentOperators)
+	if err != nil {
+		return p, err
+	}
+	return rt.PathTransformWithAxis(p, axisPoint)
 }
