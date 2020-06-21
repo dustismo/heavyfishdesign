@@ -21,7 +21,6 @@ type SVGParser struct {
 }
 
 // parses an SVG file for any Path Elements and joining them together
-// note this will ignore any transforms.
 func (s SVGParser) ParseSVG(xml string, logger *util.HfdLog) (path.Path, error) {
 	element, err := Parse(strings.NewReader(xml), true)
 	p, err := ElementToPath(element, util.NewLog())

@@ -77,7 +77,11 @@ Commands
         aligns to 'to'.
     * ``svg`` The svg path string, (ex: "M 2,2 L 0,0").   
     * ``to`` Where to draw the svg to. 
-    * ``reverse`` if true this will reverse the path        
+    * ``svg_from`` The starting point in the SVG to use as the connection point.  By
+        default this is the start of the path
+    * ``svg_to`` The end point in the SVG to use as the connection point.  By 
+        default this is the end of the path
+    * ``reverse`` if true this will reverse the path. Default is false       
 * ``rel_svg_connect_to`` Same as ``svg_connect_to`` but ``to`` is using relative coodrdinates
 
                          

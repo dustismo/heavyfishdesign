@@ -31,7 +31,7 @@ func (dcf DrawComponentFactory) CreateComponent(componentType string, dm *dynmap
 func (dcf DrawComponentFactory) ComponentTypes() []string {
 	return []string{"draw"}
 }
-func (dc *DrawComponent) svgRotateScaleTo(draw *path.Draw, ctx RenderContext, to path.Point, svg string, reverse bool) error {
+func (dc *DrawComponent) svgRotateScaleTo(draw *path.Draw, ctx RenderContext, to path.Point, svg string, reverse bool, svgFrom path.Point, svgTo path.Point) error {
 	_, endPoint := path.GetStartAndEnd(draw.Path().Segments())
 	p, err := path.ParsePathFromSvg(svg)
 	if err != nil {
@@ -47,6 +47,8 @@ func (dc *DrawComponent) svgRotateScaleTo(draw *path.Draw, ctx RenderContext, to
 	pth, err := transforms.RotateScaleTransform{
 		StartPoint:       endPoint,
 		EndPoint:         to,
+		PathStartPoint:   svgFrom,
+		PathEndPoint:     svgTo,
 		SegmentOperators: AppContext().SegmentOperators(),
 	}.PathTransform(p)
 	if err != nil {
@@ -278,7 +280,10 @@ func (dc *DrawComponent) Render(ctx RenderContext) (path.Path, RenderContext, er
 				return nil, ctx, fmt.Errorf("%s requires param %s", command, "to")
 			}
 			reverse := attr.MustBool("reverse", false)
-			err := dc.svgRotateScaleTo(draw, ctx, to, svg, reverse)
+
+			svgFrom := attr.MustPoint("svg_from", path.NewPoint(0, 0))
+			svgTo := attr.MustPoint("svg_to", path.NewPoint(0, 0))
+			err := dc.svgRotateScaleTo(draw, ctx, to, svg, reverse, svgFrom, svgTo)
 			if err != nil {
 				return nil, ctx, err
 			}
@@ -292,7 +297,13 @@ func (dc *DrawComponent) Render(ctx RenderContext) (path.Path, RenderContext, er
 				return nil, ctx, fmt.Errorf("%s requires param %s", command, "to")
 			}
 			reverse := attr.MustBool("reverse", false)
-			err := dc.svgRotateScaleTo(draw, ctx, draw.ToAbsPosition(to), svg, reverse)
+
+			// we dont need to translate these points, because they are within the coordinate
+			// system of the svg, not the path
+			svgFrom := attr.MustPoint("svg_from", path.NewPoint(0, 0))
+			svgTo := attr.MustPoint("svg_to", path.NewPoint(0, 0))
+
+			err := dc.svgRotateScaleTo(draw, ctx, draw.ToAbsPosition(to), svg, reverse, svgFrom, svgTo)
 			if err != nil {
 				return nil, ctx, err
 			}
