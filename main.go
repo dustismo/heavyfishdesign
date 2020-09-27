@@ -131,6 +131,10 @@ func main() {
 				fmt.Printf("\t%s\n", msg.MustString("file1", ""))
 			}
 		}
+	} else if command == "svg" {
+		logger := util.NewLog()
+		logger.LogToStdOut = util.Info
+
 	} else {
 		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated]\n")
 	}

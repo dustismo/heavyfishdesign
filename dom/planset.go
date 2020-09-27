@@ -72,7 +72,7 @@ func (p *PlanSet) addPart(part *RenderedPart, ctx RenderContext) (bool, error) {
 	return false, nil
 }
 
-func (p *PlanSet) Init(ctx RenderContext) error {
+func (p *PlanSet) InitWithPartsFilter(ctx RenderContext, filter func(p *RenderedPart) bool) error {
 	// create the first svgdoc
 	p.svgDocs = []*SVGDocument{
 		p.createSvgDoc(ctx),
@@ -87,18 +87,26 @@ func (p *PlanSet) Init(ctx RenderContext) error {
 			return err
 		}
 		for _, renderedPart := range renderedParts {
-			added, err := p.addPart(renderedPart, ctx)
-			if err != nil {
-				println(err.Error())
-				return err
-			}
-			if !added {
-				// too big.  try again?
-				return fmt.Errorf("unable to add part, it is probably too big")
+			if filter(renderedPart) {
+				added, err := p.addPart(renderedPart, ctx)
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+				if !added {
+					// too big.  try again?
+					return fmt.Errorf("unable to add part, it is probably too big")
+				}
 			}
 		}
 	}
 	return nil
+}
+
+func (p *PlanSet) Init(ctx RenderContext) error {
+	return p.InitWithPartsFilter(ctx, func(p *RenderedPart) bool {
+		return true
+	})
 }
 
 func positionForSplit(width, documentWidth, documentHeight float64) float64 {
