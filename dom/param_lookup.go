@@ -76,7 +76,11 @@ func (b *Attr) lookup(param string, recursion int) (interface{}, bool) {
 		return v, true
 	}
 	// didn't find it, now look at defaults
-	return b.lookupDefault(b.element, param, recursion)
+	v, ok = b.lookupDefault(b.element, param, recursion)
+	if !ok {
+		fmt.Printf("Unable to find param %s", param)
+	}
+	return v, ok
 }
 
 func (b *Attr) lookupDefault(elem Element, param string, recursion int) (interface{}, bool) {
