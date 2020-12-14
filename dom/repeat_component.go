@@ -99,8 +99,9 @@ func RepeatRender(ctx RenderContext, component Component, maxX, maxY float64) (p
 
 	// join the paths
 	pth := transforms.SimpleJoin{}.JoinPaths(paths...)
-	context.Cursor = path.PathCursor(pth)
-
+	if !path.IsEmptyPath(pth) {
+		context.Cursor = path.PathCursor(pth)
+	}
 	return pth, context, nil
 }
 func (rc *RepeatComponent) Render(ctx RenderContext) (path.Path, RenderContext, error) {

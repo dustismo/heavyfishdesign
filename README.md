@@ -69,4 +69,10 @@ To set the .hfd file associations edit settings.hfd and add:
         "*.hfd": "json"
     }
 
+RELEASE
+
+To create a release
+
+    $ git tag v1.0.X
+    $ git push origin master --tags
 
