@@ -117,13 +117,15 @@ func (rc *RepeatEdgeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Ren
 		return p, ctx, err
 	}
 
-	// measure what we got
-	tl, br, err := path.BoundingBoxWithWhitespace(p, dom.AppContext().SegmentOperators())
-	if err != nil {
-		return p, ctx, err
+	repeatWidth := 0.0
+	if !path.IsEmptyPath(p) {
+		// measure what we got
+		tl, br, err := path.BoundingBoxWithWhitespace(p, dom.AppContext().SegmentOperators())
+		if err != nil {
+			return p, ctx, err
+		}
+		repeatWidth = br.X - tl.X
 	}
-	repeatWidth := br.X - tl.X
-
 	// fmt.Printf("maxX %.3f repeatWidth %.3f\n", maxX, repeatWidth)
 	overflow := maxX - repeatWidth
 
@@ -152,7 +154,6 @@ func (rc *RepeatEdgeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Ren
 	// 1. left is already at 0,0
 	// 2. shift repeat to leftwidth, 0
 	// 3. shift right to leftwidth + repeatWidth, 0
-
 	p, err = transforms.MoveTransform{
 		Point:            path.NewPoint(leftWidth, 0),
 		Handle:           path.StartPosition,
