@@ -161,7 +161,9 @@ type SimpleJoin struct {
 }
 
 func (sj SimpleJoin) JoinPaths(paths ...path.Path) path.Path {
-
+	if len(paths) == 0 {
+		return path.NewPath()
+	}
 	// simple join.
 	newPath := paths[0].Clone()
 	for i := 1; i < len(paths); i++ {

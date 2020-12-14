@@ -95,7 +95,6 @@ func RepeatRender(ctx RenderContext, component Component, maxX, maxY float64) (p
 	}
 	if len(paths) == 0 {
 		println("Warning: could not repeat, probably not enough space for 1 iteration.")
-		// return p, context, fmt.Errorf("Error could not repeat, probably not enough space for 1 iteration.")
 	}
 
 	// join the paths
