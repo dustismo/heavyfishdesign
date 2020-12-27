@@ -84,8 +84,28 @@ Commands
     * ``reverse`` if true this will reverse the path. Default is false       
 * ``rel_svg_connect_to`` Same as ``svg_connect_to`` but ``to`` is using relative coodrdinates
 
-                         
 ----------------------------------------------------------------
+
+group
+=====
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/tree/master/designs/component_examples/svg_connect.hfd>`_
+
+
+group component is an easy way to group components together. 
+For instance, this provides a way to do a transform on multiple components, without applying to the
+entire part
+
+Parameters
+^^^^^^^^^^
+
+* ``components``: An array of components.
+
+                        
+----------------------------------------------------------------
+
 
 basic_edge
 ==========
