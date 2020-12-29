@@ -33,9 +33,12 @@ func extractParams(mp *dynmap.DynMap) *dynmap.DynMap {
 		"id",
 		"transforms",
 		"components",
+		"component",
 		"type",
 		"commands",
 		"command",
+		"repeat",
+		"defaults", // deprecated
 	}
 
 	tmp := mp.Clone()

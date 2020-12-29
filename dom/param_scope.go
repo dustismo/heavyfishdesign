@@ -2,9 +2,41 @@ package dom
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dustismo/heavyfishdesign/dynmap"
 )
+
+// defines the special points on a box
+type ParamType string
+
+const (
+	// Number represents a floating point number param
+	// Value will either be a formula or a constant
+	Number ParamType = "NUMBER"
+	// Point represents an X, Y Coord
+	// Value can be of the form:
+	// "x, y" or { x, y }
+	Point ParamType = "POINT"
+	// Handle will be $TOP_LEFT or the like
+	Handle ParamType = "HANDLE"
+	// Unknown params
+	Unknown ParamType = "UNKNOWN"
+)
+
+func ToParamType(str string) ParamType {
+
+	switch strings.ToUpper(str) {
+	case string(Number):
+		return Number
+	case string(Point):
+		return Point
+	case string(Handle):
+		return Handle
+	default:
+		return Unknown
+	}
+}
 
 // Stateful parameter scope
 // this should collect params during render and should
@@ -14,15 +46,16 @@ type Param struct {
 	Key           string
 	ElementID     string
 	RealizedValue interface{}
-	Type          string
+	Type          ParamType
 	Value         string
 	Description   string
-	lookedUp      bool
 	// If param gets overwritten because its Id is
 	// non-unique
-	// generally these params should not be available
+	// generally non-unique params should not be available
 	// to other components
-	Unique bool
+	Unique   bool
+	lookedUp bool
+	owner    Element
 }
 
 func (p *Param) ToHFD() *dynmap.DynMap {
@@ -31,8 +64,8 @@ func (p *Param) ToHFD() *dynmap.DynMap {
 	if len(p.Description) > 0 {
 		mp.Put("description", p.Description)
 	}
-	if len(p.Type) > 0 {
-		mp.Put("type", p.Type)
+	if len(string(p.Type)) > 0 {
+		mp.Put("type", string(p.Type))
 	}
 	return mp
 }
@@ -51,7 +84,7 @@ func ParseParams(paramsMap *dynmap.DynMap) ([]*Param, error) {
 		mp.PutIfAbsent("key", k)
 		p := &Param{
 			Key:         k,
-			Type:        mp.MustString("type", ""),
+			Type:        ToParamType(mp.MustString("type", "")),
 			Value:       mp.MustString("value", ""),
 			Description: mp.MustString("description", ""),
 		}
