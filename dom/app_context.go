@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/dustismo/heavyfishdesign/util"
 
@@ -240,12 +241,13 @@ func (c *Factories) MakePartTransformers(dm []*dynmap.DynMap, part *Part) ([]Par
 	return transforms, nil
 }
 
-// create an id based on the dynmap.
+// create an id based on the dynmap json rendering.
 // this must be idempotent in order
 // to keep rendering consistent
 func nextId(dm *dynmap.DynMap) string {
 	h := md5.New()
-	io.WriteString(h, dm.ToJSON())
+	str := strings.NewReplacer("\n", "", " ", "").Replace(dm.ToJSON())
+	io.WriteString(h, str)
 	return fmt.Sprintf("%x", h.Sum(nil))[:16]
 }
 
