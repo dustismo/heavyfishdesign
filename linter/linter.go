@@ -1,9 +1,11 @@
 package linter
 
 import (
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"strings"
 
 	"github.com/dustismo/heavyfishdesign/dom"
 	"github.com/dustismo/heavyfishdesign/dynmap"
@@ -32,6 +34,8 @@ func extractParams(mp *dynmap.DynMap) *dynmap.DynMap {
 		"transforms",
 		"components",
 		"type",
+		"commands",
+		"command",
 	}
 
 	tmp := mp.Clone()
@@ -99,6 +103,26 @@ func newId() string {
 }
 
 func Lint(filename string, logger *util.HfdLog) error {
+	if strings.HasSuffix(filename, ".hfd") {
+		return LintFile(filename, true, logger)
+	} else {
+		// is a directory?
+		filenames, err := util.FileList(filename, "hfd")
+		if err != nil {
+			return err
+		}
+		for _, fn := range filenames {
+			fmt.Printf("LINTING: %s\n", fn)
+			err = LintFile(fn, true, logger)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func LintFile(filename string, save bool, logger *util.HfdLog) error {
 	// first render it to make sure it is valid
 	dm, err := LoadDynMap(filename)
 
