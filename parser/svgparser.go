@@ -305,7 +305,8 @@ func (e *Element) Compare(o *Element) bool {
 		return false
 	}
 
-	for k, v := range e.Attributes.Map {
+	for _, k := range e.Attributes.Keys() {
+		v, _ := e.Attributes.Get(k)
 		v1, _ := o.Attributes.Get(k)
 		if v != v1 {
 			return false

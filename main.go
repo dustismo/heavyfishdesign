@@ -12,6 +12,7 @@ import (
 
 	"github.com/dustismo/heavyfishdesign/dom"
 	"github.com/dustismo/heavyfishdesign/dynmap"
+	"github.com/dustismo/heavyfishdesign/linter"
 	"github.com/dustismo/heavyfishdesign/parser"
 	"github.com/dustismo/heavyfishdesign/path"
 	"github.com/dustismo/heavyfishdesign/util"
@@ -135,6 +136,14 @@ func main() {
 		logger := util.NewLog()
 		logger.LogToStdOut = util.Info
 
+	} else if command == "lint" {
+		logger := util.NewLog()
+		logger.LogToStdOut = util.Info
+		rfn := os.Args[2]
+		if len(*renderFilename) > 0 {
+			rfn = *renderFilename
+		}
+		linter.Lint(rfn, logger)
 	} else {
 		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated]\n")
 	}
@@ -178,7 +187,7 @@ func CompareDirectories(left string, right string, extension string, logger *uti
 
 					if !IsEqualDiff(diffs) {
 						loggerL.Errorf("Files not equal: bytes not equal")
-						loggerL.Errorfd(dynmap.Wrap(map[string]interface{}{
+						loggerL.Errorfd(dynmap.CreateFromMap(map[string]interface{}{
 							"bad_diff": true,
 							"diff":     diff.DiffPrettyText(diffs),
 							"file1":    l,
@@ -244,13 +253,7 @@ func RenderAll(renderDir, outputDir string, logger *util.HfdLog) error {
 
 func renderPlanSet(filename string, params *dynmap.DynMap, logger *util.HfdLog) (*dom.PlanSet, error) {
 	logger.Infof("RENDERING: %s\n", filename)
-	b, err := ioutil.ReadFile(filename) // just pass the file name
-	if err != nil {
-		return nil, err
-	}
-	json := string(b) // convert content to a 'string'
-
-	dm, err := dynmap.ParseJSON(json)
+	dm, err := linter.LoadDynMap(filename)
 	if err != nil {
 		return nil, err
 	}

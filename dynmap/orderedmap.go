@@ -62,7 +62,7 @@ func NewOrderedMapFromMap(mp map[string]interface{}) *OrderedMap {
 
 	o.keys = keys
 	o.values = mp
-	o.escapeHTML = false
+	o.escapeHTML = true
 	return &o
 }
 
@@ -70,7 +70,7 @@ func NewOrderedMap() *OrderedMap {
 	o := OrderedMap{}
 	o.keys = []string{}
 	o.values = map[string]interface{}{}
-	o.escapeHTML = false
+	o.escapeHTML = true
 	return &o
 }
 
@@ -340,17 +340,21 @@ func sliceStringToSliceWithOrderedMaps(valueStr string, newSlice *[]interface{})
 	return nil
 }
 
-func (o OrderedMap) MarshalJSON() ([]byte, error) {
+func (o OrderedMap) marshalJSON(indent string) ([]byte, error) {
 	s := "{"
+
 	for _, k := range o.keys {
-		// add key
 		kEscaped := strings.Replace(k, `"`, `\"`, -1)
+		if len(indent) > 0 {
+			s = s + "\n" + indent
+		}
 		s = s + `"` + kEscaped + `":`
 		// add value
 		v := o.values[k]
 		buffer := new(bytes.Buffer)
 		encoder := json.NewEncoder(buffer)
 		encoder.SetEscapeHTML(o.escapeHTML)
+		encoder.SetIndent("", indent+indent)
 		err := encoder.Encode(v)
 		if err != nil {
 			return []byte{}, err
@@ -358,8 +362,13 @@ func (o OrderedMap) MarshalJSON() ([]byte, error) {
 		s = s + buffer.String() + ","
 	}
 	if len(o.keys) > 0 {
+		// trim the trailing comma
 		s = s[0 : len(s)-1]
 	}
 	s = s + "}"
 	return []byte(s), nil
+}
+
+func (o OrderedMap) MarshalJSON() ([]byte, error) {
+	return o.marshalJSON("  ")
 }

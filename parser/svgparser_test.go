@@ -96,7 +96,7 @@ func TestParser1(t *testing.T) {
 		`,
 			Element{
 				Name: "svg",
-				Attributes: dynmap.Wrap(map[string]interface{}{
+				Attributes: dynmap.CreateFromMap(map[string]interface{}{
 					"width":  "100",
 					"height": "100",
 				}),
@@ -117,14 +117,14 @@ func TestParser1(t *testing.T) {
 		`,
 			Element{
 				Name: "svg",
-				Attributes: dynmap.Wrap(map[string]interface{}{
+				Attributes: dynmap.CreateFromMap(map[string]interface{}{
 					"width":  "450",
 					"height": "400",
 				}),
 				Children: []*Element{
 					&Element{
 						Name: "g",
-						Attributes: dynmap.Wrap(map[string]interface{}{
+						Attributes: dynmap.CreateFromMap(map[string]interface{}{
 							"stroke":       "black",
 							"stroke-width": "3",
 							"fill":         "black",
@@ -167,7 +167,7 @@ func TestValidDocument(t *testing.T) {
 func element(name string, attrs map[string]interface{}) *Element {
 	return &Element{
 		Name:       name,
-		Attributes: dynmap.Wrap(attrs),
+		Attributes: dynmap.CreateFromMap(attrs),
 		Children:   []*Element{},
 	}
 }

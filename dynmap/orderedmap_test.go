@@ -185,6 +185,7 @@ func TestMarshalJSONNoEscapeHTML(t *testing.T) {
 		t.Error("Marshalling json", err)
 	}
 	s := strings.Replace(string(b), "\n", "", -1)
+	s = strings.Replace(s, " ", "", -1)
 	// check json is correctly ordered
 	if s != `{"specialstring":"\\.<>[]{}_-"}` {
 		t.Error("JSON Marshal value is incorrect", s)

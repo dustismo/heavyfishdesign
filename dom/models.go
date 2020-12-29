@@ -89,14 +89,14 @@ func (b *BasicElement) ToDynMap() *dynmap.DynMap {
 	return b.originalMap
 }
 func (b *BasicElement) Params() *dynmap.DynMap {
-	if b.params == nil || len(b.params.Map) == 0 {
+	if b.params == nil || b.params.Length() == 0 {
 		b.params = b.ToDynMap().MustDynMap("params", dynmap.New())
 	}
 	return b.params
 }
 
 func (b *BasicElement) Defaults() *dynmap.DynMap {
-	if b.defaults == nil || len(b.defaults.Map) == 0 {
+	if b.defaults == nil || b.params.Length() == 0 {
 		b.defaults = b.ToDynMap().MustDynMap("defaults", dynmap.New())
 		b.originalMap.Put("defaults", b.defaults)
 	}
@@ -161,13 +161,13 @@ func (b *BasicComponent) ToDynMap() *dynmap.DynMap {
 	return b.originalMap
 }
 func (b *BasicComponent) Params() *dynmap.DynMap {
-	if b.params == nil || len(b.params.Map) == 0 {
+	if b.params == nil || b.params.Length() == 0 {
 		b.params = b.ToDynMap().MustDynMap("params", dynmap.New())
 	}
 	return b.params
 }
 func (b *BasicComponent) Defaults() *dynmap.DynMap {
-	if b.defaults == nil || len(b.defaults.Map) == 0 {
+	if b.defaults == nil || b.params.Length() == 0 {
 		b.defaults = b.ToDynMap().MustDynMap("defaults", dynmap.New())
 		b.originalMap.Put("defaults", b.defaults)
 	}
