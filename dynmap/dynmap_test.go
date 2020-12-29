@@ -135,24 +135,24 @@ func TestToString(t *testing.T) {
 	}
 }
 
-func TestURLEncode(t *testing.T) {
-	mp := New()
-	mp.PutWithDot("this.that.test", 80)
-	mp.PutWithDot("this.eight", 8)
-	url, err := mp.MarshalUrl()
-	if err != nil {
-		t.Errorf("Error in url %s", err)
-	}
+// func TestURLEncode(t *testing.T) {
+// 	mp := New()
+// 	mp.PutWithDot("this.that.test", 80)
+// 	mp.PutWithDot("this.eight", 8)
+// 	url, err := mp.MarshalUrl()
+// 	if err != nil {
+// 		t.Errorf("Error in url %s", err)
+// 	}
 
-	log.Printf("Got URL : %s", url)
+// 	log.Printf("Got URL : %s", url)
 
-	un := New()
-	un.UnmarshalUrl(url)
+// 	un := New()
+// 	un.UnmarshalUrl(url)
 
-	if un.MustInt("this.that.test", 0) != 80 {
-		t.Errorf("Unmarshal URL failure ")
-	}
-}
+// 	if un.MustInt("this.that.test", 0) != 80 {
+// 		t.Errorf("Unmarshal URL failure ")
+// 	}
+// }
 
 func TestAddToSlice(t *testing.T) {
 	mp := New()

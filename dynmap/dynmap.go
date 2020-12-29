@@ -14,20 +14,29 @@ import (
 //Dont make this a map type, since we want the option of
 //extending this and adding members.
 type DynMap struct {
-	Map map[string]interface{} `bson:",inline"`
+	//Map        map[string]interface{} `bson:",inline"`
+	OrderedMap *OrderedMap
 }
 
 type DynMaper interface {
 	ToDynMap() *DynMap
 }
 
-func Wrap(mp map[string]interface{}) *DynMap {
-	return &DynMap{mp}
+func CreateFromOrderedMap(mp *OrderedMap) *DynMap {
+	return &DynMap{
+		mp,
+	}
+}
+
+func CreateFromMap(mp map[string]interface{}) *DynMap {
+	return CreateFromOrderedMap(NewOrderedMapFromMap(mp))
 }
 
 // Creates a new dynmap
 func New() *DynMap {
-	return &DynMap{make(map[string]interface{})}
+	return &DynMap{
+		NewOrderedMap(),
+	}
 }
 
 func ParseJSON(json string) (*DynMap, error) {
@@ -81,7 +90,7 @@ func (this *DynMap) ConvertTo(val interface{}) error {
 //
 func (this *DynMap) Flatten() map[string]interface{} {
 	mp := make(map[string]interface{})
-	for k, v := range this.Map {
+	for _, k := range this.OrderedMap.Keys() {
 		dm, ok := this.GetDynMap(k)
 		if ok {
 			for k2, v2 := range dm.Flatten() {
@@ -89,6 +98,7 @@ func (this *DynMap) Flatten() map[string]interface{} {
 			}
 		} else {
 			// try as a slice
+			v, _ := this.OrderedMap.Get(k)
 			slice, ok := v.([]interface{})
 			if ok {
 				// need to flatten the members of the slice
@@ -114,7 +124,8 @@ func (this *DynMap) Flatten() map[string]interface{} {
 // returns a new DynMap instance
 func (dm *DynMap) UnFlatten() (*DynMap, error) {
 	newMp := New()
-	for key, value := range dm.Map {
+	for _, key := range dm.OrderedMap.Keys() {
+		value, _ := dm.OrderedMap.Get(key)
 		err := newMp.PutWithDot(key, value)
 		if err != nil {
 			return dm, err
@@ -127,8 +138,9 @@ func (dm *DynMap) UnFlatten() (*DynMap, error) {
 // (will convert any sub maps)
 func (this *DynMap) ToMap() map[string]interface{} {
 	mp := make(map[string]interface{})
-	for k, v := range this.Map {
-		submp, ok := ToDynMap(this.Map[k])
+	for _, k := range this.OrderedMap.Keys() {
+		v, _ := this.OrderedMap.Get(k)
+		submp, ok := ToDynMap(v)
 		if ok {
 			v = submp.ToMap()
 		}
@@ -150,7 +162,8 @@ func (dm *DynMap) Clone() *DynMap {
 // recursively merges the requested dynmap into the current dynmap
 // returns self in order to support chaining.
 func (this *DynMap) Merge(mp *DynMap) *DynMap {
-	for key, value := range mp.Map {
+	for _, key := range mp.OrderedMap.Keys() {
+		value, _ := mp.OrderedMap.Get(key)
 		m, ok := mp.GetDynMap(key)
 		if ok {
 			m2, ok := this.GetDynMap(key)
@@ -172,7 +185,8 @@ func (this *DynMap) Merge(mp *DynMap) *DynMap {
 // can be used a cache key
 func (this *DynMap) MarshalUrl() (string, error) {
 	vals := &url.Values{}
-	for key, value := range this.Map {
+	for _, key := range this.OrderedMap.Keys() {
+		value, _ := this.OrderedMap.Get(key)
 		err := this.urlEncode(vals, key, value)
 		if err != nil {
 			return "", err
@@ -218,9 +232,10 @@ func (this *DynMap) urlEncode(vals *url.Values, key string, value interface{}) e
 	if IsDynMapConvertable(value) {
 		mp, ok := ToDynMap(value)
 		if !ok {
-			return fmt.Errorf("Unable to convert %s", mp)
+			return fmt.Errorf("Unable to convert %+v", mp)
 		}
-		for k, v := range mp.Map {
+		for _, k := range mp.OrderedMap.Keys() {
+			v, _ := mp.OrderedMap.Get(key)
 			//encode in rails style key[key2]=value
 			this.urlEncode(vals, fmt.Sprintf("%s[%s]", key, k), v)
 		}
@@ -239,28 +254,31 @@ func (this *DynMap) urlEncode(vals *url.Values, key string, value interface{}) e
 }
 
 func (this DynMap) MarshalJSON() ([]byte, error) {
-	bytes, err := json.Marshal(this.Map)
-	return bytes, err
+	return this.OrderedMap.MarshalJSON()
 }
 
 // converts to indented json, throws away any errors
 // this is useful for logging purposes.  MarshalJSON
 // should be used for most uses.
 func (this DynMap) ToJSON() string {
-	bytes, _ := json.MarshalIndent(this.Map, "", "  ")
+	bytes, _ := this.MarshalJSON()
 	return string(bytes)
 }
 
 func (this *DynMap) UnmarshalJSON(bytes []byte) error {
-	return json.Unmarshal(bytes, &this.Map)
+	return this.OrderedMap.UnmarshalJSON(bytes)
 }
 
 func (this *DynMap) Length() int {
-	return len(this.Map)
+	return this.OrderedMap.Length()
 }
 
 func (this *DynMap) IsEmpty() bool {
 	return this.Length() == 0
+}
+
+func (this *DynMap) Keys() []string {
+	return this.OrderedMap.Keys()
 }
 
 // Gets the value at the specified key as an int64.  returns -1,false if value not available or is not convertable
@@ -577,11 +595,12 @@ func (this DynMap) AddToSliceWithDot(key string, mp ...interface{}) error {
 // the passed in map must be convertable to a DynMap via ToDynMap.
 // returns false if the passed value is not convertable to dynmap
 func (this *DynMap) PutAll(mp interface{}) bool {
-	dynmap, ok := ToDynMap(mp)
+	dm, ok := ToDynMap(mp)
 	if !ok {
 		return false
 	}
-	for k, v := range dynmap.Map {
+	for _, k := range dm.OrderedMap.Keys() {
+		v, _ := dm.OrderedMap.Get(k)
 		this.Put(k, v)
 	}
 	return true
@@ -616,7 +635,7 @@ func (this *DynMap) PutIfAbsentWithDot(key string, value interface{}) (interface
 // Put's a value into the map
 //
 func (this *DynMap) Put(key string, value interface{}) {
-	this.Map[key] = this.beforePut(value)
+	this.OrderedMap.Set(key, this.beforePut(value))
 }
 
 func (this *DynMap) beforePut(value interface{}) interface{} {
@@ -644,23 +663,23 @@ func (this *DynMap) PutWithDot(key string, value interface{}) error {
 		return nil
 	}
 	mapKeys := splitStr[:(len(splitStr) - 1)]
-	var mp = this.Map
+	var mp = this.OrderedMap
 	for _, k := range mapKeys {
-		tmp, o := mp[k]
+		tmp, o := mp.Get(k)
 		if !o {
 			//create a new map and insert
-			newmap := make(map[string]interface{})
-			mp[k] = newmap
+			newmap := NewOrderedMap()
+			mp.Set(k, newmap)
 			mp = newmap
 		} else {
-			mp, o = ToMap(tmp)
+			mp, o = ToOrderedMap(tmp)
 			if !o {
 				//error
 				return errors.New("Error, value at key was not a map")
 			}
 		}
 	}
-	mp[splitStr[len(splitStr)-1]] = this.beforePut(value)
+	mp.Set(splitStr[len(splitStr)-1], this.beforePut(value))
 	return nil
 }
 
@@ -677,9 +696,9 @@ func (dm *DynMap) RemoveAll(key ...string) {
 
 //Remove a mapping
 func (this *DynMap) Remove(key string) (interface{}, bool) {
-	val, ok := this.Map[key]
+	val, ok := this.OrderedMap.Get(key)
 	if ok {
-		delete(this.Map, key)
+		this.OrderedMap.Delete(key)
 		return val, true
 	}
 	// dot op..
@@ -687,18 +706,18 @@ func (this *DynMap) Remove(key string) (interface{}, bool) {
 	if len(splitStr) == 1 {
 		return val, false
 	}
-	var mp = this.Map
+	var mp = this.OrderedMap
 	for index, k := range splitStr {
-		tmp, o := mp[k]
+		tmp, o := mp.Get(k)
 		if !o {
 			return val, ok
 		}
 
 		if index == (len(splitStr) - 1) {
-			delete(mp, k)
+			mp.Delete(k)
 			return tmp, o
 		} else {
-			mp, o = ToMap(tmp)
+			mp, o = ToOrderedMap(tmp)
 			if !o {
 				return val, ok
 			}
@@ -723,7 +742,7 @@ func (this *DynMap) Must(key string, def interface{}) interface{} {
 // if no value is present it will look for a sub map at key 'map'
 //
 func (this *DynMap) Get(key string) (interface{}, bool) {
-	val, ok := this.Map[key]
+	val, ok := this.OrderedMap.Get(key)
 	if ok {
 		return val, true
 	}
@@ -733,9 +752,9 @@ func (this *DynMap) Get(key string) (interface{}, bool) {
 		return val, false
 	}
 
-	var mp = this.Map
+	var mp = this.OrderedMap
 	for index, k := range splitStr {
-		tmp, o := mp[k]
+		tmp, o := mp.Get(k)
 		if !o {
 			return val, ok
 		}
@@ -743,7 +762,7 @@ func (this *DynMap) Get(key string) (interface{}, bool) {
 		if index == (len(splitStr) - 1) {
 			return tmp, o
 		} else {
-			mp, o = ToMap(tmp)
+			mp, o = ToOrderedMap(tmp)
 			if !o {
 				return val, ok
 			}

@@ -171,11 +171,11 @@ func ToDynMap(value interface{}) (*DynMap, bool) {
 		return v.ToDynMap(), true
 	case map[string]interface{}:
 		dynmap := New()
-		dynmap.Map = v
+		dynmap.OrderedMap = NewOrderedMapFromMap(v)
 		return dynmap, true
 	case *map[string]interface{}:
 		dynmap := New()
-		dynmap.Map = *v
+		dynmap.OrderedMap = NewOrderedMapFromMap(*v)
 		return dynmap, true
 	case map[string]string:
 		dynmap := New()
@@ -189,6 +189,10 @@ func ToDynMap(value interface{}) (*DynMap, bool) {
 			dynmap.Put(k, v)
 		}
 		return dynmap, true
+	case OrderedMap:
+		return CreateFromOrderedMap(&v), true
+	case *OrderedMap:
+		return CreateFromOrderedMap(v), true
 	case DynMap:
 		return &v, true
 	case *DynMap:
@@ -200,16 +204,16 @@ func ToDynMap(value interface{}) (*DynMap, bool) {
 //
 // attempts to convert the given value to a map.
 // returns
-func ToMap(value interface{}) (map[string]interface{}, bool) {
+func ToOrderedMap(value interface{}) (*OrderedMap, bool) {
 	switch v := value.(type) {
 	case map[string]interface{}:
-		return v, true
+		return NewOrderedMapFromMap(v), true
 	case *map[string]interface{}:
-		return *v, true
+		return NewOrderedMapFromMap(*v), true
 	default:
 		dynmap, ok := ToDynMap(value)
 		if ok {
-			return dynmap.Map, true
+			return dynmap.OrderedMap, true
 		}
 	}
 	return nil, false
