@@ -1,35 +1,40 @@
 {
-    "params": {
-        "from": "0,0",
-        "to": "1,1",
-        "svg": "M 0,0 L 3,0"
-    },
-    "parts": [
-        {   
-            "components": [
-                {
-                    "type": "basic_edge",
-                    "custom_component": {
-                        "type": "svg_edge"
-                    },
-                    "components" : [
-                        {
-                            "type": "draw",
-                            "commands": [
-                                {
-                                    "command": "move",
-                                    "to": "0,0"
-                                },
-                                {
-                                    "command": "svg_connect_to",
-                                    "to": "width,0",
-                                    "svg": "svg"
-                                }
-                            ]  
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+  "params":{
+    "from": "0,0",
+    "to": "1,1",
+    "svg": "M 0,0 L 3,0"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "basic_edge",
+                "custom_component": {
+                    "type": "svg_edge"
+                },
+                "components": [
+                    {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": "0,0"
+                            },
+                            {
+                                "command": "svg_connect_to",
+                                "to": "width,0",
+                                "svg": "svg"
+                            }
+                        ],
+                        "id": "oemJCGRphZjibJGP"
+                    }
+                ],
+                "id": "vBRheHOWibCmstpc"
+            }
+        ],
+        "id": "eTDgwKPRYQHeHueP",
+        "type": ""
+    }
+]
 }

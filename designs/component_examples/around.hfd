@@ -1,41 +1,47 @@
 {
-    "imports": [
-        {"path": "designs/common/rectangle.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "around_radius": 2,
-        "around_num_edges": 9
-    },
-    "parts": [
-        {
-            "components": [
-                {
-                    "type" : "around", 
-                    "num_edges": "around_num_edges",
-                    "radius": "around_radius",
-                    "repeatable": {                        
-                        "type": "draw",
-                        "transforms": [
-                            // move to the center of the length                           
-                            {
-                                "type" : "move",
-                                "to" : "around__length / 2, 0",
-                                "handle" : "$BOTTOM_MIDDLE"
-                            }
-                        ],
-                        "commands": [
-                            {
-                                "command": "rectangle",
-                                "width": "around__length - .3",
-                                "height": ".2"
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-    ]
+  "imports":[
+    {
+        "path": "designs/common/rectangle.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "around_radius": 2,
+    "around_num_edges": 9
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "around",
+                "num_edges": "around_num_edges",
+                "radius": "around_radius",
+                "repeatable": {
+                    "type": "draw",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "around__length / 2, 0",
+                            "handle": "$BOTTOM_MIDDLE"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "rectangle",
+                            "width": "around__length - .3",
+                            "height": ".2"
+                        }
+                    ]
+                },
+                "id": "RLmciVEWlUwPHdPi"
+            }
+        ],
+        "id": "TxRINKSzjAIvxBRD",
+        "type": ""
+    }
+]
 }

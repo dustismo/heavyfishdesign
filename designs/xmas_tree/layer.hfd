@@ -1,82 +1,83 @@
 {
-    "params": {
-        "width": 4,
-        "stem_width": 0.5,
-        "offset": 0.0035,
-        "material_thickness": 0.2,
-        "rotation": 0,
-        "branch_widener": 0,
-        "layer_svg": "M355.68,1207.11C355.68,1207.74 447.232,1189.84 458.28,1207.04C469.328,1224.25 478.325,1304.92 504.396,1299.93C530.467,1294.94 536.224,1196.35 551.322,1200.95C566.42,1205.55 638.435,1292.96 651.805,1270.8C665.176,1248.64 668.891,1176.54 656.957,1156.03C645.023,1135.52 760.745,1162.57 757.85,1145.92C754.956,1129.28 700.762,1067.06 715.579,1036.96C730.397,1006.86 821.603,1009.24 821.603,1009.24C846.494,983.823 686.75,916.191 687.683,925.852C690.207,951.977 718.668,829.796 718.668,829.796C675.713,830.72 665.66,838.469 611.899,864C611.899,864 593.669,762.516 576,751.223C558.331,739.93 520.164,810.281 490.054,834.397C459.943,858.514 358.337,819.634 345.625,864C332.914,908.366 384.883,944.406 390.607,951.318C396.331,958.23 319.381,991.094 319.381,1020.21C319.381,1049.33 392.173,1061.66 391.828,1095.35C391.482,1129.03 355.68,1206.47 355.68,1207.11"
-    },
-    "parts": [
-        {
-            "custom_component": {
-                "type": "tree_layer"
+  "params":{
+    "width": 4,
+    "stem_width": 0.5,
+    "offset": 0.0035,
+    "material_thickness": 0.2,
+    "rotation": 0,
+    "branch_widener": 0,
+    "layer_svg": "M355.68,1207.11C355.68,1207.74 447.232,1189.84 458.28,1207.04C469.328,1224.25 478.325,1304.92 504.396,1299.93C530.467,1294.94 536.224,1196.35 551.322,1200.95C566.42,1205.55 638.435,1292.96 651.805,1270.8C665.176,1248.64 668.891,1176.54 656.957,1156.03C645.023,1135.52 760.745,1162.57 757.85,1145.92C754.956,1129.28 700.762,1067.06 715.579,1036.96C730.397,1006.86 821.603,1009.24 821.603,1009.24C846.494,983.823 686.75,916.191 687.683,925.852C690.207,951.977 718.668,829.796 718.668,829.796C675.713,830.72 665.66,838.469 611.899,864C611.899,864 593.669,762.516 576,751.223C558.331,739.93 520.164,810.281 490.054,834.397C459.943,858.514 358.337,819.634 345.625,864C332.914,908.366 384.883,944.406 390.607,951.318C396.331,958.23 319.381,991.094 319.381,1020.21C319.381,1049.33 392.173,1061.66 391.828,1095.35C391.482,1129.03 355.68,1206.47 355.68,1207.11"
+}
+,
+  "parts":[
+    {
+        "custom_component": {
+            "type": "tree_layer"
+        },
+        "components": [
+            {
+                "type": "draw",
+                "id": "xmax_layer",
+                "transforms": [
+                    {
+                        "type": "cleanup"
+                    },
+                    {
+                        "type": "trim"
+                    },
+                    {
+                        "type": "rotate",
+                        "degrees": "rotation"
+                    },
+                    {
+                        "type": "scale",
+                        "width": "width",
+                        "height": "width"
+                    },
+                    {
+                        "type": "offset",
+                        "distance": "branch_widener",
+                        "size_should_be": "larger"
+                    },
+                    {
+                        "type": "move",
+                        "to": "0,0",
+                        "handle": "$TOP_LEFT"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "svg",
+                        "svg": "layer_svg"
+                    }
+                ]
             },
-            "components": [
-                {
-                    "type": "draw",
-                    "id": "xmax_layer",
-                    "transforms" : [
-                        {
-                            "type" : "cleanup"
-                        },
-                        {
-                            "type" : "trim"
-                        },
-                        {
-                            "type" : "rotate",
-                            "degrees" : "rotation"
-                        },
-                        {
-                            "type" : "scale",
-                            "width" : "width",
-                            "height": "width"
-                        },
-                        {
-                            "type": "offset",
-                            "distance" : "branch_widener",
-                            "size_should_be" : "larger"
-                        },
-                        {
-                            "type" : "move",
-                            "to" : "0,0",
-                            "handle" : "$TOP_LEFT"
-                        }
-                        
-                    ],
-                    "commands": [
-                        {
-                            "command": "svg",
-                            "svg": "layer_svg"
-                        }
-                    ]
-                },
-                {
-                    "type": "draw",
-                    "id": "xmax_layer_hole",
-                    "transforms" : [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        },
-                        {
-                            "type": "move",
-                            "to": "width/2, width/2",
-                            "handle": "$MIDDLE_MIDDLE"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "rectangle",
-                            "width": "material_thickness",
-                            "height": "stem_width"
-                        }
-                    ]
-                }
-
-            ]
-        }
-    ]
+            {
+                "type": "draw",
+                "id": "xmax_layer_hole",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    },
+                    {
+                        "type": "move",
+                        "to": "width/2, width/2",
+                        "handle": "$MIDDLE_MIDDLE"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "rectangle",
+                        "width": "material_thickness",
+                        "height": "stem_width"
+                    }
+                ]
+            }
+        ],
+        "id": "amniAfNodNFTYvJW",
+        "type": ""
+    }
+]
 }

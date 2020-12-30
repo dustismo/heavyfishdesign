@@ -1,60 +1,74 @@
 {
-    "imports": [
-        {"path": "designs/joints/finger_joint_plug.hfd"},
-        {"path": "designs/joints/finger_joint_socket.hfd"},
-        {"path": "designs/joints/line.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_depth": "material_thickness",
-        "width": 10,
-        "height": 10
+  "imports":[
+    {
+        "path": "designs/joints/finger_joint_plug.hfd"
     },
-    "parts": [
-        {
-            "custom_component" : {
-                "type": "cabinet_joystick_panel"
+    {
+        "path": "designs/joints/finger_joint_socket.hfd"
+    },
+    {
+        "path": "designs/joints/line.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "finger_width": 0.3,
+    "finger_height": 0.2,
+    "finger_space": 0.2,
+    "finger_depth": "material_thickness",
+    "width": 10,
+    "height": 10
+}
+,
+  "parts":[
+    {
+        "custom_component": {
+            "type": "cabinet_joystick_panel"
+        },
+        "transforms": [
+            {
+                "type": "join",
+                "close_path": "true"
             },
-            "transforms": [
-                {
-                    "type": "join",
-                    "close_path" : "true"
-                },
-                {
-                    "type": "offset",
-                    "distance" : "offset",
-                    "size_should_be" : "larger"
-                }
-            ],
-            "components": [
-                {
-                    "type" : "line",
-                    "from" : "0,0",
-                    "to" : "width,0"
-                },
-                {
-                    "type": "finger_joint_plug",
-                    "from": "width,0",
-                    "to" : "width,height"
-                },
-                {
-                    "type": "finger_joint_plug",
-                    "finger_height": "material_thickness * 1.1", // add a little height because this is joined at an angle
-                    "from" : "width,height",
-                    "to" : "0,height"
-                },
-                {
-                    "type": "finger_joint_plug",
-                    "from": "0,height",
-                    "to" : "0,0"
-                }
-            ]
-        }
-    ]
+            {
+                "type": "offset",
+                "distance": "offset",
+                "size_should_be": "larger"
+            }
+        ],
+        "components": [
+            {
+                "type": "line",
+                "from": "0,0",
+                "to": "width,0",
+                "id": "UMgbIhVnuuXpPxrB"
+            },
+            {
+                "type": "finger_joint_plug",
+                "from": "width,0",
+                "to": "width,height",
+                "id": "hnUwhvrHGPTNAVlI"
+            },
+            {
+                "type": "finger_joint_plug",
+                "finger_height": "material_thickness * 1.1",
+                "from": "width,height",
+                "to": "0,height",
+                "id": "krfsduYlzJkUtlWK"
+            },
+            {
+                "type": "finger_joint_plug",
+                "from": "0,height",
+                "to": "0,0",
+                "id": "eFsyZJCDgQLrRSlX"
+            }
+        ],
+        "id": "wgADLZbUfouezpAW",
+        "type": ""
+    }
+]
 }

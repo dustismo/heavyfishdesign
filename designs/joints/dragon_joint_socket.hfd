@@ -1,35 +1,39 @@
 {
-    "imports": [
-        {
-            "type": "svg",
-            "path": "designs/svg/dragon.svg",
-            "alias": "dragon"
-        },
-        {
-            "path": "designs/joints/dragon_joint_plug.hfd"
-        }
-    ],
-    "params": {
-        "dragon_width": 1,
-        "dragon_space": 0.4
+  "imports":[
+    {
+        "type": "svg",
+        "path": "designs/svg/dragon.svg",
+        "alias": "dragon"
     },
-    "parts": [
-        {
-            "id": "dragon_butt_joint",
-            "components": [
-                {
-                    "type": "dragon_joint_plug",
-                    "custom_component": {
-                        "type": "dragon_joint_socket"
-                    },
-                    "transforms": [
-                        {
-                            "type": "mirror",
-                            "axis": "horizontal"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+    {
+        "path": "designs/joints/dragon_joint_plug.hfd"
+    }
+]
+,
+  "params":{
+    "dragon_width": 1,
+    "dragon_space": 0.4
+}
+,
+  "parts":[
+    {
+        "id": "dragon_butt_joint",
+        "components": [
+            {
+                "type": "dragon_joint_plug",
+                "custom_component": {
+                    "type": "dragon_joint_socket"
+                },
+                "transforms": [
+                    {
+                        "type": "mirror",
+                        "axis": "horizontal"
+                    }
+                ],
+                "id": "jbdClcPfErZiTRmU"
+            }
+        ],
+        "type": ""
+    }
+]
 }

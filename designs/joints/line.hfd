@@ -1,35 +1,38 @@
 {
-    "params": {
-        "from": "0,0",
-        "to": "1,1"
-    },
-    "parts": [
-        {   
-            "components": [
-                {
-                    "type": "basic_edge",
-                    "custom_component": {
-                        "type": "line"
-                    },
-                    "components" : [
-                        {
-                            "type": "draw",
-                            "commands": [
-                                {
-                                    "command": "move",
-                                    "to": "0,0"
-                                },
-                                {
-                                    "command": "line",
-                                    "to": "width,0"
-                                }
-                            ]  
-                        }
-                    ]
-                }
-
-                
-            ]
-        }
-    ]
+  "params":{
+    "from": "0,0",
+    "to": "1,1"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "basic_edge",
+                "custom_component": {
+                    "type": "line"
+                },
+                "components": [
+                    {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": "0,0"
+                            },
+                            {
+                                "command": "line",
+                                "to": "width,0"
+                            }
+                        ],
+                        "id": "zTxydBVJcupIQZwI"
+                    }
+                ],
+                "id": "ZqFVPbiwFoMjEUxz"
+            }
+        ],
+        "id": "mDMmgcquneIXiKgQ",
+        "type": ""
+    }
+]
 }

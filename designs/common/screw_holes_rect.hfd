@@ -1,53 +1,57 @@
 {
-    "params": {
-        "width": "2", // width from outer edge to outer edge of the screw holes
-        "height": "2", // height from outer edges of screw holes
-        "diameter": ".225" // the diameter of the screw holes
-    },
-    "parts": [
-        {
-            "components": [
-                {
-                    "type": "draw",
-                    "custom_component": {
-                        "type": "screw_holes_rect"
+  "params":{
+    "width": "2",
+    "height": "2",
+    "diameter": ".225"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "draw",
+                "custom_component": {
+                    "type": "screw_holes_rect"
+                },
+                "commands": [
+                    {
+                        "command": "move",
+                        "to": "0,0"
                     },
-                    "commands": [
-                        {
-                            "command": "move",
-                            "to": "0,0"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "width - diameter, 0"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "width - diameter, height - diameter"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "0, height - diameter"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        }
-                    ]  
-                }
-            ]
-        }
-    ]
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "width - diameter, 0"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "width - diameter, height - diameter"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "0, height - diameter"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    }
+                ],
+                "id": "YaqBhqHzoCIkjKQb"
+            }
+        ],
+        "id": "YFyqjyZdUShIIWpU",
+        "type": ""
+    }
+]
 }

@@ -1,133 +1,142 @@
 {
-    "imports": [
-        {"path": "designs/common/rectangle.hfd"},
-        {"path": "designs/common/circle_with_center_rectangle.hfd"},
-        {
-            "path": "designs/svg/candle_holder_gus.svg",
-            "type": "svg",
-            "alias": "side_view_outline_svg"
-        }
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 11,
-        "material_thickness": 0.2,
-        "candle_radius": 0.75,
-        "candle_height": 0.6,
-        "votive_height": 5,
-        "strut_width": ".3",
-        "side_view_outline": "side_view_outline_svg"
+  "imports":[
+    {
+        "path": "designs/common/rectangle.hfd"
     },
-    "parts": [
-        {
-            "label": {
-                "text": "votive_top"
-            },
-            "part_transformers": [
-                {
-                    "type" : "lathe",
-                    "padding_bottom": "votive_height - candle_height",
-                    "lathe_variable_name": "top_lathe_votive",
-                    "repeat": {
-                        "type": "group",
-                        "components": [
-                            {
-                                "type": "draw",
-                                "commands": [
-                                    {
-                                        "command": "circle",
-                                        "radius": "lathe__width / 2"
-                                    },
-                                    // cut out the candle hole
-                                    {
-                                        "command": "move",
-                                        "to": "(lathe__width / 2) - candle_radius, (lathe__width / 2) - candle_radius"
-                                    },
-                                    {
-                                        "command": "circle",
-                                        "radius": "candle_radius"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ],
-            "components": [
-                // Here we draw the outline
-                {
-                    "transforms": [
+    {
+        "path": "designs/common/circle_with_center_rectangle.hfd"
+    },
+    {
+        "path": "designs/svg/candle_holder_gus.svg",
+        "type": "svg",
+        "alias": "side_view_outline_svg"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 11,
+    "material_thickness": 0.2,
+    "candle_radius": 0.75,
+    "candle_height": 0.6,
+    "votive_height": 5,
+    "strut_width": ".3",
+    "side_view_outline": "side_view_outline_svg"
+}
+,
+  "parts":[
+    {
+        "label": {
+            "text": "votive_top"
+        },
+        "part_transformers": [
+            {
+                "type": "lathe",
+                "padding_bottom": "votive_height - candle_height",
+                "lathe_variable_name": "top_lathe_votive",
+                "repeat": {
+                    "type": "group",
+                    "components": [
                         {
-                            "type": "scale",
-                            "height": "votive_height"
-                        }
-                    ],
-                    "type": "draw",
-                    "commands": [
-                        {
-                            "command": "svg",
-                            "svg": "side_view_outline"
+                            "type": "draw",
+                            "commands": [
+                                {
+                                    "command": "circle",
+                                    "radius": "lathe__width / 2"
+                                },
+                                {
+                                    "command": "move",
+                                    "to": "(lathe__width / 2) - candle_radius, (lathe__width / 2) - candle_radius"
+                                },
+                                {
+                                    "command": "circle",
+                                    "radius": "candle_radius"
+                                }
+                            ]
                         }
                     ]
                 }
-            ]
-        },
-        // draw the bottom, 
-        // this is a copy paste of the top, only padding change and this
-        // does not have the candle hole cutout
-        {
-            "label": {
-                "text": "votive_bottom"
-            },
-            "part_transformers": [
-                {
-                    "type" : "lathe",
-                    "padding_top" : "candle_height",
-                    "lathe_variable_name": "bottom_lathe_votive",
-                    "repeat": {
-                        "type": "group",
-                        "components": [
-                            {
-                                "type": "circle_with_center_rectangle",
-                                "radius": "lathe__width / 2",
-                                "hole_width": "strut_width",
-                                "hole_height": "material_thickness"
-                            }
-                        ]
+            }
+        ],
+        "components": [
+            {
+                "transforms": [
+                    {
+                        "type": "scale",
+                        "height": "votive_height"
                     }
-                }
-            ],
-            "components": [
-                // Here we draw the outline
-                {
-                    "transforms": [
+                ],
+                "type": "draw",
+                "commands": [
+                    {
+                        "command": "svg",
+                        "svg": "side_view_outline"
+                    }
+                ],
+                "id": "uZJUuZkJwQsrzoVW"
+            }
+        ],
+        "id": "xVduzfhinMkGuotV",
+        "type": ""
+    },
+    {
+        "label": {
+            "text": "votive_bottom"
+        },
+        "part_transformers": [
+            {
+                "type": "lathe",
+                "padding_top": "candle_height",
+                "lathe_variable_name": "bottom_lathe_votive",
+                "repeat": {
+                    "type": "group",
+                    "components": [
                         {
-                            "type": "scale",
-                            "height": "votive_height"
-                        }
-                    ],
-                    "type": "draw",
-                    "commands": [
-                        {
-                            "command": "svg",
-                            "svg": "side_view_outline"
+                            "type": "circle_with_center_rectangle",
+                            "radius": "lathe__width / 2",
+                            "hole_width": "strut_width",
+                            "hole_height": "material_thickness"
                         }
                     ]
                 }
-            ]
+            }
+        ],
+        "components": [
+            {
+                "transforms": [
+                    {
+                        "type": "scale",
+                        "height": "votive_height"
+                    }
+                ],
+                "type": "draw",
+                "commands": [
+                    {
+                        "command": "svg",
+                        "svg": "side_view_outline"
+                    }
+                ],
+                "id": "zKaWlfVcjYMcwVxD"
+            }
+        ],
+        "id": "aYedKZpEKrSOKAaK",
+        "type": ""
+    },
+    {
+        "repeat": {
+            "total": "1"
         },
-        {
-            "repeat": {
-                "total" : "1"
-            },
-            "components":[
-                {
-                    "type": "rectangle",
-                    "width": "strut_width",
-                    "height" :"bottom_lathe_votive__total_height"
-                }
-            ]
-        }
-    ]
+        "components": [
+            {
+                "type": "rectangle",
+                "width": "strut_width",
+                "height": "bottom_lathe_votive__total_height",
+                "id": "pwvkbeRKvUdUyRSg"
+            }
+        ],
+        "id": "rnsfUrCFsVySzWtb",
+        "type": ""
+    }
+]
 }

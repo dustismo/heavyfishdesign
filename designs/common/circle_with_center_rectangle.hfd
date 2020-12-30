@@ -1,67 +1,73 @@
 {
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "radius": 5,
-        "hole_width": 0.5,
-        "hole_height": "material_thickness"
-    },
-    "parts": [
-        {
-            "id" : "circle_with_center_rectangle",
-            "custom_component": {
-                "type": "circle_with_center_rectangle"
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "radius": 5,
+    "hole_width": 0.5,
+    "hole_height": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "id": "circle_with_center_rectangle",
+        "custom_component": {
+            "type": "circle_with_center_rectangle"
+        },
+        "components": [
+            {
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "larger"
+                    }
+                ],
+                "type": "draw",
+                "commands": [
+                    {
+                        "command": "move",
+                        "to": {
+                            "x": "0",
+                            "y": "0"
+                        }
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "radius"
+                    }
+                ],
+                "id": "VakGzAALtLhTUZHJ"
             },
-            "components": [
-                {
-                    "transforms": [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
-                        }
-                    ],
-                    "type" : "draw",
-                    "commands" : [
-                        {
-                            "command" : "move",
-                            "to" : {"x": "0", "y": "0"}
+            {
+                "type": "draw",
+                "id": "handle_hole",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    },
+                    {
+                        "type": "move",
+                        "to": {
+                            "x": "radius",
+                            "y": "radius"
                         },
-                        {
-                            "command" : "circle",
-                            "radius" : "radius"
-                        }
-                    ]
-                },
-                {
-                    "type": "draw",
-                    "id": "handle_hole",
-                    "transforms" : [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        },
-                        {
-                            "type": "move",
-                            "to": {
-                                "x" : "radius",
-                                "y" : "radius"
-                            },
-                            "handle": "$MIDDLE_MIDDLE"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "rectangle",
-                            "width": "hole_width",
-                            "height": "hole_height"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+                        "handle": "$MIDDLE_MIDDLE"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "rectangle",
+                        "width": "hole_width",
+                        "height": "hole_height"
+                    }
+                ]
+            }
+        ],
+        "type": ""
+    }
+]
 }

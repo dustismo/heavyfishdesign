@@ -1,58 +1,62 @@
 {
-    "imports": [
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "joystick_diameter": 0.75,
-        "joystick_screw_diameter": 0.1,
-        "joystick_screw_distance": 3
-    },
-    "parts": [
-        {
-            "custom_component" : {
-                "type": "joystick"
-            },
-            "components": [
-                {
-                    "type": "draw",
-                    "transforms": [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "move",
-                            "to": "(joystick_diameter / 2) - (joystick_screw_diameter / 2), 0"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "joystick_screw_diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "0, (joystick_screw_distance / 2) - (joystick_diameter / 2) + (joystick_screw_diameter / 2)"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "joystick_diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "(joystick_diameter / 2) - (joystick_screw_diameter / 2), joystick_screw_distance"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "joystick_screw_diameter / 2"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+  "imports":[]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "joystick_diameter": 0.75,
+    "joystick_screw_diameter": 0.1,
+    "joystick_screw_distance": 3
+}
+,
+  "parts":[
+    {
+        "custom_component": {
+            "type": "joystick"
+        },
+        "components": [
+            {
+                "type": "draw",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "move",
+                        "to": "(joystick_diameter / 2) - (joystick_screw_diameter / 2), 0"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "joystick_screw_diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "0, (joystick_screw_distance / 2) - (joystick_diameter / 2) + (joystick_screw_diameter / 2)"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "joystick_diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "(joystick_diameter / 2) - (joystick_screw_diameter / 2), joystick_screw_distance"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "joystick_screw_diameter / 2"
+                    }
+                ],
+                "id": "diLGLPAxcWXJOpPb"
+            }
+        ],
+        "id": "ZRPuCtaMbnJgcYyK",
+        "type": ""
+    }
+]
 }

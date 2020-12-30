@@ -1,51 +1,56 @@
 {
-    "params": {
-        "from": "0,0",
-        "to": "1,1",
-        "tab_height": "0.2",
-        "tab_width": ".5"
-    },
-    "parts": [
-        {
-            "components": [
-                {
-                    "type": "basic_edge",
-                    "custom_component": {
-                        "type": "tab_joint_plug"
-                    },
-                    "components": [
-                        {
-                            "type": "draw",
-                            "commands": [
-                                {
-                                    "command": "move",
-                                    "to": "0,0"
-                                },
-                                {
-                                    "command": "rel_line",
-                                    "to": "(width - tab_width) / 2,0"
-                                },
-                                {
-                                    "command": "rel_line",
-                                    "to": "0, tab_height"
-                                },
-                                {
-                                    "command": "rel_line",
-                                    "to": "tab_width,0"
-                                },
-                                {
-                                    "command": "rel_line",
-                                    "to": "0, -tab_height"
-                                },
-                                {
-                                    "command": "rel_line",
-                                    "to": "(width - tab_width) / 2,0"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+  "params":{
+    "from": "0,0",
+    "to": "1,1",
+    "tab_height": "0.2",
+    "tab_width": ".5"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "basic_edge",
+                "custom_component": {
+                    "type": "tab_joint_plug"
+                },
+                "components": [
+                    {
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "move",
+                                "to": "0,0"
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": "(width - tab_width) / 2,0"
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": "0, tab_height"
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": "tab_width,0"
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": "0, -tab_height"
+                            },
+                            {
+                                "command": "rel_line",
+                                "to": "(width - tab_width) / 2,0"
+                            }
+                        ],
+                        "id": "qJZVOwpatperGpin"
+                    }
+                ],
+                "id": "QcsXaoKYEPKgntPk"
+            }
+        ],
+        "id": "eCSQWZkKtvXBfVFP",
+        "type": ""
+    }
+]
 }

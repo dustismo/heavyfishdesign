@@ -101,8 +101,10 @@ func (pt *ParamTracker) toKey(key string, elementID string) string {
 	return fmt.Sprintf("%s__%s", key, elementID)
 }
 
-func (pt *ParamTracker) Set(p *Param) {
+// Sets the Param.
+func (pt *ParamTracker) Set(p *Param) error {
 	pt.params[pt.toKey(p.Key, p.ElementID)] = p
+	return nil
 }
 
 func (pt *ParamTracker) SetFromElement(e Element) {

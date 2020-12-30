@@ -1,60 +1,58 @@
 {
-    "imports": [],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "tooth_size": 0.2,
-        "hole_radius": "0.25 / 2",
-        "num_teeth": 22,
-        "num_gears": 1
-    },
-    "parts": [
-        {
-            "repeat": {
-                "total": "num_gears"
+  "imports":[]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "tooth_size": 0.2,
+    "hole_radius": "0.25 / 2",
+    "num_teeth": 22,
+    "num_gears": 1
+}
+,
+  "parts":[
+    {
+        "repeat": {
+            "total": "num_gears"
+        },
+        "components": [
+            {
+                "transforms": [],
+                "type": "gear",
+                "teeth": "num_teeth",
+                "tooth_width": "tooth_size",
+                "gear_variable_name": "gear_25",
+                "id": "eBvZwcJXyXLoetEA"
             },
-            "components": [
-                {
-                    "transforms": [
-                        // {
-                        //     "type": "offset",
-                        //     "distance": "offset",
-                        //     "size_should_be": "larger",
-                        //     "precision": 6
-                        // }
-                    ],
-                    "type": "gear",
-                    "teeth": "num_teeth",
-                    "tooth_width": "tooth_size",
-                    "gear_variable_name": "gear_25"
-                },
-                {
-                    "type": "draw",
-                    "id": "handle_hole",
-                    "transforms": [
-                        {
-                            "type": "offset",
-                            "distance": "offset",
-                            "size_should_be": "smaller"
+            {
+                "type": "draw",
+                "id": "handle_hole",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    },
+                    {
+                        "type": "move",
+                        "to": {
+                            "x": "0",
+                            "y": "0"
                         },
-                        {
-                            "type": "move",
-                            "to": {
-                                "x": "0",
-                                "y": "0"
-                            },
-                            "handle": "$MIDDLE_MIDDLE"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "circle",
-                            "radius": "hole_radius"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+                        "handle": "$MIDDLE_MIDDLE"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "circle",
+                        "radius": "hole_radius"
+                    }
+                ]
+            }
+        ],
+        "id": "HZuUiUFXrgXbHMbj",
+        "type": ""
+    }
+]
 }

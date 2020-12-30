@@ -63,8 +63,10 @@ func extractParams(mp *dynmap.DynMap) *dynmap.DynMap {
 
 func lintPart(part *dynmap.DynMap) *dynmap.DynMap {
 
-	newPart := dynmap.New()
+	// TODO: use this when params is ready
+	// newPart := dynmap.New()
 
+	newPart := part.Clone()
 	newPart.Put("id", part.MustString("id", newId()))
 	newPart.Put("type", part.MustString("type", ""))
 
@@ -79,10 +81,10 @@ func lintPart(part *dynmap.DynMap) *dynmap.DynMap {
 	}
 
 	//  move attributes to params
-	params := extractParams(part)
-	if params.Length() > 0 {
-		newPart.Put("params", params)
-	}
+	// params := extractParams(part)
+	// if params.Length() > 0 {
+	// 	newPart.Put("params", params)
+	// }
 
 	components := []*dynmap.DynMap{}
 	for _, c := range part.MustDynMapSlice("components", []*dynmap.DynMap{}) {
@@ -130,12 +132,12 @@ func LintFile(filename string, save bool, logger *util.HfdLog) error {
 	dm, err := LoadDynMap(filename)
 
 	// normalize params
-	params, _ := dom.ParseParams(dm.MustDynMap("params", dynmap.New()))
-	newParams := dynmap.New()
-	for _, p := range params {
-		newParams.Put(p.Key, p.ToHFD())
-	}
-	dm.Put("params", newParams)
+	// params, _ := dom.ParseParams(dm.MustDynMap("params", dynmap.New()))
+	// newParams := dynmap.New()
+	// for _, p := range params {
+	// 	newParams.Put(p.Key, p.ToHFD())
+	// }
+	// dm.Put("params", newParams)
 
 	parts := []*dynmap.DynMap{}
 	for _, p := range dm.MustDynMapSlice("parts", []*dynmap.DynMap{}) {

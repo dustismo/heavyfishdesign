@@ -1,50 +1,53 @@
 {
-    "params": {
-        "width": 0.5,
-        "stem_width": 0.25,
-        "offset": 0.0035,
-        "material_thickness": 0.2
-    },
-    "parts": [
-        {
-            "custom_component": {
-                "type": "spacer"
+  "params":{
+    "width": 0.5,
+    "stem_width": 0.25,
+    "offset": 0.0035,
+    "material_thickness": 0.2
+}
+,
+  "parts":[
+    {
+        "custom_component": {
+            "type": "spacer"
+        },
+        "components": [
+            {
+                "type": "draw",
+                "id": "spacer",
+                "commands": [
+                    {
+                        "command": "circle",
+                        "radius": "width / 2"
+                    }
+                ]
             },
-            "components": [
-                {
-                    "type": "draw",
-                    "id": "spacer",
-                    "commands": [
-                        {
-                            "command": "circle",
-                            "radius": "width / 2"
-                        }
-                    ]
-                },
-                {
-                    "type": "draw",
-                    "id": "xmax_layer_hole",
-                    "transforms" : [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        },
-                        {
-                            "type": "move",
-                            "to": "width/2, width/2",
-                            "handle": "$MIDDLE_MIDDLE"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "rectangle",
-                            "width": "material_thickness",
-                            "height": "stem_width"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+            {
+                "type": "draw",
+                "id": "xmax_layer_hole",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    },
+                    {
+                        "type": "move",
+                        "to": "width/2, width/2",
+                        "handle": "$MIDDLE_MIDDLE"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "rectangle",
+                        "width": "material_thickness",
+                        "height": "stem_width"
+                    }
+                ]
+            }
+        ],
+        "id": "OrwuzbCOiutbzIxG",
+        "type": ""
+    }
+]
 }

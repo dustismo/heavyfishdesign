@@ -1,57 +1,62 @@
 {
-    "imports": [
-        {
-            "path": "designs/svg/dala_horse.svg",
-            "type": "svg",
-            "alias": "dala_horse"
-        }
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "slot_height": ".1",
-        "slot_spacing": ".1"
-    },
-    "parts": [
-        {
-            "components": [
-                {
-                    "type" : "xintercept", 
-                    "repeat_spacing": "slot_spacing",
-                    "outline": {
-                        "transforms": [
-                            {
-                                "type": "scale",
-                                "width": "3"
-                            }
-                        ],
-                        "type": "draw",
-                        "commands": [
-                            {
-                                "command": "svg",
-                                "svg": "dala_horse"
-                            }
-                        ]
-                    },
-                    "repeatable": {                        
-                        "type": "draw",
-                        "transforms": [
-                            { 
-                                "type" : "move",
-                                "to": "xintercept__from__x, xintercept__from__y"
-                            }
-                        ],
-                        "commands": [
-                            {
-                                "command": "rectangle",
-                                "width": "xintercept__length",
-                                "height": "slot_height"
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-    ]
+  "imports":[
+    {
+        "path": "designs/svg/dala_horse.svg",
+        "type": "svg",
+        "alias": "dala_horse"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "slot_height": ".1",
+    "slot_spacing": ".1"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "xintercept",
+                "repeat_spacing": "slot_spacing",
+                "outline": {
+                    "transforms": [
+                        {
+                            "type": "scale",
+                            "width": "3"
+                        }
+                    ],
+                    "type": "draw",
+                    "commands": [
+                        {
+                            "command": "svg",
+                            "svg": "dala_horse"
+                        }
+                    ]
+                },
+                "repeatable": {
+                    "type": "draw",
+                    "transforms": [
+                        {
+                            "type": "move",
+                            "to": "xintercept__from__x, xintercept__from__y"
+                        }
+                    ],
+                    "commands": [
+                        {
+                            "command": "rectangle",
+                            "width": "xintercept__length",
+                            "height": "slot_height"
+                        }
+                    ]
+                },
+                "id": "LHqeeizRbUesPXmQ"
+            }
+        ],
+        "id": "WeJSYZBjGdAeQxmv",
+        "type": ""
+    }
+]
 }

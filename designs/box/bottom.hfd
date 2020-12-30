@@ -1,61 +1,74 @@
 {
-    "imports": [
-        {"path": "designs/joints/finger_joint_holes.hfd"},
-        {"path": "designs/joints/finger_joint_plug.hfd"},
-        {"path": "designs/joints/finger_joint_socket.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "front_width": 5,
-        "side_width": 6,
-        "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_depth": "material_thickness"
+  "imports":[
+    {
+        "path": "designs/joints/finger_joint_holes.hfd"
     },
-    "parts": [
-        {
-            "custom_component": {
-                "type" : "box_bottom"
+    {
+        "path": "designs/joints/finger_joint_plug.hfd"
+    },
+    {
+        "path": "designs/joints/finger_joint_socket.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "front_width": 5,
+    "side_width": 6,
+    "finger_width": 0.3,
+    "finger_height": 0.2,
+    "finger_space": 0.2,
+    "finger_depth": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "custom_component": {
+            "type": "box_bottom"
+        },
+        "id": "box_bottom",
+        "finger_padding": "(finger_space + finger_width) / 2",
+        "transforms": [
+            {
+                "type": "join",
+                "close_path": "true"
             },
-            "id" : "box_bottom",
-            "finger_padding": "(finger_space + finger_width) / 2",
-            "transforms": [
-                {
-                    "type": "join",
-                    "close_path" : "true"
-                },
-                {
-                    "type": "offset",
-                    "distance" : "offset",
-                    "size_should_be" : "larger"
-                }
-            ],
-            "components": [
-                {
-                    "type": "finger_joint_socket",
-                    "from": "0,0",
-                    "to" : "front_width,0"
-                },
-                {
-                    "type": "finger_joint_socket",
-                    "from": "front_width,0",
-                    "to" : "front_width,side_width"
-                },
-                {
-                    "type": "finger_joint_socket",
-                    "from": "front_width,side_width",
-                    "to" : "0,side_width"
-                },
-                {
-                    "type": "finger_joint_socket",
-                    "from": "0,side_width",
-                    "to" : "0,0"
-                }
-            ]
-        }
-    ]
+            {
+                "type": "offset",
+                "distance": "offset",
+                "size_should_be": "larger"
+            }
+        ],
+        "components": [
+            {
+                "type": "finger_joint_socket",
+                "from": "0,0",
+                "to": "front_width,0",
+                "id": "hTHctcuAxhxKQFDa"
+            },
+            {
+                "type": "finger_joint_socket",
+                "from": "front_width,0",
+                "to": "front_width,side_width",
+                "id": "FpLSjFbcXoEFfRsW"
+            },
+            {
+                "type": "finger_joint_socket",
+                "from": "front_width,side_width",
+                "to": "0,side_width",
+                "id": "xPLDnJObCsNVlgTe"
+            },
+            {
+                "type": "finger_joint_socket",
+                "from": "0,side_width",
+                "to": "0,0",
+                "id": "MaPEZQleQYhYzRyW"
+            }
+        ],
+        "type": ""
+    }
+]
 }

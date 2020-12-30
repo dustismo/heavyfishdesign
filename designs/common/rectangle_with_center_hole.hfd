@@ -1,69 +1,75 @@
 {
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "width": 5,
-        "height": 6,
-        "hole_width": 0.5,
-        "hole_height": "material_thickness"
-    },
-    "parts": [
-        {
-            "id" : "rectangle_with_center_hole",
-            "custom_component": {
-                "type": "rectangle_with_center_hole"
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "width": 5,
+    "height": 6,
+    "hole_width": 0.5,
+    "hole_height": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "id": "rectangle_with_center_hole",
+        "custom_component": {
+            "type": "rectangle_with_center_hole"
+        },
+        "components": [
+            {
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "larger"
+                    }
+                ],
+                "type": "draw",
+                "commands": [
+                    {
+                        "command": "move",
+                        "to": {
+                            "x": "0",
+                            "y": "0"
+                        }
+                    },
+                    {
+                        "command": "rectangle",
+                        "width": "width",
+                        "height": "height"
+                    }
+                ],
+                "id": "qUQnzXSfBigfpkml"
             },
-            "components": [
-                {
-                    "transforms": [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
-                        }
-                    ],
-                    "type" : "draw",
-                    "commands" : [
-                        {
-                            "command" : "move",
-                            "to" : {"x": "0", "y": "0"}
+            {
+                "type": "draw",
+                "id": "handle_hole",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    },
+                    {
+                        "type": "move",
+                        "to": {
+                            "x": "width / 2",
+                            "y": "height / 2"
                         },
-                        {
-                            "command" : "rectangle",
-                            "width" : "width",
-                            "height" : "height"
-                        }
-                    ]
-                },
-                {
-                    "type": "draw",
-                    "id": "handle_hole",
-                    "transforms" : [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        },
-                        {
-                            "type": "move",
-                            "to": {
-                                "x" : "width / 2",
-                                "y" : "height / 2"
-                            },
-                            "handle": "$MIDDLE_MIDDLE"
-                        }
-                    ],
-                    "commands": [
-                        {
-                            "command": "rectangle",
-                            "width": "hole_width",
-                            "height": "hole_height"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+                        "handle": "$MIDDLE_MIDDLE"
+                    }
+                ],
+                "commands": [
+                    {
+                        "command": "rectangle",
+                        "width": "hole_width",
+                        "height": "hole_height"
+                    }
+                ]
+            }
+        ],
+        "type": ""
+    }
+]
 }

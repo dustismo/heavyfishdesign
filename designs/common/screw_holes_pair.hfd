@@ -1,36 +1,40 @@
 {
-    "params": {
-        "width": "2", // width from outer edge to outer edge of the screw holes
-        "diameter": ".2" // the diameter of the screw holes
-    },
-    "parts": [
-        {
-            "components": [
-                {
-                    "type": "draw",
-                    "custom_component": {
-                        "type": "screw_holes_pair"
+  "params":{
+    "width": "2",
+    "diameter": ".2"
+}
+,
+  "parts":[
+    {
+        "components": [
+            {
+                "type": "draw",
+                "custom_component": {
+                    "type": "screw_holes_pair"
+                },
+                "commands": [
+                    {
+                        "command": "move",
+                        "to": "0,0"
                     },
-                    "commands": [
-                        {
-                            "command": "move",
-                            "to": "0,0"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        },
-                        {
-                            "command": "move",
-                            "to": "width - diameter, 0"
-                        },
-                        {
-                            "command": "circle",
-                            "radius": "diameter / 2"
-                        }
-                    ]  
-                }
-            ]
-        }
-    ]
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    },
+                    {
+                        "command": "move",
+                        "to": "width - diameter, 0"
+                    },
+                    {
+                        "command": "circle",
+                        "radius": "diameter / 2"
+                    }
+                ],
+                "id": "XDPizdhpgJsjyBqa"
+            }
+        ],
+        "id": "EhZFxQuvApLIPkPz",
+        "type": ""
+    }
+]
 }

@@ -1,75 +1,91 @@
 {
-    "imports": [
-        {"path": "designs/joints/finger_joint_holes.hfd"},
-        {"path": "designs/joints/finger_joint_plug.hfd"},
-        {"path": "designs/joints/finger_joint_socket.hfd"},
-        {"path": "designs/joints/line.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "width": 5,
-        "height": 6,
-        "roof_gable_height": 4,
-        "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_padding": 0.5,
-        "finger_depth": "material_thickness"
+  "imports":[
+    {
+        "path": "designs/joints/finger_joint_holes.hfd"
     },
-    "parts": [
-        {
-            "id" : "house_side",
-            "custom_component": {
-                "type": "house_side_gabled"
+    {
+        "path": "designs/joints/finger_joint_plug.hfd"
+    },
+    {
+        "path": "designs/joints/finger_joint_socket.hfd"
+    },
+    {
+        "path": "designs/joints/line.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "width": 5,
+    "height": 6,
+    "roof_gable_height": 4,
+    "finger_width": 0.3,
+    "finger_height": 0.2,
+    "finger_space": 0.2,
+    "finger_padding": 0.5,
+    "finger_depth": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "id": "house_side",
+        "custom_component": {
+            "type": "house_side_gabled"
+        },
+        "finger_padding": "(finger_space + finger_width) / 2",
+        "transforms": [
+            {
+                "type": "join",
+                "close_path": "true"
             },
-            "finger_padding": "(finger_space + finger_width) / 2",
-            "transforms": [
-                {
-                    "type": "join",
-                    "close_path" : "true"
-                },
-                {
-                    "type": "offset",
-                    "distance" : "offset",
-                    "size_should_be" : "larger"
-                }
-            ],
-            "components": [
-                {
-                    "type": "finger_joint_plug",
-                    "from" : "0,0",
-                    "to" : "width,0"
-                },
-                {
-                    "type": "finger_joint_socket",
-                    "padding_left": "finger_padding",
-                    "padding_right": "finger_padding + material_thickness",
-                    "from": "width,0",
-                    "to" : "width,height"
-                },
-                {
-                    "type": "finger_joint_plug",
-                    "handle": "$BOTTOM_LEFT",
-                    "from" : "width,height",
-                    "to" : "width / 2,height + roof_gable_height"
-                },
-                {
-                    "type": "finger_joint_plug",
-                    "handle": "$BOTTOM_LEFT",
-                    "from" : "width / 2,height + roof_gable_height",
-                    "to" : "0,height"
-                },
-                {
-                    "type": "finger_joint_socket",
-                    "padding_right": "finger_padding",
-                    "padding_left": "finger_padding + material_thickness",
-                    "from": "0,height",
-                    "to" : "0,0"
-                }
-            ]
-        }
-    ]
+            {
+                "type": "offset",
+                "distance": "offset",
+                "size_should_be": "larger"
+            }
+        ],
+        "components": [
+            {
+                "type": "finger_joint_plug",
+                "from": "0,0",
+                "to": "width,0",
+                "id": "mEGgDvlIlmBAHAhu"
+            },
+            {
+                "type": "finger_joint_socket",
+                "padding_left": "finger_padding",
+                "padding_right": "finger_padding + material_thickness",
+                "from": "width,0",
+                "to": "width,height",
+                "id": "gbQxiFgCyvgCaZae"
+            },
+            {
+                "type": "finger_joint_plug",
+                "handle": "$BOTTOM_LEFT",
+                "from": "width,height",
+                "to": "width / 2,height + roof_gable_height",
+                "id": "fIzHgWbaIuLRUjZA"
+            },
+            {
+                "type": "finger_joint_plug",
+                "handle": "$BOTTOM_LEFT",
+                "from": "width / 2,height + roof_gable_height",
+                "to": "0,height",
+                "id": "gfAWPiLiMltzEiAS"
+            },
+            {
+                "type": "finger_joint_socket",
+                "padding_right": "finger_padding",
+                "padding_left": "finger_padding + material_thickness",
+                "from": "0,height",
+                "to": "0,0",
+                "id": "SecBesONCODDCfHc"
+            }
+        ],
+        "type": ""
+    }
+]
 }

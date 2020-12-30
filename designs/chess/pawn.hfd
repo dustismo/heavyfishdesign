@@ -1,75 +1,88 @@
 {
-    "imports": [
-        {"path": "designs/common/rectangle_with_center_hole.hfd"},
-        {"path": "designs/common/rectangle.hfd"},
-        {
-            "path": "designs/svg/lathe_pawn.svg",
-            "type": "svg",
-            "alias": "pawn"
-        }
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "pawn_height": 2.8
+  "imports":[
+    {
+        "path": "designs/common/rectangle_with_center_hole.hfd"
     },
-    "parts": [
-        {
-            "label": {
-                "text": "pwn"
-            },
-            "part_transformers": [
-                {
-                    "type" : "lathe",
-                    "lathe_variable_name": "lathe_pawn",
-                    "repeat": {
-                        "type": "rectangle_with_center_hole",
-                        "width": "lathe__width",
-                        "height": "lathe__width",
-                        "hole_width": "material_thickness",
-                        "hole_height": "material_thickness"
+    {
+        "path": "designs/common/rectangle.hfd"
+    },
+    {
+        "path": "designs/svg/lathe_pawn.svg",
+        "type": "svg",
+        "alias": "pawn"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "pawn_height": 2.8
+}
+,
+  "parts":[
+    {
+        "label": {
+            "text": "pwn"
+        },
+        "part_transformers": [
+            {
+                "type": "lathe",
+                "lathe_variable_name": "lathe_pawn",
+                "repeat": {
+                    "type": "rectangle_with_center_hole",
+                    "width": "lathe__width",
+                    "height": "lathe__width",
+                    "hole_width": "material_thickness",
+                    "hole_height": "material_thickness"
+                }
+            }
+        ],
+        "components": [
+            {
+                "transforms": [
+                    {
+                        "type": "scale",
+                        "height": "pawn_height"
                     }
-                }
-            ],
-            "components": [
-                {
-                    "transforms": [
-                        {
-                            "type": "scale",
-                            "height": "pawn_height"
-                        }
-                    ],
-                    "type": "draw",
-                    "commands": [
-                        {
-                            "command": "svg",
-                            "svg": "pawn"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "components": [
-                {
-                    "id": "stem",
-                    "type": "rectangle",
-                    "width": "material_thickness",
-                    "height": "lathe_pawn__total_height - material_thickness"
-                }
-            ]
-        },
-        {
-            "components": [
-                {
-                    "id": "pawn_topper",
-                    "type": "rectangle",
-                    "width": "lathe_pawn__top_width",
-                    "height": "lathe_pawn__top_width"
-                }
-            ]
-        }
-    ]
+                ],
+                "type": "draw",
+                "commands": [
+                    {
+                        "command": "svg",
+                        "svg": "pawn"
+                    }
+                ],
+                "id": "pyWsRCkctWdcUosn"
+            }
+        ],
+        "id": "YpTpzlFPhUhSWZdg",
+        "type": ""
+    },
+    {
+        "components": [
+            {
+                "id": "stem",
+                "type": "rectangle",
+                "width": "material_thickness",
+                "height": "lathe_pawn__total_height - material_thickness"
+            }
+        ],
+        "id": "pMVHZdiyeoUqzMJG",
+        "type": ""
+    },
+    {
+        "components": [
+            {
+                "id": "pawn_topper",
+                "type": "rectangle",
+                "width": "lathe_pawn__top_width",
+                "height": "lathe_pawn__top_width"
+            }
+        ],
+        "id": "ItIBhgIvarcSbblm",
+        "type": ""
+    }
+]
 }

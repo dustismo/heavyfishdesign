@@ -1,68 +1,77 @@
-// creates a two layered lid, where the inner layer fits within the box,
-// and has a hole to connect both via a handle
 {
-    "imports": [
-        {"path": "designs/common/rectangle_with_center_hole.hfd"},
-        {"path": "designs/common/stem_with_topper.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "front_width": 5,
-        "side_width": 6,
-        "handle_hole": 0.3, 
-        "stem_topper_svg": "M 425.474 705.105 L 345.318 705.105 C 330.065 705.105 317.682 692.721 317.682 677.468 L 317.682 622.196 C 317.682 606.943 330.065 594.559 345.318 594.559 C 383.050 626.859 417.826 640.878 450.386 641.197 C 482.947 640.878 517.723 626.859 555.455 594.559 C 570.708 594.559 583.091 606.943 583.091 622.196 L 583.091 677.468 C 583.091 692.721 570.708 705.105 555.455 705.105 L 475.298 705.105",
-        "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_depth": "material_thickness"
+  "imports":[
+    {
+        "path": "designs/common/rectangle_with_center_hole.hfd"
     },
-    "parts": [
-        {
-            "id": "inner_rectangle",
-            "custom_component": {
-                "type" : "lid_underside"
-            },
-            "components": [
-                {
-                    "type": "rectangle_with_center_hole",
-                    "hole_width" : "handle_hole",
-                    "hole_height" : "material_thickness",
-                    "width": "front_width - (material_thickness * 2) - (material_thickness * .1)",
-                    "height": "side_width - (material_thickness * 2) - (material_thickness * .1)"        
-                }
-            ]
+    {
+        "path": "designs/common/stem_with_topper.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "front_width": 5,
+    "side_width": 6,
+    "handle_hole": 0.3,
+    "stem_topper_svg": "M 425.474 705.105 L 345.318 705.105 C 330.065 705.105 317.682 692.721 317.682 677.468 L 317.682 622.196 C 317.682 606.943 330.065 594.559 345.318 594.559 C 383.050 626.859 417.826 640.878 450.386 641.197 C 482.947 640.878 517.723 626.859 555.455 594.559 C 570.708 594.559 583.091 606.943 583.091 622.196 L 583.091 677.468 C 583.091 692.721 570.708 705.105 555.455 705.105 L 475.298 705.105",
+    "finger_width": 0.3,
+    "finger_height": 0.2,
+    "finger_space": 0.2,
+    "finger_depth": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "id": "inner_rectangle",
+        "custom_component": {
+            "type": "lid_underside"
         },
-        {
-            "id": "outer_rectangle",
-            "custom_component": {
-                "type" : "lid_top"
-            },
-            "components": [
-                {
-                    "type": "rectangle_with_center_hole",
-                    "hole_width" : "handle_hole",
-                    "hole_height" : "material_thickness",
-                    "width": "front_width",
-                    "height": "side_width"
-                }
-            ]
+        "components": [
+            {
+                "type": "rectangle_with_center_hole",
+                "hole_width": "handle_hole",
+                "hole_height": "material_thickness",
+                "width": "front_width - (material_thickness * 2) - (material_thickness * .1)",
+                "height": "side_width - (material_thickness * 2) - (material_thickness * .1)",
+                "id": "vFOkqIexsFzXzrlc"
+            }
+        ],
+        "type": ""
+    },
+    {
+        "id": "outer_rectangle",
+        "custom_component": {
+            "type": "lid_top"
         },
-        {
-            "id": "handle",
-            "custom_component": {
-                "type" : "lid_handle"
-            },
-            "components": [
-                {
-                    "id" : "lid_handle",
-                    "type": "stem_with_topper",
-                    "stem_width" : "handle_hole",
-                    "stem_height" : "material_thickness * 2"
-                }
-            ]
-        }
-    ]
+        "components": [
+            {
+                "type": "rectangle_with_center_hole",
+                "hole_width": "handle_hole",
+                "hole_height": "material_thickness",
+                "width": "front_width",
+                "height": "side_width",
+                "id": "gpVvlGsXalGqARmn"
+            }
+        ],
+        "type": ""
+    },
+    {
+        "id": "handle",
+        "custom_component": {
+            "type": "lid_handle"
+        },
+        "components": [
+            {
+                "id": "lid_handle",
+                "type": "stem_with_topper",
+                "stem_width": "handle_hole",
+                "stem_height": "material_thickness * 2"
+            }
+        ],
+        "type": ""
+    }
+]
 }

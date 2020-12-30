@@ -1,77 +1,87 @@
 {
-    "imports": [
-        {"path": "designs/joints/finger_joint_holes.hfd"},
-        {"path": "designs/joints/finger_joint_plug.hfd"},
-        {"path": "designs/joints/finger_joint_socket.hfd"},
-        {"path": "designs/common/rectangle.hfd"}
-    ],
-    "params": {
-        "offset": ".0035",
-        "material_width": 20,
-        "material_height": 12,
-        "material_thickness": 0.2,
-        "house_side_width": 5,
-        "house_height": 6,
-        "house_front_width": 4,
-        "roof_gable_height": 4,
-        "roof_overhang": 0.75,
-        "roof_eave": 0.5,
-        "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_padding": 0.5,
-        "finger_depth": "material_thickness"
+  "imports":[
+    {
+        "path": "designs/joints/finger_joint_holes.hfd"
     },
-    "parts": [
-        {
-            "id": "roof_left",
-            "custom_component": {
-                "type": "house_roof"
+    {
+        "path": "designs/joints/finger_joint_plug.hfd"
+    },
+    {
+        "path": "designs/joints/finger_joint_socket.hfd"
+    },
+    {
+        "path": "designs/common/rectangle.hfd"
+    }
+]
+,
+  "params":{
+    "offset": ".0035",
+    "material_width": 20,
+    "material_height": 12,
+    "material_thickness": 0.2,
+    "house_side_width": 5,
+    "house_height": 6,
+    "house_front_width": 4,
+    "roof_gable_height": 4,
+    "roof_overhang": 0.75,
+    "roof_eave": 0.5,
+    "finger_width": 0.3,
+    "finger_height": 0.2,
+    "finger_space": 0.2,
+    "finger_padding": 0.5,
+    "finger_depth": "material_thickness"
+}
+,
+  "parts":[
+    {
+        "id": "roof_left",
+        "custom_component": {
+            "type": "house_roof"
+        },
+        "connect_height": "distance(house_side_width / 2, house_height + roof_gable_height, 0, house_height)",
+        "roof_side_height": "connect_height + roof_overhang",
+        "roof_side_width": "house_front_width + (2 * roof_eave)",
+        "components": [
+            {
+                "type": "rectangle",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "larger"
+                    }
+                ],
+                "width": "roof_side_width",
+                "height": "roof_side_height",
+                "id": "YJryiOdonGiPEVeE"
             },
-            // measure distance to gable
-            // this is the length of the holes connection
-            "connect_height": "distance(house_side_width / 2, house_height + roof_gable_height, 0, house_height)",
-            "roof_side_height" : "connect_height + roof_overhang", 
-            "roof_side_width" : "house_front_width + (2 * roof_eave)",
-            "components": [
-                // first draw the outline
-                // then the finger holes
-                {
-                    "type": "rectangle",
-                    "transforms": [
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
-                        }
-                    ],
-                    "width": "roof_side_width",
-                    "height": "roof_side_height"
-                },
-                {
-                    "type": "group",
-                    "transforms": [
-                        // offset should be smaller for the holes
-                        {
-                            "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "smaller"
-                        }
-                    ],
-                    "components": [
-                        {
-                           "type": "finger_joint_holes",
-                           "from": "roof_eave + material_thickness, 0",
-                           "to": "roof_eave + material_thickness, connect_height"
-                        },
-                        {
-                            "type": "finger_joint_holes",
-                            "from": "roof_side_width - roof_eave, 0",
-                            "to": "roof_side_width - roof_eave, connect_height"
-                         }
-                    ]
-                }
-            ]
-        }
-    ]
+            {
+                "type": "group",
+                "transforms": [
+                    {
+                        "type": "offset",
+                        "distance": "offset",
+                        "size_should_be": "smaller"
+                    }
+                ],
+                "components": [
+                    {
+                        "type": "finger_joint_holes",
+                        "from": "roof_eave + material_thickness, 0",
+                        "to": "roof_eave + material_thickness, connect_height",
+                        "id": "LVQtvCHVUnvRFSKK"
+                    },
+                    {
+                        "type": "finger_joint_holes",
+                        "from": "roof_side_width - roof_eave, 0",
+                        "to": "roof_side_width - roof_eave, connect_height",
+                        "id": "VuFuwDHfeVnEuuoB"
+                    }
+                ],
+                "id": "rJOLxwEQgFXTWLvb"
+            }
+        ],
+        "type": ""
+    }
+]
 }
