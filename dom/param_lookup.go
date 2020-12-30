@@ -75,21 +75,7 @@ func (b *Attr) lookup(param string, recursion int) (interface{}, bool) {
 	if ok {
 		return v, true
 	}
-	// didn't find it, now look at defaults
-	v, ok = b.lookupDefault(b.element, param, recursion)
 	return v, ok
-}
-
-func (b *Attr) lookupDefault(elem Element, param string, recursion int) (interface{}, bool) {
-	v, ok := elem.Defaults().Get(param)
-	if ok {
-		return b.realize(param, v, recursion)
-	}
-	com, ok := elem.(Component)
-	if ok {
-		return b.lookupDefault(com.Parent(), param, recursion+1)
-	}
-	return v, false
 }
 
 func (b *Attr) MustPoint(param string, def path.Point) path.Point {

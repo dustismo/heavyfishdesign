@@ -15,12 +15,6 @@ type Element interface {
 
 	ToDynMap() *dynmap.DynMap
 
-	// The defaults for this element.
-	// Defaults should be accessed LAST, after the entire
-	// graph has been searched for the value.
-	// Note - defaults currently have limited use, since they
-	// are not used when evaluating expressions
-	Defaults() *dynmap.DynMap
 	// @Deprecated
 	Params() *dynmap.DynMap
 
@@ -72,7 +66,6 @@ type BasicElement struct {
 	elementType string
 	originalMap *dynmap.DynMap // The map that this element is parsed from
 	params      *dynmap.DynMap
-	defaults    *dynmap.DynMap
 	doc         *Document // this will only be set for the actual document element (pointer to itself)
 }
 
@@ -93,14 +86,6 @@ func (b *BasicElement) Params() *dynmap.DynMap {
 		b.params = b.ToDynMap().MustDynMap("params", dynmap.New())
 	}
 	return b.params
-}
-
-func (b *BasicElement) Defaults() *dynmap.DynMap {
-	if b.defaults == nil || b.params.Length() == 0 {
-		b.defaults = b.ToDynMap().MustDynMap("defaults", dynmap.New())
-		b.originalMap.Put("defaults", b.defaults)
-	}
-	return b.defaults
 }
 
 func (b *BasicElement) ParamLookerUpper() ParamLookerUpper {
@@ -141,7 +126,6 @@ type BasicComponent struct {
 	elementType string
 	originalMap *dynmap.DynMap // The map that this element is parsed from
 	params      *dynmap.DynMap
-	defaults    *dynmap.DynMap
 	parent      Element
 	children    []Element
 	ctx         RenderContext
@@ -165,13 +149,6 @@ func (b *BasicComponent) Params() *dynmap.DynMap {
 		b.params = b.ToDynMap().MustDynMap("params", dynmap.New())
 	}
 	return b.params
-}
-func (b *BasicComponent) Defaults() *dynmap.DynMap {
-	if b.defaults == nil || b.params.Length() == 0 {
-		b.defaults = b.ToDynMap().MustDynMap("defaults", dynmap.New())
-		b.originalMap.Put("defaults", b.defaults)
-	}
-	return b.defaults
 }
 
 // sets a parameter available to this component and all of its

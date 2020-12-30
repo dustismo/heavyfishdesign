@@ -172,7 +172,6 @@ func (c *Factories) MakeBasicElement(dm *dynmap.DynMap) *BasicElement {
 		elementType: dm.MustString("type", ""),
 		originalMap: dm,
 		params:      dm.MustDynMap("params", dynmap.New()),
-		defaults:    dm.MustDynMap("defaults", dynmap.New()),
 	}
 }
 
@@ -183,7 +182,6 @@ func (c *Factories) MakeBasicComponent(dm *dynmap.DynMap) *BasicComponent {
 		elementType: be.elementType,
 		originalMap: be.originalMap,
 		params:      be.params,
-		defaults:    be.defaults,
 	}
 }
 func (c *Factories) MakePartTransformer(transformType string, dm *dynmap.DynMap, part *Part) (PartTransformer, error) {
@@ -317,11 +315,6 @@ func ParseDocument(dm *dynmap.DynMap, logger *util.HfdLog) (*Document, error) {
 				if len(customType) > 0 {
 					varName := importDm.MustString(fmt.Sprintf("alias.%s", customType), customType)
 					dc.customComponents[varName] = e.(Component)
-					// merge all the document params as the defaults of the
-					// for the current element
-					e.Defaults().Merge(newDoc.Params())
-					// also merge in the params from the document context
-					e.Defaults().Merge(newDoc.Context.Params)
 				}
 			}
 		} else if importType == "svg" {
