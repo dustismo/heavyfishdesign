@@ -1,10 +1,20 @@
 {
     "imports": [
-        {"path": "designs/joints/line.hfd"},
-        {"path": "designs/joints/svg_edge.hfd"},
-        {"path": "designs/joints/finger_joint_plug.hfd"},
-        {"path": "designs/joints/finger_joint_socket.hfd"},
-        {"path": "designs/common/screw_holes_pair.hfd"},
+        {
+            "path": "designs/joints/line.hfd"
+        },
+        {
+            "path": "designs/joints/svg_edge.hfd"
+        },
+        {
+            "path": "designs/joints/finger_joint_plug.hfd"
+        },
+        {
+            "path": "designs/joints/finger_joint_socket.hfd"
+        },
+        {
+            "path": "designs/common/screw_holes_pair.hfd"
+        },
         {
             "path": "designs/svg/squiggle_line.svg",
             "type": "svg",
@@ -21,19 +31,19 @@
         "material_width": 12,
         "material_height": 11,
         "material_thickness": 0.25,
-        "shelf_width": 3,
-        "shelf_front_height": 1,
-        "shelf_back_height": 2,
+        "shelf_width": 6,
+        "shelf_front_height": 2.5,
+        "shelf_back_height": 4,
         "shelf_depth": 5, //11.5,
         "finger_width": 0.2,
         "finger_height": "material_thickness",
         "finger_space": 0.2,
         "finger_depth": "material_thickness",
-        "finger_padding" : 0.2,
-        "side_screw_hole": 0.2,
-        "back_screw_hole": 0.2, 
-        "back_screw_distance_to_edge": 0.75, 
-        "side_svg_edge": "squiggle_line",
+        "finger_padding": 0.2,
+        "side_screw_hole": 0.0,
+        "back_screw_hole": 0.2,
+        "back_screw_distance_to_edge": 0.75,
+        "side_svg_edge": "straight_line",
         "back_svg_edge": "straight_line"
     },
     "parts": [
@@ -45,12 +55,12 @@
                     "transforms": [
                         {
                             "type": "join",
-                            "close_path" : "true"
+                            "close_path": "true"
                         },
                         {
                             "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
+                            "distance": "offset",
+                            "size_should_be": "larger"
                         }
                     ],
                     "components": [
@@ -62,17 +72,17 @@
                         {
                             "type": "finger_joint_socket",
                             "from": "shelf_width,0",
-                            "to" : "shelf_width,shelf_back_height"
+                            "to": "shelf_width,shelf_back_height"
                         },
                         {
                             "type": "finger_joint_plug",
                             "from": "shelf_width,shelf_back_height",
-                            "to" : "0,shelf_back_height"
+                            "to": "0,shelf_back_height"
                         },
                         {
                             "type": "finger_joint_socket",
                             "from": "0,shelf_back_height",
-                            "to" : "0,0"
+                            "to": "0,0"
                         }
                     ]
                 },
@@ -96,16 +106,16 @@
             },
             "components": [
                 {
-                    "type" : "group",
+                    "type": "group",
                     "transforms": [
                         {
                             "type": "join",
-                            "close_path" : "true"
+                            "close_path": "true"
                         },
                         {
                             "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
+                            "distance": "offset",
+                            "size_should_be": "larger"
                         }
                     ],
                     "components": [
@@ -117,17 +127,17 @@
                         {
                             "type": "finger_joint_plug",
                             "from": "shelf_depth,shelf_back_height-shelf_front_height",
-                            "to" : "shelf_depth,shelf_back_height"
+                            "to": "shelf_depth,shelf_back_height"
                         },
                         {
                             "type": "finger_joint_plug",
                             "from": "shelf_depth,shelf_back_height",
-                            "to" : "0,shelf_back_height"
+                            "to": "0,shelf_back_height"
                         },
                         {
                             "type": "finger_joint_plug",
                             "from": "0,shelf_back_height",
-                            "to" : "0,0"
+                            "to": "0,0"
                         }
                     ]
                 },
@@ -142,10 +152,8 @@
                         }
                     ]
                 }
-
             ]
         },
-
         {
             "id": "front",
             "repeat": {
@@ -153,16 +161,16 @@
             },
             "components": [
                 {
-                    "type" : "group",
+                    "type": "group",
                     "transforms": [
                         {
                             "type": "join",
-                            "close_path" : "true"
+                            "close_path": "true"
                         },
                         {
                             "type": "offset",
-                            "distance" : "offset",
-                            "size_should_be" : "larger"
+                            "distance": "offset",
+                            "size_should_be": "larger"
                         }
                     ],
                     "components": [
@@ -174,17 +182,17 @@
                         {
                             "type": "finger_joint_socket",
                             "from": "shelf_width, 0",
-                            "to" : "shelf_width,shelf_front_height"
+                            "to": "shelf_width,shelf_front_height"
                         },
                         {
                             "type": "finger_joint_plug",
                             "from": "shelf_width, shelf_front_height",
-                            "to" : "0,shelf_front_height"
+                            "to": "0,shelf_front_height"
                         },
                         {
                             "type": "finger_joint_socket",
                             "from": "0, shelf_front_height",
-                            "to" : "0,0"
+                            "to": "0,0"
                         }
                     ]
                 }
@@ -195,34 +203,34 @@
             "transforms": [
                 {
                     "type": "join",
-                    "close_path" : "true"
+                    "close_path": "true"
                 },
                 {
                     "type": "offset",
-                    "distance" : "offset",
-                    "size_should_be" : "larger"
+                    "distance": "offset",
+                    "size_should_be": "larger"
                 }
             ],
             "components": [
                 {
                     "type": "finger_joint_socket",
                     "from": "0,0",
-                    "to" : "shelf_width,0"
+                    "to": "shelf_width,0"
                 },
                 {
                     "type": "finger_joint_socket",
                     "from": "shelf_width,0",
-                    "to" : "shelf_width,shelf_depth"
+                    "to": "shelf_width,shelf_depth"
                 },
                 {
                     "type": "finger_joint_socket",
                     "from": "shelf_width,shelf_depth",
-                    "to" : "0,shelf_depth"
+                    "to": "0,shelf_depth"
                 },
                 {
                     "type": "finger_joint_socket",
                     "from": "0,shelf_depth",
-                    "to" : "0,0"
+                    "to": "0,0"
                 }
             ]
         }

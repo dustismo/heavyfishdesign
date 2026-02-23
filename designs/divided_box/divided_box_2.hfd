@@ -6,26 +6,36 @@
 // |-------|
 {
     "imports": [
-        {"path": "designs/box/front_flat_top.hfd"},
-        {"path": "designs/box/bottom.hfd"},
-        {"path": "designs/box/side_flat_top.hfd"},
-        {"path": "designs/joints/finger_joint_holes.hfd"},
-        {"path": "designs/joints/line.hfd"}
+        {
+            "path": "designs/box/front_flat_top.hfd"
+        },
+        {
+            "path": "designs/box/bottom.hfd"
+        },
+        {
+            "path": "designs/box/side_flat_top.hfd"
+        },
+        {
+            "path": "designs/joints/finger_joint_holes.hfd"
+        },
+        {
+            "path": "designs/joints/line.hfd"
+        }
     ],
     "params": {
         "offset": ".0035",
         "material_width": 18,
         "material_height": 11,
         "material_thickness": 0.25,
-        "box_width": 9,
-        "box_height": 11.5,
-        "box_depth": 12,
-        "finger_width": 0.2,
+        "box_width": 2.5, //7.5,
+        "box_height": 2,
+        "box_depth": 4.25, //5,
+        "finger_width": 0.5,
         "finger_height": "material_thickness",
-        "finger_space": 0.2,
+        "finger_space": 0.30,
         "finger_depth": "material_thickness",
-        "finger_padding" : "(finger_space + finger_width) / 2",
-        "divider_1_position": 6
+        "finger_padding": "(finger_space + finger_width) / 2",
+        "divider_1_position": 2.125
     },
     "parts": [
         {
@@ -33,11 +43,13 @@
             "repeat": {
                 "total": 3
             },
-            "components" : [{
-                "type": "front_flat_top",
-                "width": "box_width",
-                "height": "box_height"
-            }]
+            "components": [
+                {
+                    "type": "front_flat_top",
+                    "width": "box_width",
+                    "height": "box_height"
+                }
+            ]
         },
         {
             "id": "side_flat_top",
@@ -59,7 +71,7 @@
                     }
                 }
             ],
-            "components" : [
+            "components": [
                 {
                     "type": "side_flat_top",
                     "width": "box_depth",
@@ -76,7 +88,7 @@
         },
         {
             "id": "bottom",
-            "components" : [
+            "components": [
                 {
                     "type": "box_bottom",
                     "front_width": "box_width",
@@ -84,7 +96,7 @@
                 },
                 {
                     "type": "finger_joint_holes",
-                    "from": "0, divider_1_position", 
+                    "from": "0, divider_1_position",
                     "to": "box_width, divider_1_position"
                 }
             ]
