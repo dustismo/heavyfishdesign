@@ -25,6 +25,8 @@ type RenderedPart struct {
 	Path   path.Path
 	Width  float64
 	Height float64
+	MinX   float64 // bbox min X (path can extend outside 0..Width in design)
+	MinY   float64 // bbox min Y
 	Label  Label
 }
 
@@ -88,7 +90,12 @@ func (p *Part) RenderPart(ctx RenderContext) ([]*RenderedPart, error) {
 		if err != nil {
 			return nil, err
 		}
-		// trim any whitespace
+		// bbox before trim: used by 3D preview so design origin (and finger tabs) align
+		tlPre, _, err := path.BoundingBoxTrimWhitespace(pth, AppContext().SegmentOperators())
+		if err != nil {
+			return nil, err
+		}
+		// trim any whitespace (shifts path so bbox min becomes 0,0)
 		pth, err = transforms.TrimWhitespaceTransform{
 			SegmentOperators: AppContext().SegmentOperators(),
 		}.PathTransform(pth)
@@ -116,6 +123,8 @@ func (p *Part) RenderPart(ctx RenderContext) ([]*RenderedPart, error) {
 			Path:   pth,
 			Width:  width,
 			Height: height,
+			MinX:   tlPre.X,
+			MinY:   tlPre.Y,
 			Label:  label,
 		})
 	}

@@ -262,3 +262,20 @@ func (d *SVGDocument) Parts() []*Part {
 	}
 	return p
 }
+
+// RenderedPartToSVG returns a minimal SVG document for a single part (viewBox + path).
+// Used by the render_parts API for 3D preview. precision is decimal places for path data.
+func RenderedPartToSVG(rp *RenderedPart, precision int, cutStyle string) string {
+	w := rp.Width
+	h := rp.Height
+	if w <= 0 {
+		w = 1
+	}
+	if h <= 0 {
+		h = 1
+	}
+	d := path.SvgString(rp.Path, precision)
+	id := rp.Part.Id()
+	return fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %.3f %.3f"><path id="%s" d="%s" style="%s"/></svg>`,
+		w, h, id, d, cutStyle)
+}
