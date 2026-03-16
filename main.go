@@ -32,7 +32,7 @@ func main() {
 	compareDirectory := flag.String("compare_dir", "designs_rendered", "The Directory to compare the current render to")
 
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated]\n")
+		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated|svg_to_path]\n")
 		return
 	}
 	command := os.Args[1]
@@ -135,8 +135,26 @@ func main() {
 		logger := util.NewLog()
 		logger.LogToStdOut = util.Info
 
+	} else if command == "svg_to_path" {
+		// Output the normalized SVG path string for an SVG file (e.g. for inlining in .hfd params).
+		if len(os.Args) < 3 {
+			fmt.Printf("Usage: go run . svg_to_path <file.svg>\n")
+			return
+		}
+		svgPath := os.Args[2]
+		b, err := ioutil.ReadFile(svgPath)
+		if err != nil {
+			log.Fatalf("read %s: %v", svgPath, err)
+		}
+		logger := util.NewLog()
+		p, err := dom.AppContext().ParseSVG(string(b), logger)
+		if err != nil {
+			log.Fatalf("parse SVG: %v", err)
+		}
+		fmt.Print(path.SvgString(p, dom.AppContext().Precision()))
+		return
 	} else {
-		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated]\n")
+		fmt.Printf("Usage: \n \t$ run main.go [serve|render|render_all|diff_test|designs_updated|svg_to_path]\n")
 	}
 }
 
@@ -242,31 +260,32 @@ func RenderAll(renderDir, outputDir string, logger *util.HfdLog) error {
 	return nil
 }
 
-func renderPlanSet(filename string, params *dynmap.DynMap, logger *util.HfdLog) (*dom.PlanSet, error) {
-	logger.Infof("RENDERING: %s\n", filename)
-	b, err := ioutil.ReadFile(filename) // just pass the file name
+// getDocument parses an HFD file with params and returns the document (no PlanSet).
+func getDocument(filename string, params *dynmap.DynMap, logger *util.HfdLog) (*dom.Document, error) {
+	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	json := string(b) // convert content to a 'string'
-
-	dm, err := dynmap.ParseJSON(json)
+	dm, err := dynmap.ParseJSON(string(b))
 	if err != nil {
 		return nil, err
 	}
 	docParams := dm.MustDynMap("params", dynmap.New()).Clone().Merge(params)
 	dm.Put("params", docParams)
-	doc, err := dom.ParseDocument(dm, logger)
+	return dom.ParseDocument(dm, logger)
+}
+
+func renderPlanSet(filename string, params *dynmap.DynMap, logger *util.HfdLog) (*dom.PlanSet, error) {
+	logger.Infof("RENDERING: %s\n", filename)
+	doc, err := getDocument(filename, params, logger)
 	if err != nil {
 		return nil, err
 	}
 	planset := dom.NewPlanSet(doc)
-
 	context := dom.RenderContext{
 		Origin: path.NewPoint(0, 0),
 		Cursor: path.NewPoint(0, 0),
 	}
-
 	err = planset.Init(context)
 	return planset, err
 }

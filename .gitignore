@@ -17,3 +17,7 @@ docs/build/
 
 # vscode file
 *.code-workspace
+
+# render comparison (before/after)
+hfd_before/
+hfd_after/

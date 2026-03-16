@@ -438,3 +438,18 @@ func DegreesToRadians(degrees float64) float64 {
 func PolarToCartesian(r, theta float64) Point {
 	return NewPoint(r*math.Sin(theta), r*math.Cos(theta))
 }
+
+func ShiftPath(deltaX float64, deltaY float64, path Path, so SegmentOperators) (Path, error) {
+	pt := func(p Point) Point {
+		return NewPoint(p.X+deltaX, p.Y+deltaY)
+	}
+	newPath := []Segment{}
+	for _, seg := range path.Segments() {
+		s, err := so.TransformPoints(seg, pt)
+		if err != nil {
+			return nil, err
+		}
+		newPath = append(newPath, s)
+	}
+	return NewPathFromSegments(newPath), nil
+}

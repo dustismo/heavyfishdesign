@@ -76,6 +76,73 @@ Parameters
     }
 
 
+Edge Types
+~~~~~~~~~~
+
+The ``plug_edge`` and ``socket_edge`` within a splitter accept an edge type object.
+The built-in edge types are:
+
+**line**
+
+A straight butt joint with no profile.
+
+.. code-block:: JSON
+
+    { "type": "line" }
+
+**keyed_edge**
+
+A keyed edge cuts a pocket shaped after a user-supplied SVG silhouette into each
+mating face.  A contrasting inlay key (cut separately) fits the two pockets together,
+turning a plain butt seam into a decorative joint.
+
+The SVG is split horizontally at its midpoint.  The top half defines the ``plug``
+pocket and the bottom half defines the ``socket`` pocket, so the physical key
+sits flush in both faces.  Non-symmetric SVG shapes are fully supported.
+
+Parameters:
+
+* ``key_svg``: SVG path string (or param alias) of the **full** key silhouette.
+  Must be a closed outline.  The path is automatically normalised and scaled.
+* ``key_width``: Width of the key / pocket measured along the seam edge.
+  Defaults to **50% of the total edge length**.
+* ``key_side``: ``"plug"`` (default) or ``"socket"``.
+
+``key_height`` is **not** a parameter — it is derived automatically from the
+SVG's natural aspect ratio so the key shape is always preserved exactly.
+
+.. code-block:: JSON
+
+    {
+        "type": "splitter",
+        "auto_split": true,
+        "plug_edge": {
+            "type":      "keyed_edge",
+            "key_side":  "plug",
+            "key_svg":   "M 0.25 0 L 0.5 0.375 L 0.25 0.75 L 0 0.375 L 0.25 0",
+            "key_width": "spline_width"
+        },
+        "socket_edge": {
+            "type":      "keyed_edge",
+            "key_side":  "socket",
+            "key_svg":   "M 0.25 0 L 0.5 0.375 L 0.25 0.75 L 0 0.375 L 0.25 0",
+            "key_width": "spline_width"
+        }
+    }
+
+The matching key piece (cut from a contrasting material) should be rendered by
+scaling the same ``key_svg`` to ``key_width`` wide using the ``scale`` transform
+with only ``width`` set so the height follows proportionally:
+
+.. code-block:: JSON
+
+    {
+        "type": "draw",
+        "transforms": [ { "type": "scale", "width": "spline_width" } ],
+        "commands": [ { "command": "svg", "svg": "key_svg" } ]
+    }
+
+
 ------------------------------------------------------------------------------------------
 
 

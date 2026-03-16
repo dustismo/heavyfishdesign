@@ -408,6 +408,8 @@ func (p *BasicParamLookerUpper) Lookup(param string) (interface{}, bool) {
 	vStr, isString := v.(string)
 	if isString && isComponent {
 		// try looking this up as a param
+		fmt.Printf("component %+v\n", component)
+		fmt.Printf("PARENT %+v\n", component.Parent())
 		v1, found1 := component.Parent().ParamLookerUpper().Lookup(vStr)
 		if found1 {
 			return v1, found1

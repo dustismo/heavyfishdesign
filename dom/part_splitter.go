@@ -89,8 +89,17 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 		return nil, err
 	}
 
-	// combine the paths
-	topPath = transforms.SimpleJoin{}.JoinPaths(topPath, plugEdgePath)
+	// Combine then join: SimpleJoin concatenates the segments, JoinTransform
+	// then geometrically connects any endpoints that don't meet exactly,
+	// producing a single continuous outline with no MoveSegment gaps.
+	combined := transforms.SimpleJoin{}.JoinPaths(topPath, plugEdgePath)
+	topPath, err = transforms.JoinTransform{
+		Precision:        AppContext().Precision(),
+		SegmentOperators: so,
+	}.PathTransform(combined)
+	if err != nil {
+		return nil, err
+	}
 
 	// now do the other half...
 
@@ -129,8 +138,15 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 	if err != nil {
 		return nil, err
 	}
-	// combine the paths
-	bottomPath = transforms.SimpleJoin{}.JoinPaths(bottomPath, socketEdgePath)
+	// Combine then join (same reasoning as topPath above).
+	combinedBottom := transforms.SimpleJoin{}.JoinPaths(bottomPath, socketEdgePath)
+	bottomPath, err = transforms.JoinTransform{
+		Precision:        AppContext().Precision(),
+		SegmentOperators: so,
+	}.PathTransform(combinedBottom)
+	if err != nil {
+		return nil, err
+	}
 	// flip the bottom path back
 	bp, err := transforms.MirrorTransform{
 		Axis:             transforms.Horizontal,

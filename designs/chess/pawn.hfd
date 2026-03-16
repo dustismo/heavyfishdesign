@@ -1,9 +1,13 @@
 {
     "imports": [
-        {"path": "designs/common/rectangle_with_center_hole.hfd"},
-        {"path": "designs/common/rectangle.hfd"},
         {
-            "path": "designs/svg/lathe_pawn.svg",
+            "path": "designs/common/rectangle_with_center_hole.hfd"
+        },
+        {
+            "path": "designs/common/rectangle.hfd"
+        },
+        {
+            "path": "designs/svg/lathe_pawn2.svg",
             "type": "svg",
             "alias": "pawn"
         }
@@ -12,8 +16,8 @@
         "offset": ".0035",
         "material_width": 20,
         "material_height": 12,
-        "material_thickness": 0.2,
-        "pawn_height": 2.8
+        "material_thickness": 0.25,
+        "pawn_height": 2
     },
     "parts": [
         {
@@ -22,14 +26,21 @@
             },
             "part_transformers": [
                 {
-                    "type" : "lathe",
+                    "type": "lathe",
                     "lathe_variable_name": "lathe_pawn",
                     "repeat": {
-                        "type": "rectangle_with_center_hole",
-                        "width": "lathe__width",
-                        "height": "lathe__width",
-                        "hole_width": "material_thickness",
-                        "hole_height": "material_thickness"
+                        "type": "draw",
+                        "commands": [
+                            {
+                                "command": "circle",
+                                "radius": "lathe__width / 2"
+                            }
+                        ]
+                    },
+                    "repeat_outside": {
+                        "type": "rectangle",
+                        "width": "lathe_pawn__max_width + (2 * material_thickness)",
+                        "height": "lathe_pawn__max_width + (2 * material_thickness)"
                     }
                 }
             ],
@@ -54,20 +65,10 @@
         {
             "components": [
                 {
-                    "id": "stem",
+                    "id": "base",
                     "type": "rectangle",
-                    "width": "material_thickness",
-                    "height": "lathe_pawn__total_height - material_thickness"
-                }
-            ]
-        },
-        {
-            "components": [
-                {
-                    "id": "pawn_topper",
-                    "type": "rectangle",
-                    "width": "lathe_pawn__top_width",
-                    "height": "lathe_pawn__top_width"
+                    "width": "lathe_pawn__max_width + (2 * material_thickness)",
+                    "height": "lathe_pawn__max_width + (2 * material_thickness)"
                 }
             ]
         }

@@ -22,6 +22,15 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		return nil, err
 	}
 
+
+	varName := attr.MustString("lathe_variable_name", "")
+
+
+	fmt.Printf("BOUNDING BOX: %+v  TO %+v\n", outlineTopLeft, outlineBottomRight)
+	maxWidth := outlineBottomRight.X - outlineTopLeft.X
+
+	part.Part.SetGlobalVariable(fmt.Sprintf("%s__max_width", varName), maxWidth)
+
 	thickness := attr.MustFloat64("material_thickness", 0.0)
 	if thickness <= 0 {
 		return nil, fmt.Errorf("Lathe requires material_thickness be set")
@@ -35,6 +44,43 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 
 	paddingTop := attr.MustFloat64("padding_top", 0)
 	paddingBottom := attr.MustFloat64("padding_bottom", 0)
+
+	repeatOutsideDM, shouldInvert := lpt.mp.GetDynMap("repeat_outside")
+	repeatOutsidePadding := attr.MustFloat64("repeat_outside_padding", thickness)
+
+	if shouldInvert {
+		repeatOutside, err := AppContext().MakeComponent(repeatOutsideDM, FindDocumentContext(part.Part))
+		if shouldInvert && err != nil {
+			return nil, err
+		}
+		println("*************")
+		println(repeatOutsideDM.ToJSON())
+
+		println(repeatOutside)
+		println("*************")
+		repeatOutside.SetParent(part.Part)
+
+		// op, _, err := repeatOutside.Render(ctx)
+		// if err != nil {
+		// 	return nil, err
+		// }
+
+		// get the bounding box
+		// tl, br, err := path.BoundingBoxTrimWhitespace(op, so)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		// now center within the bounding box...
+		// xOffset = ((br.X - tl.X) - (outlineBottomRight.X - outlineTopLeft.X)) / 2
+		// println("xOffset")
+		// println(outlineTopLeft.X)
+		// println(outlineBottomRight.X)
+		// // move the outline based on xOffset
+		// outline, err = path.ShiftPath(xOffset, 0, outline, so)
+		// if err != nil {
+		// 	return nil, err
+		// }
+	}
 
 	// set the parent
 	repeat.SetParent(part.Part)
@@ -62,7 +108,10 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		if path.PrecisionEquals(length, 0, AppContext().Precision()) {
 			continue
 		}
+		fmt.Printf("from: %+v\n", from)
+		fmt.Printf("to: %+v\n", to)
 
+		repeat.SetLocalVariable("max_part_width", maxWidth)
 		repeat.SetLocalVariable("from__x", from.X)
 		repeat.SetLocalVariable("from__y", from.Y)
 
@@ -74,6 +123,28 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		p, _, err := repeat.Render(ctx)
 		if err != nil {
 			return nil, err
+		}
+
+		if shouldInvert {
+			// move p to the X offset (in both X and Y)
+			// TODO: we might need a different strategy for centering
+			// in the Y direction
+			p, err = path.ShiftPath(from.X + repeatOutsidePadding, 
+				from.X + repeatOutsidePadding, p, so)
+			if err != nil {
+				return nil, err
+			}
+
+
+			repeatOutside, err := AppContext().MakeComponent(repeatOutsideDM, FindDocumentContext(part.Part))
+			if shouldInvert && err != nil {
+				return nil, err
+			}
+			repeatOutside.SetParent(part.Part)
+			repeatOutside.SetLocalVariable("max_part_width", maxWidth)
+			op, _, err := repeatOutside.Render(ctx)
+			// now combine with p
+			p.AddSegments(op.Segments()...)
 		}
 
 		tl, br, err := path.BoundingBoxTrimWhitespace(p, so)
@@ -104,7 +175,6 @@ func (lpt *LathePartTransform) TransformPart(part *RenderedPart, ctx RenderConte
 		totalHeight = totalHeight + thickness
 	}
 
-	varName := attr.MustString("lathe_variable_name", "")
 	if len(varName) > 0 {
 		part.Part.SetGlobalVariable(fmt.Sprintf("%s__total_height", varName), totalHeight)
 		part.Part.SetGlobalVariable(fmt.Sprintf("%s__top_width", varName), topLength)
