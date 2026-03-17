@@ -82,8 +82,11 @@ func (st ReorderTransform) PathTransform(p path.Path) (path.Path, error) {
 		}
 
 		pList = pL
-		retList = append(retList, p1.Segments()...)
+		// p1 = pth + chosen path; only append the chosen path's segments to avoid duplication
+		n := len(pth.Segments())
+		retList = append(retList, p1.Segments()[n:]...)
 		pth = p1
 	}
-	return DedupSegmentsTransform{Precision: st.Precision}.PathTransform(pth)
+	// Return the full reordered path (all segments in retList), not just the last subpath.
+	return DedupSegmentsTransform{Precision: st.Precision}.PathTransform(path.NewPathFromSegments(retList))
 }

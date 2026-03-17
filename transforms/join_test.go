@@ -124,7 +124,8 @@ func TestJoinAfterOffset(t *testing.T) {
 		t.Errorf("Error %s", err)
 	}
 
-	expectedStr := `M 0.950 -0.050 L 0.950 0.450 L 0.300 0.450 L 0.300 -0.050 L -0.050 -0.050 L -0.050 5.050 L 5.050 5.050 L 5.050 -0.050 L 4.700 -0.050 L 4.700 0.450 L 4.050 0.450 L 4.050 -0.050 L 3.750 -0.050 L 3.450 -0.050 L 3.450 0.450 L 2.800 0.450 L 2.800 -0.050 L 2.500 -0.050 L 2.200 -0.050 L 2.200 0.450 L 1.550 0.450 L 1.550 -0.050 L 1.250 -0.050 L 0.950 -0.050`
+	// ReorderTransform returns the full path; traversal may start at a different vertex (same closed outline).
+	expectedStr := `M 1.550 -0.050 L 1.550 0.450 L 2.200 0.450 L 2.200 -0.050 L 2.500 -0.050 L 2.800 -0.050 L 2.800 0.450 L 3.450 0.450 L 3.450 -0.050 L 3.750 -0.050 L 4.050 -0.050 L 4.050 0.450 L 4.700 0.450 L 4.700 -0.050 L 5.050 -0.050 L 5.050 5.050 L -0.050 5.050 L -0.050 -0.050 L 0.300 -0.050 L 0.300 0.450 L 0.950 0.450 L 0.950 -0.050 L 1.250 -0.050 L 1.550 -0.050`
 	actualStr := path.SvgString(newPath, 3)
 
 	if expectedStr != actualStr {
@@ -296,5 +297,152 @@ func TestJoinSquare(t *testing.T) {
 
 	if expectedStr != actualStr {
 		t.Errorf("Expected: %s\nActual: %s", expectedStr, actualStr)
+	}
+}
+
+// TestJoinKeyedEdgeNonSymmetricKey reproduces the bug where a keyed edge with a
+// non-symmetric key (e.g. chessboard) can "close one side completely" due to
+// JoinTransform (or ReorderTransform) connecting segments in the wrong order.
+// Key path from user: non-symmetric polygon that when HSlice'd and joined must
+// produce a single open edge outline (left straight + key pocket + right straight).
+// Passes when key is oriented left-to-right after the first join (keyed_edge step 8b)
+// and ReorderTransform returns the full reordered path (not just the last subpath).
+func TestJoinKeyedEdgeNonSymmetricKey(t *testing.T) {
+	// Non-symmetric key SVG path (e.g. pawn silhouette) — closed polygon.
+	keySVG := "M 350 183.3333 L 440.4444 172.5 L 455.4966 287.0521 L 350 316.6667 L 305.5556 250 L 350 183.3333"
+	keyPath, err := path.ParsePathFromSvg(keySVG)
+	if err != nil {
+		t.Fatalf("parse key_svg: %v", err)
+	}
+
+	so := path.NewSegmentOperators()
+	precision := 3
+	edgeLen := 200.0
+	keyWidth := 100.0
+
+	// Replicate keyed_edge pipeline: trim, scale, HSlice at mid, mirror, trim, join (key only).
+	keyPath, err = TrimWhitespaceTransform{SegmentOperators: so}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("trim: %v", err)
+	}
+	tl, br, err := path.BoundingBoxTrimWhitespace(keyPath, so)
+	if err != nil {
+		t.Fatalf("bbox: %v", err)
+	}
+	naturalWidth := br.X - tl.X
+	naturalHeight := br.Y - tl.Y
+	if naturalWidth <= 0 || naturalHeight <= 0 {
+		t.Fatalf("key has zero bbox: w=%.4f h=%.4f", naturalWidth, naturalHeight)
+	}
+	keyHeight := keyWidth * (naturalHeight / naturalWidth)
+
+	keyPath, err = ScaleTransform{
+		Width:            keyWidth,
+		Height:           keyHeight,
+		SegmentOperators: so,
+	}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("scale: %v", err)
+	}
+
+	keyPath, err = HSliceTransform{
+		Y:                keyHeight / 2,
+		SegmentOperators: so,
+		Precision:        precision,
+	}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("hslice: %v", err)
+	}
+
+	keyPath, err = MirrorTransform{
+		Axis:             Horizontal,
+		Handle:           path.TopLeft,
+		SegmentOperators: so,
+	}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("mirror: %v", err)
+	}
+	keyPath, err = TrimWhitespaceTransform{SegmentOperators: so}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("trim after mirror: %v", err)
+	}
+
+	// First JoinTransform: reconnect disjoint segments of the key profile (from HSlice).
+	keyPath, err = JoinTransform{
+		Precision:        precision,
+		SegmentOperators: so,
+	}.PathTransform(keyPath)
+	if err != nil {
+		t.Fatalf("join key profile: %v", err)
+	}
+
+	// Orient key left-to-right (same as keyed_edge step 8b) so assembly order is correct.
+	keySegs := path.TrimMove(keyPath.Segments())
+	if len(keySegs) > 0 {
+		ks, ke := path.GetStartAndEnd(keySegs)
+		if ks.X > ke.X {
+			keyPath, err = PathReverse{}.PathTransform(keyPath)
+			if err != nil {
+				t.Fatalf("reverse key: %v", err)
+			}
+		}
+	}
+
+	// Build full edge: left straight + key + right straight (same as keyed_edge step 11).
+	offset := (edgeLen - keyWidth) / 2
+	if offset < 0 {
+		offset = 0
+	}
+	leftDraw := path.NewDraw()
+	leftDraw.MoveTo(path.NewPoint(0, 0))
+	leftDraw.LineTo(path.NewPoint(offset, 0))
+
+	rightDraw := path.NewDraw()
+	rightDraw.MoveTo(path.NewPoint(offset+keyWidth, 0))
+	rightDraw.LineTo(path.NewPoint(edgeLen, 0))
+
+	var allSegs []path.Segment
+	allSegs = append(allSegs, leftDraw.Path().Segments()...)
+	allSegs = append(allSegs, keyPath.Segments()...)
+	allSegs = append(allSegs, rightDraw.Path().Segments()...)
+
+	fullPath, err := JoinTransform{
+		Precision:        precision,
+		SegmentOperators: so,
+	}.PathTransform(path.NewPathFromSegments(allSegs))
+	if err != nil {
+		t.Fatalf("join full edge: %v", err)
+	}
+
+	// Assert: result must be a single contiguous outline (no extra Move = no "closed" side).
+	subpaths := path.SplitPathOnMove(fullPath)
+	if len(subpaths) != 1 {
+		t.Errorf("keyed edge should produce a single contiguous path; got %d subpaths (bug: one side closed). SVG:\n%s",
+			len(subpaths), path.SvgString(fullPath, precision))
+	}
+
+	// Edge outline must span the full seam 0..edgeLen (left straight + key + right straight).
+	// Bug: JoinTransform can connect segments in the wrong order so one side is "closed" or
+	// dropped, and the path no longer reaches x=0 (or x=edgeLen).
+	segs := path.TrimMove(fullPath.Segments())
+	if len(segs) == 0 {
+		t.Errorf("path has no segments after TrimMove")
+		return
+	}
+	start, end := path.GetStartAndEnd(segs)
+	minX := start.X
+	if end.X < minX {
+		minX = end.X
+	}
+	maxX := start.X
+	if end.X > maxX {
+		maxX = end.X
+	}
+	if minX > 1 {
+		t.Errorf("keyed edge bug: path does not reach left side (x=0); minX=%.2f — one side closed or dropped. start=%v end=%v",
+			minX, start, end)
+	}
+	if maxX < edgeLen-1 {
+		t.Errorf("keyed edge bug: path does not reach right side (x=%.0f); maxX=%.2f", edgeLen, maxX)
 	}
 }

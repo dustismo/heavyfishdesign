@@ -169,6 +169,21 @@ func (ke *KeyedEdgeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Rend
 		return nil, ctx, err
 	}
 
+	// ── 8b. Orient key left-to-right so assembly (left + key + right) has correct order.
+	//      ReorderTransform in the final JoinTransform picks "next" by distance; a
+	//      non-symmetric key can end up with start.X > end.X, which can reorder
+	//      subpaths and drop one side. Forcing start.X <= end.X keeps the chain correct.
+	keySegs := path.TrimMove(keyPath.Segments())
+	if len(keySegs) > 0 {
+		ks, ke := path.GetStartAndEnd(keySegs)
+		if ks.X > ke.X {
+			keyPath, err = transforms.PathReverse{}.PathTransform(keyPath)
+			if err != nil {
+				return nil, ctx, err
+			}
+		}
+	}
+
 	// ── 9. Centre the key profile along the edge ──────────────────────────────
 	offset := (edgeLen - keyWidth) / 2
 	if offset < 0 {
