@@ -24,7 +24,8 @@ func (st ScaleTransform) PathTransform(p path.Path) (path.Path, error) {
 	var xScale = st.ScaleX
 	var yScale = st.ScaleY
 	if st.Width > 0 || st.Height > 0 {
-		// measure.
+		// Fit path bbox to target width and/or height. If only one dimension is set, the other
+		// axis uses the same scale factor (uniform); non-uniform scaling requires both set.
 		tl, br, err := path.BoundingBoxTrimWhitespace(p, st.SegmentOperators)
 		if err != nil {
 			return p, err
