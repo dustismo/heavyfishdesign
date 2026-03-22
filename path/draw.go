@@ -134,7 +134,7 @@ func (d *Draw) QCurveTo(controlPoint, point Point) {
 	current := d.CurrentPosition()
 	// control point 1
 	cpx1 := current.X + (2.0/3.0)*(controlPoint.X-current.X)
-	cpy1 := current.Y + (2.0/3.0)*(controlPoint.Y-current.X)
+	cpy1 := current.Y + (2.0/3.0)*(controlPoint.Y-current.Y)
 
 	// control point 2
 	cpx2 := point.X + (2.0/3.0)*(controlPoint.X-point.X)

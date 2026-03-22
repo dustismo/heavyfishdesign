@@ -203,6 +203,23 @@ func (tf SliceTransformFactory) CreateTransform(transformType string, dm *dynmap
 type ScaleTransformFactory struct {
 }
 
+// float64FromTransformMap reads and evaluates a numeric field only if it appears on this transform's
+// JSON object. It does not fall back to parent/part params via Attr.lookup.
+//
+// Without this, a scale like {"type":"scale","width":"…"} would still resolve "height" from the
+// owning part's param "height" (panel height), producing non-uniform X/Y scale and stretching circles.
+func float64FromTransformMap(e Element, dm *dynmap.DynMap, key string, def float64) float64 {
+	v, ok := dm.Get(key)
+	if !ok {
+		return def
+	}
+	f, err := e.ParamLookerUpper().ToFloat64(v)
+	if err != nil {
+		return def
+	}
+	return f
+}
+
 // // The list of component types this Factory should be used for
 func (tf ScaleTransformFactory) TransformTypes() []string {
 	return []string{"scale"}
@@ -216,8 +233,8 @@ func (tf ScaleTransformFactory) CreateTransform(transformType string, dm *dynmap
 	startPoint := attr.MustPoint("start_point", path.NewPoint(0, 0))
 	endPoint := attr.MustPoint("end_point", path.NewPoint(0, 0))
 
-	width := attr.MustFloat64("width", 0)
-	height := attr.MustFloat64("height", 0)
+	width := float64FromTransformMap(element, dm, "width", 0)
+	height := float64FromTransformMap(element, dm, "height", 0)
 
 	return transforms.ScaleTransform{
 		ScaleX:           scaleX,

@@ -2,6 +2,7 @@ package bezier
 
 import (
 	"fmt"
+	"math"
 	"testing"
 )
 
@@ -190,9 +191,10 @@ func TestScale(t *testing.T) {
 	// 3: {x: 149.72145699273443, y: 239.88858279709376}
 
 	points := cubicCurveToArray(result)
-	// test a random point
-	if points[1].X != 25.0407381826544295 {
-		t.Errorf("expected %f, got %f", 25.0407381826544295, points[1].X)
+	// test a random point (use tolerance; float bit patterns differ across platforms)
+	wantX := 25.0407381826544295
+	if math.Abs(points[1].X-wantX) > 1e-12 {
+		t.Errorf("expected %g, got %g", wantX, points[1].X)
 	}
 }
 

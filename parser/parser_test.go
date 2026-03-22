@@ -2,6 +2,7 @@ package parser
 
 import (
 	"io/ioutil"
+	"math"
 	"testing"
 
 	"github.com/dustismo/heavyfishdesign/dom"
@@ -107,6 +108,53 @@ func TestParser(t *testing.T) {
 	}
 	expected := "M 0.000 0.000 L 12.500 0.000 L 10.000 10.000 L 0.000 10.000 L 0.000 0.000"
 	PartRenderEquals(doc.Parts[0], rc, expected, t)
+}
+
+// Regression: scale {"width":…} must not pick up the part's "height" param as the scale transform's
+// target height (Attr.lookup fell through to parent params), which caused non-uniform scaling.
+func TestScaleWidthOnlyDoesNotUsePartHeightParam(t *testing.T) {
+	InitContext()
+	rc := dom.RenderContext{}
+	json := `{
+		"params": {},
+		"parts": [{
+			"params": { "height": 100 },
+			"components": [{
+				"type": "draw",
+				"transforms": [
+					{ "type": "scale", "width": "16" }
+				],
+				"commands": [
+					{ "command": "move", "to": "0, 0" },
+					{ "command": "circle", "radius": 5 }
+				]
+			}]
+		}]
+	}`
+	dm, err := dynmap.ParseJSON(json)
+	if err != nil {
+		t.Fatal(err)
+	}
+	doc, err := dom.ParseDocument(dm, util.NewLog())
+	if err != nil {
+		t.Fatal(err)
+	}
+	pth, _, err := doc.Parts[0].Render(rc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	so := path.NewSegmentOperators()
+	tl, br, err := path.BoundingBoxTrimWhitespace(pth, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w, h := br.X-tl.X, br.Y-tl.Y
+	if w <= 0 || h <= 0 {
+		t.Fatalf("bbox w=%v h=%v", w, h)
+	}
+	if math.Abs(w/h-1) > 0.05 {
+		t.Fatalf("width-only scale with part param height should stay uniform; bbox w=%v h=%v (ratio %v)", w, h, w/h)
+	}
 }
 
 func PartRenderEquals(p *dom.Part, rc dom.RenderContext, expected string, t *testing.T) bool {
