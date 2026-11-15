@@ -11,9 +11,9 @@
         "material_height": 12,
         "material_thickness": 0.2,
         "finger_width": 0.3,
-        "finger_height": 0.2,
+        "finger_height": "material_thickness",
+        "finger_recess": "material_thickness",
         "finger_space": 0.2,
-        "finger_depth": "material_thickness",
         "width": 10,
         "height": 10
     },

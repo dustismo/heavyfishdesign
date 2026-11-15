@@ -17,10 +17,10 @@
         "roof_overhang": 0.75,
         "roof_eave": 0.5,
         "finger_width": 0.3,
-        "finger_height": 0.2,
+        "finger_height": "material_thickness",
+        "finger_recess": "material_thickness",
         "finger_space": 0.2,
-        "finger_padding": 0.5,
-        "finger_depth": "material_thickness"
+        "finger_padding": 0.5
     },
     "parts": [
         {

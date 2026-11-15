@@ -12,9 +12,9 @@
         "front_width": 5,
         "side_width": 6,
         "finger_width": 0.3,
-        "finger_height": 0.2,
-        "finger_space": 0.2,
-        "finger_depth": "material_thickness"
+        "finger_height": "material_thickness",
+        "finger_recess": "material_thickness",
+        "finger_space": 0.2
     },
     "parts": [
         {

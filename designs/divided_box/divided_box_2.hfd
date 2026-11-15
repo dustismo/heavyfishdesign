@@ -32,8 +32,8 @@
         "box_depth": 4.25, //5,
         "finger_width": 0.5,
         "finger_height": "material_thickness",
+        "finger_recess": "material_thickness",
         "finger_space": 0.30,
-        "finger_depth": "material_thickness",
         "finger_padding": "(finger_space + finger_width) / 2",
         "divider_1_position": 2.125
     },

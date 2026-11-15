@@ -22,8 +22,8 @@
         "material_thickness": 0.25,
         "finger_width": 0.3,
         "finger_height": "material_thickness",
+        "finger_recess": "material_thickness",
         "finger_space": 0.2,
-        "finger_depth": "material_thickness",
         "marquee_angle": -15,
         "cabinet_depth": 10.5,  
         "cabinet_width": 11, // looking at the screen, this is the width 
