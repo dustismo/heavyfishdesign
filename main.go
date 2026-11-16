@@ -201,7 +201,7 @@ func CompareDirectories(left string, right string, extension string, logger *uti
 							"diff":     diff.DiffPrettyText(diffs),
 							"file1":    l,
 							"file2":    r,
-						}), diff.DiffPrettyText(diffs))
+						}), "%s", diff.DiffPrettyText(diffs))
 
 					} else {
 						loggerL.Infof("Files are equal!")

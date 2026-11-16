@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/dustismo/heavyfishdesign/dynmap"
+	"github.com/tdewolff/canvas"
 )
 
 type SvgCommand rune
@@ -33,8 +34,24 @@ const (
 	relQCurveCommand      SvgCommand = 'q'
 )
 
+// ParsePathFromSvg parses an SVG path d string into Move, Line, and cubic Curve
+// segments. Commands this parser already accepts stay on that path so rendered
+// designs do not change. H, V, Q, T, A, and implicit command repeats are parsed
+// with canvas. Z is still ignored, matching the historical parser.
+func ParsePathFromSvg(svg string) (Path, error) {
+	p, err := parsePathFromSvgLegacy(svg)
+	if err == nil {
+		return p, nil
+	}
+	cp, cerr := canvas.ParseSVGPath(svg)
+	if cerr != nil {
+		return p, err
+	}
+	return PathFromCanvas(cp), nil
+}
+
 // parses a path from the SVG style string
-func ParsePathFromSvg(path string) (Path, error) {
+func parsePathFromSvgLegacy(path string) (Path, error) {
 
 	d := NewDraw()
 	// Now we normalize to make parsing easier.
