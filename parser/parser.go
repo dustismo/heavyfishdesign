@@ -24,6 +24,7 @@ func InitContext() {
 		components.XInterceptComponentFactory{},
 		components.AroundComponentFactory{},
 		components.GearComponentFactory{},
+		components.PatternComponentFactory{},
 		components.KeyedEdgeComponentFactory{},
 	}
 	tf := []dom.TransformFactory{

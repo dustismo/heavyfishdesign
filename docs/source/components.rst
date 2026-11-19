@@ -338,3 +338,21 @@ Global Variables
 
 * ``<gear_variable_name>__outer_radius``: The radius from center to tooth tip
 * ``<gear_variable_name>__inner_radius``: The radius from center to lowest valley
+
+
+------------------------------------------------------------------------------------------
+
+pattern
+=======
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/pattern_grids.hfd>`_
+
+Closed cutout grids. Each hole is its own subpath. ``width``, ``height``, and ``margin`` are inches. The grid is centered in the inner margin. ``clip_to_border`` keeps holes that cross that rectangle and cuts them at the margin.
+
+``kind`` selects the grid:
+
+* ``hexagon_grid``: pointy-top hexes. ``circumradius`` (default 0.35) and ``gap`` (default 0.2).
+* ``hex_circles``: honeycomb-packed circles. ``radius`` (default 0.35) and ``gap`` (default 0.2).
+* ``lens_grid``: lens holes. ``lens_length`` (default 0.72), ``lens_width`` (default 0.44), ``lean_deg`` (default 36), ``gap_x`` (default 0.13), ``gap_y`` (default 0.11). Neighbors lean the opposite way.
