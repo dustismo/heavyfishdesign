@@ -1,0 +1,103 @@
+{
+    "params": {
+        "material_width": 12,
+        "material_height": 12,
+        "material_thickness": 0.25,
+        "panel_width": 4,
+        "panel_height": 3,
+        "panel_margin": 0.2,
+        "clip": "false",
+        "hatch_angle": 45,
+        "hatch_spacing": 0.35,
+        "hatch_thickness": 0.08,
+        "wave_amplitude": 0.15,
+        "wave_length": 1.1,
+        "wave_thickness": 0.18,
+        "wave_gap": 0.22,
+        "wave_phase": 0.5,
+        "wave_samples": 32,
+        "lattice_rect_w": 1.15,
+        "lattice_rect_h": 1.55,
+        "lattice_v_gap": 0.35,
+        "lattice_h_gap": 0.55,
+        "lattice_thickness": 0.08,
+        "ring_radius_min": 0.22,
+        "ring_radius_max": 0.48,
+        "ring_stroke": 0.07,
+        "ring_count": 12,
+        "ring_seed": 17,
+        "ring_segments": 20
+    },
+    "parts": [
+        {
+            "label": {"text": "hatch"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "hatch",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "angle_deg": "hatch_angle",
+                    "spacing": "hatch_spacing",
+                    "thickness": "hatch_thickness"
+                }
+            ]
+        },
+        {
+            "label": {"text": "waves"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "wave_lattice",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "amplitude": "wave_amplitude",
+                    "wavelength": "wave_length",
+                    "ribbon_thickness": "wave_thickness",
+                    "ribbon_gap": "wave_gap",
+                    "phase_step": "wave_phase",
+                    "samples": "wave_samples"
+                }
+            ]
+        },
+        {
+            "label": {"text": "lattice"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "staggered_lattice_lines",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "rect_width": "lattice_rect_w",
+                    "rect_height": "lattice_rect_h",
+                    "v_gap_ratio": "lattice_v_gap",
+                    "h_gap_ratio": "lattice_h_gap",
+                    "line_thickness": "lattice_thickness"
+                }
+            ]
+        },
+        {
+            "label": {"text": "rings"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "overlapping_circles",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "radius_min": "ring_radius_min",
+                    "radius_max": "ring_radius_max",
+                    "stroke_width": "ring_stroke",
+                    "count": "ring_count",
+                    "seed": "ring_seed",
+                    "segments": "ring_segments"
+                }
+            ]
+        }
+    ]
+}

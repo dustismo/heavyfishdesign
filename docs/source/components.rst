@@ -348,6 +348,7 @@ pattern
 .. topic:: Examples
 
     * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/pattern_grids.hfd>`_
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/pattern_strokes.hfd>`_
 
 Closed cutout grids. Each hole is its own subpath. ``width``, ``height``, and ``margin`` are inches. The grid is centered in the inner margin. ``clip_to_border`` keeps holes that cross that rectangle and cuts them at the margin.
 
@@ -356,3 +357,27 @@ Closed cutout grids. Each hole is its own subpath. ``width``, ``height``, and ``
 * ``hexagon_grid``: pointy-top hexes. ``circumradius`` (default 0.35) and ``gap`` (default 0.2).
 * ``hex_circles``: honeycomb-packed circles. ``radius`` (default 0.35) and ``gap`` (default 0.2).
 * ``lens_grid``: lens holes. ``lens_length`` (default 0.72), ``lens_width`` (default 0.44), ``lean_deg`` (default 36), ``gap_x`` (default 0.13), ``gap_y`` (default 0.11). Neighbors lean the opposite way.
+* ``hatch``: parallel slots. ``angle_deg`` (default 45), ``spacing`` (default 0.5), ``thickness`` (default 0.25). ``cross`` (default false) adds a second family at ``cross_angle`` (default 90).
+* ``wave_lattice``: stacked sine ribbons. ``amplitude`` (default 0.15), ``wavelength`` (default 1.2), ``ribbon_thickness`` (default 0.25), ``ribbon_gap`` (default 0.3), ``phase_step`` (default 0.4 radians), ``samples`` (default 48). ``clip_to_border`` cuts ribbons at the margin.
+* ``staggered_lattice_lines``: staggered rectangular fretwork. ``rect_width`` (default 0.5), ``rect_height`` (default 1.25), ``v_gap_ratio`` (default 0.4), ``h_gap_ratio`` (default 0.95), ``line_thickness`` (default 0.1). A thickness of 0 emits the centerlines only.
+* ``overlapping_circles``: jittered rings subtracted from the panel. ``radius_min`` (default 0.25), ``radius_max`` (default 0.6), ``stroke_width`` (default 0.08), ``count`` (default 30), ``seed`` (default 17), ``segments`` (default 64). ``count`` 0 is the panel rectangle only.
+
+----------------------------------------------------------------
+
+expanded_stroke
+================
+
+.. topic:: Examples
+
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/expanded_stroke.hfd>`_
+
+Thickens a child line drawing. ``components`` is any list of components that draw centerlines (a ``draw`` with ``svg``, lines, or another component).
+
+The child drawing is scaled uniformly so its bounding box fits inside the inner margin and is centered there. The stroke then offsets both sides of each continuous path and joins the corners, clips the result to that margin, and unions it with a frame. An open end that meets the frame is extended through that edge before the stroke, so the opening follows the line. ``width``, ``height``, and ``margin`` are the panel, in inches. ``thickness`` (default 0.1) is the stroke width. A thickness of 0 keeps the fitted centerlines and does not draw the frame.
+
+Parameters
+^^^^^^^^^^
+
+* ``components``: the line drawing to expand
+* ``width``, ``height``, ``margin``: the panel and its inner margin
+* ``thickness``: full stroke width, in inches

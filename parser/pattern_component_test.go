@@ -12,6 +12,15 @@ import (
 
 func renderPatternComponent(t *testing.T, componentJSON string) path.Path {
 	t.Helper()
+	pth, _, err := renderPatternComponentMaybeErr(t, componentJSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return pth
+}
+
+func renderPatternComponentMaybeErr(t *testing.T, componentJSON string) (path.Path, dom.RenderContext, error) {
+	t.Helper()
 	InitContext()
 	dm, err := dynmap.ParseJSON(`{
 		"params": {},
@@ -28,11 +37,7 @@ func renderPatternComponent(t *testing.T, componentJSON string) path.Path {
 	if !ok {
 		t.Fatal("part child is not a component")
 	}
-	pth, _, err := component.Render(dom.RenderContext{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return pth
+	return component.Render(dom.RenderContext{})
 }
 
 func countSegments(p path.Path) (moves, lines, curves int) {
@@ -190,5 +195,185 @@ func TestPatternExpressionsAndUnknownKind(t *testing.T) {
 	_, _, err = doc.Parts[0].Render(dom.RenderContext{})
 	if err == nil {
 		t.Fatal("unknown pattern kind should fail the render")
+	}
+}
+
+func endpointsInside(t *testing.T, p path.Path, minX, minY, maxX, maxY, tol float64) {
+	t.Helper()
+	for _, seg := range p.Segments() {
+		end := seg.End()
+		if end.X < minX-tol || end.X > maxX+tol || end.Y < minY-tol || end.Y > maxY+tol {
+			t.Fatalf("endpoint (%v, %v) outside [%v,%v]–[%v,%v]", end.X, end.Y, minX, minY, maxX, maxY)
+		}
+	}
+}
+
+func TestPatternHatchOneHorizontalSlot(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "hatch",
+		"width": 2,
+		"height": 2,
+		"margin": 0.25,
+		"angle_deg": 0,
+		"spacing": 10,
+		"thickness": 0.2
+	}`)
+	moves, lines, curves := countSegments(pth)
+	if moves != 1 || lines < 4 || curves != 0 {
+		t.Fatalf("hatch moves=%d lines=%d curves=%d\n%s", moves, lines, curves, path.SvgString(pth, 3))
+	}
+	sawLow, sawHigh := false, false
+	for _, seg := range pth.Segments() {
+		y := seg.End().Y
+		if math.Abs(y-0.9) < 1e-6 {
+			sawLow = true
+		}
+		if math.Abs(y-1.1) < 1e-6 {
+			sawHigh = true
+		}
+		if seg.End().X < 0.25-1e-6 || seg.End().X > 1.75+1e-6 {
+			t.Fatalf("hatch x %v outside the inner rect", seg.End().X)
+		}
+	}
+	if !sawLow || !sawHigh {
+		t.Fatalf("hatch slot edges missing\n%s", path.SvgString(pth, 3))
+	}
+}
+
+func TestPatternHatchCrossHasMoreSlots(t *testing.T) {
+	one := renderPatternComponent(t, `{
+		"type": "pattern", "kind": "hatch",
+		"width": 3, "height": 3, "margin": 0.2,
+		"angle_deg": 0, "spacing": 0.6, "thickness": 0.08
+	}`)
+	both := renderPatternComponent(t, `{
+		"type": "pattern", "kind": "hatch",
+		"width": 3, "height": 3, "margin": 0.2,
+		"angle_deg": 0, "spacing": 0.6, "thickness": 0.08,
+		"cross": "true"
+	}`)
+	if len(both.Segments()) <= len(one.Segments()) {
+		t.Fatalf("cross hatch has %d segments, single has %d", len(both.Segments()), len(one.Segments()))
+	}
+}
+
+func TestPatternWaveLatticeRibbons(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "wave_lattice",
+		"width": 4,
+		"height": 3,
+		"margin": 0.2,
+		"amplitude": 0.1,
+		"wavelength": 1.2,
+		"ribbon_thickness": 0.2,
+		"ribbon_gap": 0.4,
+		"phase_step": 0.4,
+		"samples": 16
+	}`)
+	moves, lines, _ := countSegments(pth)
+	if moves < 1 || lines < 16 {
+		t.Fatalf("wave moves=%d lines=%d", moves, lines)
+	}
+}
+
+func TestPatternWaveClipStaysInsideMargin(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "wave_lattice",
+		"width": 3,
+		"height": 2,
+		"margin": 0.3,
+		"amplitude": 0.5,
+		"wavelength": 1,
+		"ribbon_thickness": 0.2,
+		"ribbon_gap": 0.15,
+		"samples": 16,
+		"clip_to_border": "true"
+	}`)
+	moves, _, _ := countSegments(pth)
+	if moves < 1 {
+		t.Fatal("clipped waves produced no path")
+	}
+	endpointsInside(t, pth, 0.3, 0.3, 2.7, 1.7, 1e-4)
+}
+
+func TestPatternLatticeCenterlines(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "staggered_lattice_lines",
+		"width": 3,
+		"height": 3,
+		"margin": 0.2,
+		"rect_width": 1.2,
+		"rect_height": 1.4,
+		"v_gap_ratio": 0.3,
+		"h_gap_ratio": 0.4,
+		"line_thickness": 0
+	}`)
+	moves, lines, curves := countSegments(pth)
+	if moves < 4 || moves != lines || curves != 0 {
+		t.Fatalf("centerlines moves=%d lines=%d curves=%d", moves, lines, curves)
+	}
+}
+
+func TestPatternLatticeStrokeInsideMargin(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "staggered_lattice_lines",
+		"width": 3,
+		"height": 3,
+		"margin": 0.25,
+		"rect_width": 1.6,
+		"rect_height": 1.8,
+		"v_gap_ratio": 0.2,
+		"h_gap_ratio": 0.25,
+		"line_thickness": 0.08
+	}`)
+	moves, lines, _ := countSegments(pth)
+	if moves < 1 || lines < 8 {
+		t.Fatalf("lattice stroke moves=%d lines=%d\n%s", moves, lines, path.SvgString(pth, 3))
+	}
+	endpointsInside(t, pth, 0.25, 0.25, 2.75, 2.75, 0.02)
+}
+
+func TestPatternOverlappingCirclesPanelOnly(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "overlapping_circles",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"count": 0
+	}`)
+	moves, lines, curves := countSegments(pth)
+	if moves != 1 || lines != 4 || curves != 0 {
+		t.Fatalf("empty circles moves=%d lines=%d curves=%d\n%s", moves, lines, curves, path.SvgString(pth, 3))
+	}
+	endpointsInside(t, pth, 0.2, 0.2, 1.8, 1.8, 1e-6)
+}
+
+func TestPatternOverlappingCirclesStable(t *testing.T) {
+	js := `{
+		"type": "pattern",
+		"kind": "overlapping_circles",
+		"width": 3,
+		"height": 2.5,
+		"margin": 0.15,
+		"radius_min": 0.25,
+		"radius_max": 0.45,
+		"stroke_width": 0.06,
+		"count": 6,
+		"seed": 17,
+		"segments": 12
+	}`
+	a := path.SvgString(renderPatternComponent(t, js), 3)
+	b := path.SvgString(renderPatternComponent(t, js), 3)
+	if a != b {
+		t.Fatal("overlapping circles changed between renders with the same seed")
+	}
+	if len(a) < 40 {
+		t.Fatalf("overlapping circles path is too short: %s", a)
 	}
 }
