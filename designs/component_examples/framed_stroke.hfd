@@ -14,7 +14,7 @@
             "label": {"text": "stroke"},
             "components": [
                 {
-                    "type": "expanded_stroke",
+                    "type": "framed_stroke",
                     "width": "panel_width",
                     "height": "panel_height",
                     "margin": "panel_margin",
@@ -34,7 +34,7 @@
             "label": {"text": "center"},
             "components": [
                 {
-                    "type": "expanded_stroke",
+                    "type": "framed_stroke",
                     "width": "panel_width",
                     "height": "panel_height",
                     "margin": "panel_margin",

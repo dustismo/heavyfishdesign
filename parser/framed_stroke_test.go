@@ -7,9 +7,9 @@ import (
 	"github.com/dustismo/heavyfishdesign/path"
 )
 
-func TestExpandedStrokeClipsCenterline(t *testing.T) {
+func TestFramedStrokeClipsCenterline(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 2,
 		"margin": 0.25,
@@ -28,7 +28,7 @@ func TestExpandedStrokeClipsCenterline(t *testing.T) {
 	}
 	start := pth.Segments()[0].End()
 	end := pth.Segments()[1].End()
-	if math.Abs(start.Y-1) > 1e-6 || math.Abs(end.Y-1) > 1e-6 {
+	if math.Abs(start.Y-0.25) > 1e-4 || math.Abs(end.Y-0.25) > 1e-4 {
 		t.Fatalf("centerline y = %v, %v", start.Y, end.Y)
 	}
 	xs := []float64{start.X, end.X}
@@ -37,9 +37,9 @@ func TestExpandedStrokeClipsCenterline(t *testing.T) {
 	}
 }
 
-func TestExpandedStrokeUnionsCrossingLines(t *testing.T) {
+func TestFramedStrokeUnionsCrossingLines(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 2,
 		"margin": 0.25,
@@ -72,9 +72,9 @@ func TestExpandedStrokeUnionsCrossingLines(t *testing.T) {
 	}
 }
 
-func TestExpandedStrokeFlattensSvgCurve(t *testing.T) {
+func TestFramedStrokeFlattensSvgCurve(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 3,
 		"margin": 0.2,
@@ -94,9 +94,9 @@ func TestExpandedStrokeFlattensSvgCurve(t *testing.T) {
 	endpointsInside(t, pth, 0.2, 0.2, 3.8, 2.8, 0.02)
 }
 
-func TestExpandedStrokeMeetsBorderOnAngle(t *testing.T) {
+func TestFramedStrokeMeetsBorderOnAngle(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 2,
 		"margin": 0.25,
@@ -129,9 +129,9 @@ func TestExpandedStrokeMeetsBorderOnAngle(t *testing.T) {
 	endpointsInside(t, pth, 0.25, 0.25, 3.75, 1.75, 0.02)
 }
 
-func TestExpandedStrokePushesNearEndThroughBorder(t *testing.T) {
+func TestFramedStrokePushesNearEndThroughBorder(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 3,
 		"margin": 0.2,
@@ -168,9 +168,9 @@ func TestExpandedStrokePushesNearEndThroughBorder(t *testing.T) {
 	}
 }
 
-func TestExpandedStrokeFitsChildToPanel(t *testing.T) {
+func TestFramedStrokeFitsChildToPanel(t *testing.T) {
 	pth := renderPatternComponent(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"width": 4,
 		"height": 2,
 		"margin": 0.25,
@@ -185,25 +185,25 @@ func TestExpandedStrokeFitsChildToPanel(t *testing.T) {
 			]
 		}]
 	}`)
-	sawTop, sawBottom := false, false
+	sawRight, sawBottom := false, false
 	for _, seg := range pth.Segments() {
 		end := seg.End()
-		if math.Abs(end.X-2.375) < 1e-3 && math.Abs(end.Y-0.25) < 1e-3 {
-			sawTop = true
+		if math.Abs(end.X-3.75) < 1e-3 && math.Abs(end.Y-0.25) < 1e-3 {
+			sawRight = true
 		}
-		if math.Abs(end.X-1.625) < 1e-3 && math.Abs(end.Y-1.75) < 1e-3 {
+		if math.Abs(end.X-0.25) < 1e-3 && math.Abs(end.Y-1.75) < 1e-3 {
 			sawBottom = true
 		}
 	}
-	if !sawTop || !sawBottom {
-		t.Fatalf("drawing was not fitted inside the panel\n%s", path.SvgString(pth, 3))
+	if !sawRight || !sawBottom {
+		t.Fatalf("drawing was not fitted to the inner panel\n%s", path.SvgString(pth, 3))
 	}
 }
 
-func TestExpandedStrokeRequiresPanelSize(t *testing.T) {
+func TestFramedStrokeRequiresPanelSize(t *testing.T) {
 	InitContext()
 	_, _, err := renderPatternComponentMaybeErr(t, `{
-		"type": "expanded_stroke",
+		"type": "framed_stroke",
 		"components": [{
 			"type": "draw",
 			"commands": [
@@ -213,6 +213,6 @@ func TestExpandedStrokeRequiresPanelSize(t *testing.T) {
 		}]
 	}`)
 	if err == nil {
-		t.Fatal("expanded_stroke without width and height should fail")
+		t.Fatal("framed_stroke without width and height should fail")
 	}
 }

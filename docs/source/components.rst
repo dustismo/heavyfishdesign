@@ -364,16 +364,16 @@ Closed cutout grids. Each hole is its own subpath. ``width``, ``height``, and ``
 
 ----------------------------------------------------------------
 
-expanded_stroke
-================
+framed_stroke
+=============
 
 .. topic:: Examples
 
-    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/expanded_stroke.hfd>`_
+    * `<https://github.com/dustismo/heavyfishdesign/blob/master/designs/component_examples/framed_stroke.hfd>`_
 
 Thickens a child line drawing. ``components`` is any list of components that draw centerlines (a ``draw`` with ``svg``, lines, or another component).
 
-The child drawing is scaled uniformly so its bounding box fits inside the inner margin and is centered there. The stroke then offsets both sides of each continuous path and joins the corners, clips the result to that margin, and unions it with a frame. An open end that meets the frame is extended through that edge before the stroke, so the opening follows the line. ``width``, ``height``, and ``margin`` are the panel, in inches. ``thickness`` (default 0.1) is the stroke width. A thickness of 0 keeps the fitted centerlines and does not draw the frame.
+The child drawing is scaled with the shared scale transform so its bounding box fills the inner margin, then moved so that corner sits on the margin. The stroke then offsets both sides of each continuous path and joins the corners, clips the result to that margin, and unions it with a frame. An open end that meets the frame is extended through that edge before the stroke, so the opening follows the line. ``width``, ``height``, and ``margin`` are the panel, in inches. ``thickness`` (default 0.1) is the stroke width. A thickness of 0 keeps the fitted centerlines and does not draw the frame.
 
 Parameters
 ^^^^^^^^^^

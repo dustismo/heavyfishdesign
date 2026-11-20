@@ -25,7 +25,7 @@ func InitContext() {
 		components.AroundComponentFactory{},
 		components.GearComponentFactory{},
 		components.PatternComponentFactory{},
-		components.ExpandedStrokeComponentFactory{},
+		components.FramedStrokeComponentFactory{},
 		components.KeyedEdgeComponentFactory{},
 	}
 	tf := []dom.TransformFactory{
