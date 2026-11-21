@@ -1,4 +1,9 @@
 {
+    "imports": [
+        {"path": "designs/component_examples/hatch.hfd"},
+        {"path": "designs/component_examples/wave_lattice.hfd"},
+        {"path": "designs/component_examples/staggered_lattice.hfd"}
+    ],
     "params": {
         "material_width": 12,
         "material_height": 12,
@@ -25,16 +30,14 @@
         "ring_radius_max": 0.48,
         "ring_stroke": 0.07,
         "ring_count": 12,
-        "ring_seed": 17,
-        "ring_segments": 20
+        "ring_seed": 17
     },
     "parts": [
         {
             "label": {"text": "hatch"},
             "components": [
                 {
-                    "type": "pattern",
-                    "kind": "hatch",
+                    "type": "hatch",
                     "width": "panel_width",
                     "height": "panel_height",
                     "margin": "panel_margin",
@@ -48,15 +51,14 @@
             "label": {"text": "waves"},
             "components": [
                 {
-                    "type": "pattern",
-                    "kind": "wave_lattice",
+                    "type": "wave_lattice",
                     "width": "panel_width",
                     "height": "panel_height",
                     "margin": "panel_margin",
                     "clip_to_border": "clip",
                     "amplitude": "wave_amplitude",
                     "wavelength": "wave_length",
-                    "ribbon_thickness": "wave_thickness",
+                    "thickness": "wave_thickness",
                     "ribbon_gap": "wave_gap",
                     "phase_step": "wave_phase",
                     "samples": "wave_samples"
@@ -67,8 +69,7 @@
             "label": {"text": "lattice"},
             "components": [
                 {
-                    "type": "pattern",
-                    "kind": "staggered_lattice_lines",
+                    "type": "staggered_lattice",
                     "width": "panel_width",
                     "height": "panel_height",
                     "margin": "panel_margin",
@@ -77,7 +78,7 @@
                     "rect_height": "lattice_rect_h",
                     "v_gap_ratio": "lattice_v_gap",
                     "h_gap_ratio": "lattice_h_gap",
-                    "line_thickness": "lattice_thickness"
+                    "thickness": "lattice_thickness"
                 }
             ]
         },

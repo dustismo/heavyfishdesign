@@ -357,10 +357,12 @@ Closed cutout grids. Each hole is its own subpath. ``width``, ``height``, and ``
 * ``hexagon_grid``: pointy-top hexes. ``circumradius`` (default 0.35) and ``gap`` (default 0.2).
 * ``hex_circles``: honeycomb-packed circles. ``radius`` (default 0.35) and ``gap`` (default 0.2).
 * ``lens_grid``: lens holes. ``lens_length`` (default 0.72), ``lens_width`` (default 0.44), ``lean_deg`` (default 36), ``gap_x`` (default 0.13), ``gap_y`` (default 0.11). Neighbors lean the opposite way.
-* ``hatch``: parallel slots. ``angle_deg`` (default 45), ``spacing`` (default 0.5), ``thickness`` (default 0.25). ``cross`` (default false) adds a second family at ``cross_angle`` (default 90).
-* ``wave_lattice``: stacked sine ribbons. ``amplitude`` (default 0.15), ``wavelength`` (default 1.2), ``ribbon_thickness`` (default 0.25), ``ribbon_gap`` (default 0.3), ``phase_step`` (default 0.4 radians), ``samples`` (default 48). ``clip_to_border`` cuts ribbons at the margin.
-* ``staggered_lattice_lines``: staggered rectangular fretwork. ``rect_width`` (default 0.5), ``rect_height`` (default 1.25), ``v_gap_ratio`` (default 0.4), ``h_gap_ratio`` (default 0.95), ``line_thickness`` (default 0.1). A thickness of 0 emits the centerlines only.
-* ``overlapping_circles``: jittered rings subtracted from the panel. ``radius_min`` (default 0.25), ``radius_max`` (default 0.6), ``stroke_width`` (default 0.08), ``count`` (default 30), ``seed`` (default 17), ``segments`` (default 64). ``count`` 0 is the panel rectangle only.
+* ``hatch``: centerlines of parallel lines. ``angle_deg`` (default 45), ``spacing`` (default 0.5), ``phase`` (default 0). ``cross`` (default false) adds a second family at ``cross_angle`` (default 90).
+* ``wave_lattice``: centerlines of stacked sines, as cubic curves. ``amplitude`` (default 0.15), ``wavelength`` (default 1.2), ``ribbon_thickness`` (default 0.25), ``ribbon_gap`` (default 0.3), ``phase_step`` (default 0.4 radians), ``samples`` (default 48) is how many curves span the panel. ``clip_to_border`` keeps waves that cross the margin.
+* ``staggered_lattice_lines``: centerlines of the staggered fretwork. ``rect_width`` (default 0.5), ``rect_height`` (default 1.25), ``v_gap_ratio`` (default 0.4), ``h_gap_ratio`` (default 0.95).
+* ``overlapping_circles``: jittered rings subtracted from the panel. Each ring is a circle of the given radius, ``stroke_width`` thick (default 0.08). Where rings cross, the outline keeps those circular arcs instead of a flattened union. ``radius_min`` (default 0.25), ``radius_max`` (default 0.6), ``count`` (default 30), ``seed`` (default 17). ``count`` 0 is the panel rectangle only.
+
+The stroked panels are custom components. Each one is a ``framed_stroke`` around the matching centerlines, with ``fit`` left off so the lines stay in panel coordinates. Import ``designs/component_examples/hatch.hfd``, ``wave_lattice.hfd``, or ``staggered_lattice.hfd``. ``thickness`` is the stroke width. ``frame`` defaults to false for hatch and waves, and true for the lattice. The lattice uses a round join, so each cell corner is a quarter-circle of half the stroke width.
 
 ----------------------------------------------------------------
 
@@ -373,11 +375,14 @@ framed_stroke
 
 Thickens a child line drawing. ``components`` is any list of components that draw centerlines (a ``draw`` with ``svg``, lines, or another component).
 
-The child drawing is scaled with the shared scale transform so its bounding box fills the inner margin, then moved so that corner sits on the margin. The stroke then offsets both sides of each continuous path and joins the corners, clips the result to that margin, and unions it with a frame. An open end that meets the frame is extended through that edge before the stroke, so the opening follows the line. ``width``, ``height``, and ``margin`` are the panel, in inches. ``thickness`` (default 0.1) is the stroke width. A thickness of 0 keeps the fitted centerlines and does not draw the frame.
+The child drawing is scaled with the shared scale transform so its bounding box fills the inner margin, then moved so that corner sits on the margin. Set ``fit`` to false to leave a drawing that is already in panel coordinates. The stroke then offsets both sides of each continuous path and joins the corners, clips the result to that margin, and unions it with a frame. Set ``frame`` to false to skip the frame. An open end that meets the frame is extended through that edge before the stroke, so the opening follows the line. A subpath that returns to its start is closed, so the join applies to that corner. ``join`` is ``miter`` (default) or ``round``. A round join puts a quarter-circle of radius half the stroke width on each convex corner. ``width``, ``height``, and ``margin`` are the panel, in inches. ``thickness`` (default 0.1) is the stroke width. A thickness of 0 keeps the centerlines and does not draw the frame.
 
 Parameters
 ^^^^^^^^^^
 
-* ``components``: the line drawing to expand
+* ``components``: the line drawing to thicken
 * ``width``, ``height``, ``margin``: the panel and its inner margin
 * ``thickness``: full stroke width, in inches
+* ``fit``: scale the drawing to the inner margin (default true)
+* ``frame``: union the perimeter band (default true)
+* ``join``: ``miter`` (default) or ``round``

@@ -10,9 +10,9 @@ import (
 	"github.com/tdewolff/canvas"
 )
 
-// PatternComponentFactory builds Pattern Studio kinds: closed cutout grids
-// (hexagon_grid, hex_circles, lens_grid) and stroke-union patterns (hatch,
-// wave_lattice, staggered_lattice_lines, overlapping_circles).
+// PatternComponentFactory builds Pattern Studio kinds. Closed cutouts and
+// overlapping circles are finished paths. Hatch, wave, and lattice kinds emit
+// centerlines; the custom components stroke those with framed_stroke.
 type PatternComponentFactory struct{}
 
 type PatternComponent struct {
@@ -61,7 +61,6 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 		p = hatchPath(width, height, margin, hatchParams{
 			angleDeg:    attr.MustFloat64("angle_deg", 45),
 			spacing:     attr.MustFloat64("spacing", 0.5),
-			thickness:   attr.MustFloat64("thickness", 0.25),
 			phase:       attr.MustFloat64("phase", 0),
 			cross:       attr.MustBool("cross", false),
 			crossOffset: attr.MustFloat64("cross_angle", 90),
@@ -81,7 +80,6 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 			rectHeight: attr.MustFloat64("rect_height", 1.25),
 			vGapRatio:  attr.MustFloat64("v_gap_ratio", 0.4),
 			hGapRatio:  attr.MustFloat64("h_gap_ratio", 0.95),
-			thickness:  attr.MustFloat64("line_thickness", 0.1),
 		}, clip)
 	case "overlapping_circles":
 		p = overlappingCircles(width, height, margin, overlapParams{
@@ -90,7 +88,6 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 			strokeWidth: attr.MustFloat64("stroke_width", 0.08),
 			count:       int(math.Floor(attr.MustFloat64("count", 30))),
 			seed:        int32(attr.MustFloat64("seed", 17)),
-			segments:    int(math.Floor(attr.MustFloat64("segments", 64))),
 		})
 	default:
 		return nil, ctx, fmt.Errorf("unknown pattern kind %q", kind)

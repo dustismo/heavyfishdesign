@@ -1,0 +1,49 @@
+{
+    "params": {
+        "width": 4,
+        "height": 3,
+        "margin": 0,
+        "thickness": 0.25,
+        "amplitude": 0.15,
+        "wavelength": 1.2,
+        "ribbon_gap": 0.3,
+        "phase_step": 0.4,
+        "samples": 48,
+        "clip_to_border": false,
+        "frame": false
+    },
+    "parts": [
+        {
+            "components": [
+                {
+                    "type": "framed_stroke",
+                    "custom_component": {
+                        "type": "wave_lattice"
+                    },
+                    "fit": false,
+                    "frame": "frame",
+                    "width": "width",
+                    "height": "height",
+                    "margin": "margin",
+                    "thickness": "thickness",
+                    "components": [
+                        {
+                            "type": "pattern",
+                            "kind": "wave_lattice",
+                            "width": "width",
+                            "height": "height",
+                            "margin": "margin",
+                            "clip_to_border": "clip_to_border",
+                            "amplitude": "amplitude",
+                            "wavelength": "wavelength",
+                            "ribbon_thickness": "thickness",
+                            "ribbon_gap": "ribbon_gap",
+                            "phase_step": "phase_step",
+                            "samples": "samples"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

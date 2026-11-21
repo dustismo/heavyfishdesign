@@ -53,6 +53,8 @@ func (c *FramedStrokeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Re
 	height := attr.MustFloat64("height", 0)
 	margin := attr.MustFloat64("margin", 0)
 	thickness := attr.MustFloat64("thickness", 0.1)
+	fit := attr.MustBool("fit", true)
+	frame := attr.MustBool("frame", true)
 	if width <= 0 || height <= 0 {
 		return nil, ctx, fmt.Errorf("framed_stroke requires width and height")
 	}
@@ -74,11 +76,15 @@ func (c *FramedStrokeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Re
 		}
 	}
 
-	joined, err := fitDrawingToPanel(transforms.SimpleJoin{}.JoinPaths(paths...), margin, width, height)
-	if err != nil {
-		return nil, ctx, err
+	joined := transforms.SimpleJoin{}.JoinPaths(paths...)
+	if fit {
+		var err error
+		joined, err = fitDrawingToPanel(joined, margin, width, height)
+		if err != nil {
+			return nil, ctx, err
+		}
 	}
-	result := strokeCenterline(joined, thickness, margin, width, height)
+	result := strokeCenterline(joined, thickness, margin, width, height, frame, attr.MustString("join", "miter"))
 	if result == nil || len(result.Segments()) == 0 {
 		empty := path.NewDraw()
 		empty.MoveTo(path.NewPoint(0, 0))

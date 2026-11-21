@@ -54,6 +54,46 @@ func countSegments(p path.Path) (moves, lines, curves int) {
 	return
 }
 
+func TestLatticeOpeningsShareFrameEdge(t *testing.T) {
+	pth := renderImportedComponent(t, `{
+		"imports": [{"path": "../designs/component_examples/staggered_lattice.hfd"}],
+		"parts": [{"components": [{
+			"type": "staggered_lattice",
+			"width": 4,
+			"height": 3,
+			"margin": 0.2,
+			"thickness": 0.08,
+			"rect_width": 1.15,
+			"rect_height": 1.55,
+			"v_gap_ratio": 0.35,
+			"h_gap_ratio": 0.55
+		}]}]
+	}`)
+	// Openings that meet the frame should share the frame's inner edge
+	// (margin + half the stroke), not stop a hair inside it.
+	const margin = 0.2
+	const half = 0.04
+	near := func(x, edge float64) bool { return math.Abs(x-edge) <= 0.005 }
+	for _, seg := range pth.Segments() {
+		ln, ok := seg.(path.LineSegment)
+		if !ok {
+			continue
+		}
+		dx := math.Abs(ln.EndPoint.X - ln.StartPoint.X)
+		dy := math.Abs(ln.EndPoint.Y - ln.StartPoint.Y)
+		if dx > 0.002 || dy < 0.05 {
+			continue
+		}
+		x := ln.EndPoint.X
+		if x > margin+half+half {
+			continue
+		}
+		if !near(x, margin) && !near(x, margin+half) {
+			t.Fatalf("left opening at x=%.3f, want the frame edge %.3f or %.3f", x, margin, margin+half)
+		}
+	}
+}
+
 func TestPatternHexagonGridOneCell(t *testing.T) {
 	pth := renderPatternComponent(t, `{
 		"type": "pattern",
@@ -216,28 +256,20 @@ func TestPatternHatchOneHorizontalSlot(t *testing.T) {
 		"height": 2,
 		"margin": 0.25,
 		"angle_deg": 0,
-		"spacing": 10,
-		"thickness": 0.2
+		"spacing": 10
 	}`)
 	moves, lines, curves := countSegments(pth)
-	if moves != 1 || lines < 4 || curves != 0 {
+	if moves != 1 || lines != 1 || curves != 0 {
 		t.Fatalf("hatch moves=%d lines=%d curves=%d\n%s", moves, lines, curves, path.SvgString(pth, 3))
 	}
-	sawLow, sawHigh := false, false
-	for _, seg := range pth.Segments() {
-		y := seg.End().Y
-		if math.Abs(y-0.9) < 1e-6 {
-			sawLow = true
-		}
-		if math.Abs(y-1.1) < 1e-6 {
-			sawHigh = true
-		}
-		if seg.End().X < 0.25-1e-6 || seg.End().X > 1.75+1e-6 {
-			t.Fatalf("hatch x %v outside the inner rect", seg.End().X)
-		}
+	start := pth.Segments()[0].End()
+	end := pth.Segments()[1].End()
+	if math.Abs(start.Y-1) > 1e-4 || math.Abs(end.Y-1) > 1e-4 {
+		t.Fatalf("hatch y = %v, %v", start.Y, end.Y)
 	}
-	if !sawLow || !sawHigh {
-		t.Fatalf("hatch slot edges missing\n%s", path.SvgString(pth, 3))
+	xs := []float64{start.X, end.X}
+	if math.Abs(math.Min(xs[0], xs[1])-0.25) > 1e-4 || math.Abs(math.Max(xs[0], xs[1])-1.75) > 1e-4 {
+		t.Fatalf("hatch x = %v, want 0.25 and 1.75", xs)
 	}
 }
 
@@ -272,9 +304,9 @@ func TestPatternWaveLatticeRibbons(t *testing.T) {
 		"phase_step": 0.4,
 		"samples": 16
 	}`)
-	moves, lines, _ := countSegments(pth)
-	if moves < 1 || lines < 16 {
-		t.Fatalf("wave moves=%d lines=%d", moves, lines)
+	moves, _, curves := countSegments(pth)
+	if moves < 1 || curves < 16 {
+		t.Fatalf("wave moves=%d curves=%d", moves, curves)
 	}
 }
 
@@ -313,12 +345,12 @@ func TestPatternLatticeCenterlines(t *testing.T) {
 		"line_thickness": 0
 	}`)
 	moves, lines, curves := countSegments(pth)
-	if moves < 4 || moves != lines || curves != 0 {
+	if moves < 1 || lines < moves || curves != 0 {
 		t.Fatalf("centerlines moves=%d lines=%d curves=%d", moves, lines, curves)
 	}
 }
 
-func TestPatternLatticeStrokeInsideMargin(t *testing.T) {
+func TestPatternLatticeCenterlinesInsideMargin(t *testing.T) {
 	pth := renderPatternComponent(t, `{
 		"type": "pattern",
 		"kind": "staggered_lattice_lines",
@@ -331,11 +363,12 @@ func TestPatternLatticeStrokeInsideMargin(t *testing.T) {
 		"h_gap_ratio": 0.25,
 		"line_thickness": 0.08
 	}`)
-	moves, lines, _ := countSegments(pth)
-	if moves < 1 || lines < 8 {
-		t.Fatalf("lattice stroke moves=%d lines=%d\n%s", moves, lines, path.SvgString(pth, 3))
+	moves, lines, curves := countSegments(pth)
+	// Cells are closed loops, so they have one extra line. They may cross the
+	// margin; framed_stroke clips the stroke.
+	if moves < 1 || lines <= moves || curves != 0 {
+		t.Fatalf("lattice centerlines moves=%d lines=%d curves=%d", moves, lines, curves)
 	}
-	endpointsInside(t, pth, 0.25, 0.25, 2.75, 2.75, 0.02)
 }
 
 func TestPatternOverlappingCirclesPanelOnly(t *testing.T) {
@@ -365,15 +398,158 @@ func TestPatternOverlappingCirclesStable(t *testing.T) {
 		"radius_max": 0.45,
 		"stroke_width": 0.06,
 		"count": 6,
-		"seed": 17,
-		"segments": 12
+		"seed": 17
 	}`
 	a := path.SvgString(renderPatternComponent(t, js), 3)
 	b := path.SvgString(renderPatternComponent(t, js), 3)
 	if a != b {
 		t.Fatal("overlapping circles changed between renders with the same seed")
 	}
-	if len(a) < 40 {
-		t.Fatalf("overlapping circles path is too short: %s", a)
+	checkRings := func(label, js string) {
+		t.Helper()
+		pth := renderPatternComponent(t, js)
+		_, lines, curves := countSegments(pth)
+		if curves < 8 {
+			t.Fatalf("%s lost curves: lines=%d curves=%d", label, lines, curves)
+		}
+		var open int
+		var worst float64
+		var loops int
+		var start, prev path.Point
+		has := false
+		flush := func() {
+			if !has {
+				return
+			}
+			loops++
+			gap := math.Hypot(prev.X-start.X, prev.Y-start.Y)
+			if gap > worst {
+				worst = gap
+			}
+			if gap > 0.002 {
+				open++
+			}
+		}
+		for _, seg := range pth.Segments() {
+			if _, ok := seg.(path.MoveSegment); ok {
+				flush()
+				start = seg.End()
+				prev = start
+				has = true
+				continue
+			}
+			prev = seg.End()
+		}
+		flush()
+		t.Logf("%s loops=%d open=%d worst=%.5f lines=%d curves=%d", label, loops, open, worst, lines, curves)
+		if open > 0 {
+			t.Fatalf("%s: %d ring loops do not close (worst %.4f)", label, open, worst)
+		}
 	}
+	checkRings("stable", js)
+	checkRings("design", `{
+		"type": "pattern",
+		"kind": "overlapping_circles",
+		"width": 4,
+		"height": 3,
+		"margin": 0.2,
+		"radius_min": 0.22,
+		"radius_max": 0.48,
+		"stroke_width": 0.07,
+		"count": 12,
+		"seed": 17
+	}`)
+}
+
+func TestHatchCustomComponentStrokesCenterline(t *testing.T) {
+	pth := renderImportedComponent(t, `{
+		"imports": [{"path": "../designs/component_examples/hatch.hfd"}],
+		"parts": [{"components": [{
+			"type": "hatch",
+			"width": 2,
+			"height": 2,
+			"margin": 0.25,
+			"thickness": 0.2,
+			"angle_deg": 0,
+			"spacing": 10,
+			"frame": false
+		}]}]
+	}`)
+	sawLow, sawHigh := false, false
+	for _, seg := range pth.Segments() {
+		y := seg.End().Y
+		if math.Abs(y-0.9) < 1e-3 {
+			sawLow = true
+		}
+		if math.Abs(y-1.1) < 1e-3 {
+			sawHigh = true
+		}
+	}
+	if !sawLow || !sawHigh {
+		t.Fatalf("hatch stroke missing the slot edges\n%s", path.SvgString(pth, 3))
+	}
+	endpointsInside(t, pth, 0.25, 0.25, 1.75, 1.75, 0.02)
+}
+
+func TestWaveAndLatticeCustomComponents(t *testing.T) {
+	wave := renderImportedComponent(t, `{
+		"imports": [{"path": "../designs/component_examples/wave_lattice.hfd"}],
+		"parts": [{"components": [{
+			"type": "wave_lattice",
+			"width": 4,
+			"height": 3,
+			"margin": 0.2,
+			"thickness": 0.18,
+			"amplitude": 0.1,
+			"wavelength": 1.2,
+			"ribbon_gap": 0.4,
+			"samples": 16,
+			"frame": false
+		}]}]
+	}`)
+	if moves, lines, _ := countSegments(wave); moves < 1 || lines < 8 {
+		t.Fatalf("wave stroke moves=%d lines=%d", moves, lines)
+	}
+	endpointsInside(t, wave, 0.2, 0.2, 3.8, 2.8, 0.02)
+
+	lattice := renderImportedComponent(t, `{
+		"imports": [{"path": "../designs/component_examples/staggered_lattice.hfd"}],
+		"parts": [{"components": [{
+			"type": "staggered_lattice",
+			"width": 3,
+			"height": 3,
+			"margin": 0.25,
+			"thickness": 0.08,
+			"rect_width": 1.6,
+			"rect_height": 1.8,
+			"v_gap_ratio": 0.2,
+			"h_gap_ratio": 0.25
+		}]}]
+	}`)
+	if moves, lines, _ := countSegments(lattice); moves < 1 || lines < 8 {
+		t.Fatalf("lattice stroke moves=%d lines=%d", moves, lines)
+	}
+	endpointsInside(t, lattice, 0.25, 0.25, 2.75, 2.75, 0.02)
+}
+
+func renderImportedComponent(t *testing.T, docJSON string) path.Path {
+	t.Helper()
+	InitContext()
+	dm, err := dynmap.ParseJSON(docJSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	doc, err := dom.ParseDocument(dm, util.NewLog())
+	if err != nil {
+		t.Fatal(err)
+	}
+	component, ok := doc.Parts[0].Children()[0].(dom.Component)
+	if !ok {
+		t.Fatal("part child is not a component")
+	}
+	pth, _, err := component.Render(dom.RenderContext{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return pth
 }

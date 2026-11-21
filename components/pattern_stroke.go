@@ -3,19 +3,18 @@ package components
 import (
 	"math"
 	"sort"
+	"strings"
 
 	"github.com/dustismo/heavyfishdesign/path"
 	"github.com/tdewolff/canvas"
 )
 
-// Stroke-union kinds follow the Pattern Studio generators: centerlines (or
-// closed ribbons / annuli), expand, boolean-union with canvas, then the same
-// output formulation (merged slots, clipped waves, panel minus bands).
+// Hatch, wave, and lattice kinds emit centerlines. framed_stroke thickens
+// them. Overlapping circles stay a panel minus the stroked rings.
 
 type hatchParams struct {
 	angleDeg    float64
 	spacing     float64
-	thickness   float64
 	phase       float64
 	cross       bool
 	crossOffset float64
@@ -35,7 +34,6 @@ type latticeParams struct {
 	rectHeight float64
 	vGapRatio  float64
 	hGapRatio  float64
-	thickness  float64
 }
 
 type overlapParams struct {
@@ -44,13 +42,11 @@ type overlapParams struct {
 	strokeWidth float64
 	count       int
 	seed        int32
-	segments    int
 }
 
 func hatchPath(w, h, m float64, p hatchParams) path.Path {
 	d := path.NewDraw()
 	sp := math.Max(1e-6, p.spacing)
-	sw := math.Max(1e-6, p.thickness)
 	xmin, ymin := m, m
 	xmax, ymax := w-m, h-m
 	if xmax <= xmin || ymax <= ymin {
@@ -58,11 +54,9 @@ func hatchPath(w, h, m float64, p hatchParams) path.Path {
 	}
 	cx := (xmin + xmax) / 2
 	cy := (ymin + ymax) / 2
-	reach := 0.5*math.Hypot(xmax-xmin, ymax-ymin) + sw
-	kMax := int(math.Ceil((reach + math.Abs(p.phase)) / sp))
-	hw := sw / 2
+	reach := 0.5*math.Hypot(xmax-xmin, ymax-ymin) + math.Abs(p.phase)
+	kMax := int(math.Ceil(reach / sp))
 
-	var polys []*canvas.Path
 	addFamily := func(deg float64) {
 		rad := deg * math.Pi / 180
 		vx, vy := math.Cos(rad), math.Sin(rad)
@@ -73,10 +67,8 @@ func hatchPath(w, h, m float64, p hatchParams) path.Path {
 			if !ok {
 				continue
 			}
-			ring := segmentRing(ax, ay, bx, by, hw, 0, 0)
-			if ring != nil && !ring.Empty() {
-				polys = append(polys, ring)
-			}
+			d.MoveTo(path.NewPoint(ax, ay))
+			d.LineTo(path.NewPoint(bx, by))
 		}
 	}
 	addFamily(p.angleDeg)
@@ -87,7 +79,6 @@ func hatchPath(w, h, m float64, p hatchParams) path.Path {
 		}
 		addFamily(p.angleDeg + off)
 	}
-	appendCanvas(d, unionCanvas(polys))
 	return d.Path()
 }
 
@@ -134,39 +125,119 @@ func waveLattice(w, h, m float64, p waveParams, clip bool) path.Path {
 	ox, oy := centeringOffset(xmin, ymin, xmax, ymax, bb)
 	x0, x1 := xmin+ox, xmax+ox
 	for _, rib := range ribbons {
-		ring := waveRibbon(x0, x1, rib.yCenter+oy, amp, wl, thick, rib.phase, samples)
-		if clip {
-			appendClipped(d, ring, m, w, h)
-		} else {
-			appendCanvas(d, ring)
-		}
+		appendWaveCenterline(d, x0, x1, rib.yCenter+oy+thick/2, amp, wl, rib.phase, samples, clip, xmin, ymin, xmax, ymax)
 	}
 	return d.Path()
 }
 
-func waveRibbon(x0, x1, yCenter, amp, wavelength, thick, phase float64, samples int) *canvas.Path {
-	if x1 <= x0 || thick <= 0 {
-		return &canvas.Path{}
+func appendWaveCenterline(d *path.Draw, x0, x1, yCenter, amp, wavelength, phase float64, samples int, clip bool, rx0, ry0, rx1, ry1 float64) {
+	if x1 <= x0 {
+		return
 	}
 	n := samples
 	if n < 8 {
 		n = 8
 	}
 	span := x1 - x0
-	pts := make([]path.Point, 0, 2*n+2)
-	for i := 0; i <= n; i++ {
-		t := float64(i) / float64(n)
-		x := x0 + t*span
-		y := yCenter + amp*math.Sin(2*math.Pi*(x-x0)/wavelength+phase)
-		pts = append(pts, path.NewPoint(x, y))
+	k := 2 * math.Pi / wavelength
+	yAt := func(x float64) float64 {
+		return yCenter + amp*math.Sin(k*(x-x0)+phase)
 	}
-	for i := n; i >= 0; i-- {
-		t := float64(i) / float64(n)
-		x := x0 + t*span
-		y := yCenter + thick + amp*math.Sin(2*math.Pi*(x-x0)/wavelength+phase)
-		pts = append(pts, path.NewPoint(x, y))
+	slopeAt := func(x float64) float64 {
+		return amp * k * math.Cos(k*(x-x0)+phase)
 	}
-	return polygonCanvas(pts)
+	open := false
+	var prev path.Point
+	for i := 0; i < n; i++ {
+		xa := x0 + span*float64(i)/float64(n)
+		xb := x0 + span*float64(i+1)/float64(n)
+		dx := xb - xa
+		ya, yb := yAt(xa), yAt(xb)
+		sa, sb := slopeAt(xa), slopeAt(xb)
+		p0 := path.NewPoint(xa, ya)
+		p1 := path.NewPoint(xa+dx/3, ya+sa*dx/3)
+		p2 := path.NewPoint(xb-dx/3, yb-sb*dx/3)
+		p3 := path.NewPoint(xb, yb)
+		if !clip || cubicHullInside(p0, p1, p2, p3, rx0, ry0, rx1, ry1) {
+			if !open || math.Hypot(p0.X-prev.X, p0.Y-prev.Y) > 1e-6 {
+				d.MoveTo(p0)
+			}
+			d.CurveTo(p1, p2, p3)
+			open = true
+			prev = p3
+			continue
+		}
+		if cubicHullOutside(p0, p1, p2, p3, rx0, ry0, rx1, ry1) {
+			open = false
+			continue
+		}
+		open, prev = appendClippedCubic(d, p0, p1, p2, p3, rx0, ry0, rx1, ry1, open, prev)
+	}
+}
+
+func cubicHullInside(p0, p1, p2, p3 path.Point, x0, y0, x1, y1 float64) bool {
+	for _, p := range []path.Point{p0, p1, p2, p3} {
+		if p.X < x0 || p.X > x1 || p.Y < y0 || p.Y > y1 {
+			return false
+		}
+	}
+	return true
+}
+
+func cubicHullOutside(p0, p1, p2, p3 path.Point, x0, y0, x1, y1 float64) bool {
+	minX, maxX := p0.X, p0.X
+	minY, maxY := p0.Y, p0.Y
+	for _, p := range []path.Point{p1, p2, p3} {
+		if p.X < minX {
+			minX = p.X
+		}
+		if p.X > maxX {
+			maxX = p.X
+		}
+		if p.Y < minY {
+			minY = p.Y
+		}
+		if p.Y > maxY {
+			maxY = p.Y
+		}
+	}
+	return maxX < x0 || minX > x1 || maxY < y0 || minY > y1
+}
+
+func appendClippedCubic(d *path.Draw, p0, p1, p2, p3 path.Point, x0, y0, x1, y1 float64, open bool, prev path.Point) (bool, path.Point) {
+	const steps = 8
+	last := prev
+	for i := 1; i <= steps; i++ {
+		a := cubicAt(p0, p1, p2, p3, float64(i-1)/steps)
+		b := cubicAt(p0, p1, p2, p3, float64(i)/steps)
+		ax, ay, bx, by, ok := clipSegmentToRect(a.X, a.Y, b.X, b.Y, x0, y0, x1, y1)
+		if !ok {
+			open = false
+			continue
+		}
+		start := path.NewPoint(ax, ay)
+		if !open || math.Hypot(start.X-last.X, start.Y-last.Y) > 1e-6 {
+			d.MoveTo(start)
+		}
+		end := path.NewPoint(bx, by)
+		d.LineTo(end)
+		open = true
+		last = end
+	}
+	return open, last
+}
+
+func cubicAt(p0, p1, p2, p3 path.Point, t float64) path.Point {
+	u := 1 - t
+	uu, tt := u*u, t*t
+	w0 := uu * u
+	w1 := 3 * uu * t
+	w2 := 3 * u * tt
+	w3 := tt * t
+	return path.NewPoint(
+		w0*p0.X+w1*p1.X+w2*p2.X+w3*p3.X,
+		w0*p0.Y+w1*p1.Y+w2*p2.Y+w3*p3.Y,
+	)
 }
 
 type seg struct{ ax, ay, bx, by float64 }
@@ -239,10 +310,13 @@ func staggeredLattice(w, h, m float64, p latticeParams, clip bool) path.Path {
 		for j := j0; j < j1; j++ {
 			tx := m + float64(i)*pitchX + ox
 			ty := m + float64(j)*pitchY + float64(i%2)*stagger + oy
-			addClipped(tx, ty, tx+rw, ty)
-			addClipped(tx+rw, ty, tx+rw, ty+rh)
-			addClipped(tx+rw, ty+rh, tx, ty+rh)
-			addClipped(tx, ty+rh, tx, ty)
+			// One closed loop per cell so the stroke joins the corners. The
+			// loop may cross the margin; framed_stroke clips the stroke.
+			d.MoveTo(path.NewPoint(tx, ty))
+			d.LineTo(path.NewPoint(tx+rw, ty))
+			d.LineTo(path.NewPoint(tx+rw, ty+rh))
+			d.LineTo(path.NewPoint(tx, ty+rh))
+			d.LineTo(path.NewPoint(tx, ty))
 			cx := tx + rw/2
 			addClipped(cx, ty, cx, ty-vStub)
 			addClipped(cx, ty+rh, cx, ty+rh+vStub)
@@ -256,7 +330,11 @@ func staggeredLattice(w, h, m float64, p latticeParams, clip bool) path.Path {
 		}
 	}
 
-	return expandStroke(segments, p.thickness, m, w, h)
+	for _, s := range segments {
+		d.MoveTo(path.NewPoint(s.ax, s.ay))
+		d.LineTo(path.NewPoint(s.bx, s.by))
+	}
+	return d.Path()
 }
 
 // expandStroke clips centerlines to the inner margin, expands each one by
@@ -341,7 +419,7 @@ func expandStroke(segments []seg, thickness, margin, width, height float64) path
 // offset and corners are joined. Open ends that meet the margin are extended
 // through that edge first, so the stroke crosses the frame on the line's
 // angle. The result is clipped to the inner margin and unioned with the frame.
-func strokeCenterline(centerline path.Path, thickness, margin, width, height float64) path.Path {
+func strokeCenterline(centerline path.Path, thickness, margin, width, height float64, frame bool, join string) path.Path {
 	if centerline == nil || len(centerline.Segments()) == 0 {
 		return path.NewPath()
 	}
@@ -356,7 +434,16 @@ func strokeCenterline(centerline path.Path, thickness, margin, width, height flo
 	}
 	hw := math.Max(1e-6, thickness) / 2
 	extended := extendCenterlinePastMargin(centerline, innerX0, innerY0, innerX1, innerY1, hw)
-	stroked := path.ToCanvasPath(extended).Stroke(math.Max(1e-6, thickness), canvas.ButtCap, canvas.MiterJoin, 0.001)
+	joiner := canvas.Joiner(canvas.MiterJoin)
+	strokeTol := 0.001
+	if strings.EqualFold(strings.TrimSpace(join), "round") {
+		joiner = canvas.RoundJoin
+		strokeTol = 0.0001
+		prevTol := canvas.Tolerance
+		canvas.Tolerance = 0.0001
+		defer func() { canvas.Tolerance = prevTol }()
+	}
+	stroked := path.ToCanvasPathJoinLoops(extended).Stroke(math.Max(1e-6, thickness), canvas.ButtCap, joiner, strokeTol)
 	if stroked == nil || stroked.Empty() {
 		return d.Path()
 	}
@@ -364,8 +451,11 @@ func strokeCenterline(centerline path.Path, thickness, margin, width, height flo
 	if clipped == nil || clipped.Empty() {
 		return d.Path()
 	}
-	if bands := perimeterBands(innerX0, innerY0, innerX1, innerY1, hw); len(bands) > 0 {
-		clipped = unionCanvas(append([]*canvas.Path{clipped}, bands...))
+	if frame {
+		if bands := perimeterBands(innerX0, innerY0, innerX1, innerY1, hw); len(bands) > 0 {
+			clipped = unionCanvas(append([]*canvas.Path{clipped}, bands...))
+		}
+		clipped = flushCutsToFrame(clipped, innerX0, innerY0, innerX1, innerY1, hw)
 	}
 	appendCanvasExceptInnerRect(d, clipped, innerX0, innerY0, innerX1, innerY1)
 	return d.Path()
@@ -586,13 +676,25 @@ func overlappingCircles(w, h, m float64, p overlapParams) path.Path {
 		return d.Path()
 	}
 	panel := innerRectCanvas(m, w, h)
+	rings := overlapAnnuli(w, h, m, p)
+	if len(rings) == 0 {
+		appendCanvas(d, panel)
+		return d.Path()
+	}
+	// Union through the polygon boolean flattens every circle first. The
+	// outline is the arcs themselves, cut where the circles and the panel meet.
+	return ringBoundary(rings, xmin, ymin, xmax, ymax)
+}
+
+func overlapAnnuli(w, h, m float64, p overlapParams) []annulus {
+	xmin, ymin := m, m
+	xmax, ymax := w-m, h-m
 	target := p.count
 	if target < 0 {
 		target = 0
 	}
 	if target == 0 {
-		appendCanvas(d, panel)
-		return d.Path()
+		return nil
 	}
 	lo := math.Max(1e-6, p.radiusMin)
 	hi := p.radiusMax
@@ -603,11 +705,6 @@ func overlappingCircles(w, h, m float64, p overlapParams) path.Path {
 		lo, hi = hi, lo
 	}
 	sw := math.Max(1e-6, p.strokeWidth)
-	half := sw / 2
-	segN := p.segments
-	if segN < 8 {
-		segN = 8
-	}
 	innerW := xmax - xmin
 	innerH := ymax - ymin
 	rng := mulberry32(p.seed)
@@ -696,36 +793,366 @@ func overlappingCircles(w, h, m float64, p overlapParams) path.Path {
 			}
 		}
 	}
-	var bands []*canvas.Path
+	half := sw / 2
+	var rings []annulus
 	for i, c := range placed {
 		if !neighbor[i] {
 			continue
 		}
-		outerR := c.r + half
-		innerR := c.r - half
-		outer := polygonCanvas(circleRing(c.cx, c.cy, outerR, segN))
-		if innerR <= 1e-6 {
-			bands = append(bands, outer)
+		inner := c.r - half
+		if inner < 0 {
+			inner = 0
+		}
+		rings = append(rings, annulus{cx: c.cx, cy: c.cy, inner: inner, outer: c.r + half})
+	}
+	return rings
+}
+
+type annulus struct {
+	cx, cy, inner, outer float64
+}
+
+type ringPiece struct {
+	x0, y0, x1, y1 float64
+	cx, cy, r      float64
+	delta          float64
+}
+
+// ringBoundary is the outline of the panel with the rings removed. Circle
+// pieces stay arcs; only the panel edges are straight.
+func ringBoundary(rings []annulus, xmin, ymin, xmax, ymax float64) path.Path {
+	const angEps = 1e-6
+	halfMin := math.MaxFloat64
+	for _, g := range rings {
+		h := (g.outer - g.inner) / 2
+		if g.inner <= 1e-8 {
+			h = g.outer
+		}
+		if h > 1e-8 && h < halfMin {
+			halfMin = h
+		}
+	}
+	if math.IsInf(halfMin, 0) || halfMin == math.MaxFloat64 {
+		halfMin = 1e-4
+	}
+	eps := math.Min(1e-4, halfMin*0.25)
+
+	inAnn := func(x, y float64) bool {
+		for _, g := range rings {
+			d := math.Hypot(x-g.cx, y-g.cy)
+			if g.inner <= 1e-8 {
+				if d <= g.outer {
+					return true
+				}
+				continue
+			}
+			if d <= g.outer && d >= g.inner {
+				return true
+			}
+		}
+		return false
+	}
+	inPanel := func(x, y float64) bool {
+		return x >= xmin-1e-7 && x <= xmax+1e-7 && y >= ymin-1e-7 && y <= ymax+1e-7
+	}
+	wood := func(x, y float64) bool {
+		return inPanel(x, y) && !inAnn(x, y)
+	}
+
+	type circ struct {
+		cx, cy, r float64
+		outer     bool
+	}
+	var circles []circ
+	for _, g := range rings {
+		if g.outer > 1e-6 {
+			circles = append(circles, circ{g.cx, g.cy, g.outer, true})
+		}
+		if g.inner > 1e-6 {
+			circles = append(circles, circ{g.cx, g.cy, g.inner, false})
+		}
+	}
+
+	type edge struct{ x0, y0, x1, y1, nx, ny float64 }
+	edges := []edge{
+		{xmin, ymin, xmax, ymin, 0, 1},
+		{xmax, ymin, xmax, ymax, -1, 0},
+		{xmax, ymax, xmin, ymax, 0, -1},
+		{xmin, ymax, xmin, ymin, 1, 0},
+	}
+
+	var pieces []ringPiece
+	for _, e := range edges {
+		ts := []float64{0, 1}
+		dx, dy := e.x1-e.x0, e.y1-e.y0
+		for _, c := range circles {
+			for _, p := range segmentCircleHits(e.x0, e.y0, e.x1, e.y1, c.cx, c.cy, c.r) {
+				den := dx*dx + dy*dy
+				if den < 1e-18 {
+					continue
+				}
+				t := ((p[0]-e.x0)*dx + (p[1]-e.y0)*dy) / den
+				if t > -1e-8 && t < 1+1e-8 {
+					ts = append(ts, math.Min(1, math.Max(0, t)))
+				}
+			}
+		}
+		sort.Float64s(ts)
+		uniq := ts[:1]
+		for _, t := range ts[1:] {
+			if t-uniq[len(uniq)-1] > 1e-7 {
+				uniq = append(uniq, t)
+			}
+		}
+		length := math.Hypot(dx, dy)
+		for i := 0; i < len(uniq)-1; i++ {
+			if (uniq[i+1]-uniq[i])*length < 1e-6 {
+				continue
+			}
+			tm := (uniq[i] + uniq[i+1]) / 2
+			mx, my := e.x0+tm*dx, e.y0+tm*dy
+			if !wood(mx+eps*e.nx, my+eps*e.ny) {
+				continue
+			}
+			pieces = append(pieces, ringPiece{
+				x0: e.x0 + uniq[i]*dx, y0: e.y0 + uniq[i]*dy,
+				x1: e.x0 + uniq[i+1]*dx, y1: e.y0 + uniq[i+1]*dy,
+			})
+		}
+	}
+
+	keep := func(c circ, ang float64) bool {
+		co, si := math.Cos(ang), math.Sin(ang)
+		mx, my := c.cx+c.r*co, c.cy+c.r*si
+		if !inPanel(mx, my) {
+			return false
+		}
+		ox, oy := mx+eps*co, my+eps*si
+		ix, iy := mx-eps*co, my-eps*si
+		if c.outer {
+			return wood(ox, oy) && inAnn(ix, iy)
+		}
+		return wood(ix, iy) && inAnn(ox, oy)
+	}
+	for _, c := range circles {
+		var angs []float64
+		for _, o := range circles {
+			if o.cx == c.cx && o.cy == c.cy && o.r == c.r {
+				continue
+			}
+			for _, p := range circleHits(c.cx, c.cy, c.r, o.cx, o.cy, o.r) {
+				angs = append(angs, math.Atan2(p[1]-c.cy, p[0]-c.cx))
+			}
+		}
+		for _, e := range edges {
+			for _, p := range segmentCircleHits(e.x0, e.y0, e.x1, e.y1, c.cx, c.cy, c.r) {
+				angs = append(angs, math.Atan2(p[1]-c.cy, p[0]-c.cx))
+			}
+		}
+		angs = uniqueAngles(angs, angEps)
+		if len(angs) == 0 {
+			if keep(c, 0) {
+				pieces = append(pieces, fullRing(c.cx, c.cy, c.r))
+			}
 			continue
 		}
-		bands = append(bands, outer.Not(polygonCanvas(circleRing(c.cx, c.cy, innerR, segN))))
+		wrapped := append(append([]float64{}, angs...), angs[0]+2*math.Pi)
+		for i := 0; i < len(wrapped)-1; i++ {
+			delta := wrapped[i+1] - wrapped[i]
+			if delta < angEps {
+				continue
+			}
+			if !keep(c, wrapped[i]+delta/2) {
+				continue
+			}
+			a0, a1 := wrapped[i], wrapped[i+1]
+			pieces = append(pieces, ringPiece{
+				x0: c.cx + c.r*math.Cos(a0), y0: c.cy + c.r*math.Sin(a0),
+				x1: c.cx + c.r*math.Cos(a1), y1: c.cy + c.r*math.Sin(a1),
+				cx: c.cx, cy: c.cy, r: c.r, delta: delta,
+			})
+		}
 	}
-	if len(bands) == 0 {
-		appendCanvas(d, panel)
-		return d.Path()
+	if len(pieces) == 0 {
+		cp := &canvas.Path{}
+		cp.MoveTo(xmin, ymin)
+		cp.LineTo(xmax, ymin)
+		cp.LineTo(xmax, ymax)
+		cp.LineTo(xmin, ymax)
+		cp.Close()
+		return path.PathFromCanvas(cp)
 	}
-	merged := unionCanvas(bands)
-	if merged == nil || merged.Empty() {
-		appendCanvas(d, panel)
-		return d.Path()
+	return path.PathFromCanvas(chainRingPieces(pieces))
+}
+
+func fullRing(cx, cy, r float64) ringPiece {
+	return ringPiece{x0: cx + r, y0: cy, x1: cx + r, y1: cy, cx: cx, cy: cy, r: r, delta: 2 * math.Pi}
+}
+
+func uniqueAngles(angs []float64, eps float64) []float64 {
+	if len(angs) == 0 {
+		return nil
 	}
-	wood := panel.Not(merged)
-	if wood == nil || wood.Empty() {
-		appendCanvas(d, panel)
-		return d.Path()
+	norm := make([]float64, len(angs))
+	for i, a := range angs {
+		a = math.Mod(a, 2*math.Pi)
+		if a < 0 {
+			a += 2 * math.Pi
+		}
+		norm[i] = a
 	}
-	appendCanvas(d, wood)
-	return d.Path()
+	sort.Float64s(norm)
+	out := norm[:1:1]
+	for _, a := range norm[1:] {
+		if a-out[len(out)-1] > eps {
+			out = append(out, a)
+		}
+	}
+	if len(out) > 1 && out[0]+2*math.Pi-out[len(out)-1] < eps {
+		out = out[:len(out)-1]
+	}
+	return out
+}
+
+func circleHits(ax, ay, ar, bx, by, br float64) [][2]float64 {
+	dx, dy := bx-ax, by-ay
+	d := math.Hypot(dx, dy)
+	if d < 1e-12 || d > ar+br+1e-8 || d < math.Abs(ar-br)-1e-8 {
+		return nil
+	}
+	a := (ar*ar - br*br + d*d) / (2 * d)
+	h2 := ar*ar - a*a
+	if h2 < 0 {
+		h2 = 0
+	}
+	h := math.Sqrt(h2)
+	mx, my := ax+a*dx/d, ay+a*dy/d
+	px, py := -dy/d*h, dx/d*h
+	hits := [][2]float64{{mx + px, my + py}}
+	if h > 1e-8 {
+		hits = append(hits, [2]float64{mx - px, my - py})
+	}
+	return hits
+}
+
+func segmentCircleHits(x0, y0, x1, y1, cx, cy, r float64) [][2]float64 {
+	dx, dy := x1-x0, y1-y0
+	fx, fy := x0-cx, y0-cy
+	a := dx*dx + dy*dy
+	if a < 1e-18 {
+		return nil
+	}
+	b := 2 * (fx*dx + fy*dy)
+	c := fx*fx + fy*fy - r*r
+	disc := b*b - 4*a*c
+	if disc < 0 {
+		return nil
+	}
+	sd := math.Sqrt(math.Max(0, disc))
+	var hits [][2]float64
+	for _, t := range []float64{(-b - sd) / (2 * a), (-b + sd) / (2 * a)} {
+		if t < -1e-8 || t > 1+1e-8 {
+			continue
+		}
+		hits = append(hits, [2]float64{x0 + t*dx, y0 + t*dy})
+	}
+	return hits
+}
+
+func chainRingPieces(pieces []ringPiece) *canvas.Path {
+	key := func(x, y float64) [2]int {
+		return [2]int{int(math.Round(x * 1e5)), int(math.Round(y * 1e5))}
+	}
+	starts := map[[2]int][]int{}
+	ends := map[[2]int][]int{}
+	for i, p := range pieces {
+		k0, k1 := key(p.x0, p.y0), key(p.x1, p.y1)
+		starts[k0] = append(starts[k0], i)
+		ends[k1] = append(ends[k1], i)
+	}
+	used := make([]bool, len(pieces))
+	take := func(m map[[2]int][]int, k [2]int) (int, bool) {
+		for _, i := range m[k] {
+			if !used[i] {
+				return i, true
+			}
+		}
+		return 0, false
+	}
+	// One coordinate per snapped key, so a panel hit and the circle point
+	// reconstructed from its angle are the same vertex.
+	canon := map[[2]int][2]float64{}
+	remember := func(k [2]int, x, y float64) {
+		if _, ok := canon[k]; !ok {
+			canon[k] = [2]float64{x, y}
+		}
+	}
+	for i, p := range pieces {
+		k0, k1 := key(p.x0, p.y0), key(p.x1, p.y1)
+		remember(k0, p.x0, p.y0)
+		remember(k1, p.x1, p.y1)
+		p.x0, p.y0 = canon[k0][0], canon[k0][1]
+		p.x1, p.y1 = canon[k1][0], canon[k1][1]
+		pieces[i] = p
+	}
+	cp := &canvas.Path{}
+	for i := range pieces {
+		if used[i] {
+			continue
+		}
+		used[i] = true
+		cp.MoveTo(pieces[i].x0, pieces[i].y0)
+		emitRingPiece(cp, pieces[i], false)
+		cur := key(pieces[i].x1, pieces[i].y1)
+		start := key(pieces[i].x0, pieces[i].y0)
+		for n := 0; n < len(pieces) && cur != start; n++ {
+			if j, ok := take(starts, cur); ok {
+				used[j] = true
+				emitRingPiece(cp, pieces[j], false)
+				cur = key(pieces[j].x1, pieces[j].y1)
+				continue
+			}
+			if j, ok := take(ends, cur); ok {
+				used[j] = true
+				emitRingPiece(cp, pieces[j], true)
+				cur = key(pieces[j].x0, pieces[j].y0)
+				continue
+			}
+			break
+		}
+		// Close() would turn a closing LineTo into a Close command, and the
+		// HFD conversion drops Close, opening the loop by that last edge.
+		pos := cp.Pos()
+		if cur == start && (pos.X != pieces[i].x0 || pos.Y != pieces[i].y0) {
+			cp.LineTo(pieces[i].x0, pieces[i].y0)
+		}
+	}
+	return cp
+}
+
+func emitRingPiece(cp *canvas.Path, p ringPiece, reverse bool) {
+	if p.r <= 0 {
+		if reverse {
+			cp.LineTo(p.x0, p.y0)
+			return
+		}
+		cp.LineTo(p.x1, p.y1)
+		return
+	}
+	if p.delta >= 2*math.Pi-1e-4 {
+		mx := p.cx - (p.x0 - p.cx)
+		my := p.cy - (p.y0 - p.cy)
+		cp.ArcTo(p.r, p.r, 0, true, true, mx, my)
+		cp.ArcTo(p.r, p.r, 0, true, true, p.x0, p.y0)
+		return
+	}
+	x, y := p.x1, p.y1
+	sweep := true
+	if reverse {
+		x, y = p.x0, p.y0
+		sweep = false
+	}
+	cp.ArcTo(p.r, p.r, 0, p.delta > math.Pi, sweep, x, y)
 }
 
 // mulberry32 matches the studio generator, including Math.imul's 32-bit wrap.
@@ -884,6 +1311,75 @@ func endcapSliver(px, py, x0, y0, x1, y1, hw, tol float64) *canvas.Path {
 	default:
 		return nil
 	}
+}
+
+// flushCutsToFrame opens a cut that stops just inside the frame out to the
+// frame's inner edge. A connector whose centerline lands in the frame band
+// otherwise leaves the neighboring openings short of that edge, so the left
+// and right ends no longer share one line.
+func flushCutsToFrame(cut *canvas.Path, x0, y0, x1, y1, hw float64) *canvas.Path {
+	if cut == nil || cut.Empty() || hw < 1e-6 {
+		return cut
+	}
+	snap := hw
+	// Strips sit just inside the frame. A gap that starts inside a strip is an
+	// opening stopped short of the frame; the stroke between it and the frame
+	// is the lip to remove.
+	strips := [][4]float64{
+		{x0 + hw, y0 + hw, x0 + hw + snap, y1 - hw},
+		{x1 - hw - snap, y0 + hw, x1 - hw, y1 - hw},
+		{x0 + hw + snap, y0 + hw, x1 - hw - snap, y0 + hw + snap},
+		{x0 + hw + snap, y1 - hw - snap, x1 - hw - snap, y1 - hw},
+	}
+	var trims []*canvas.Path
+	for i, s := range strips {
+		if s[2]-s[0] < 1e-6 || s[3]-s[1] < 1e-6 {
+			continue
+		}
+		gaps := rectPath(s[0], s[1], s[2], s[3]).Not(cut)
+		if gaps == nil || gaps.Empty() {
+			continue
+		}
+		for _, sub := range gaps.Split() {
+			if sub == nil || sub.Empty() {
+				continue
+			}
+			b := sub.Bounds()
+			if b.X1-b.X0 < 1e-4 || b.Y1-b.Y0 < 1e-4 {
+				continue
+			}
+			switch i {
+			case 0:
+				if b.X0 <= s[0]+1e-4 {
+					continue
+				}
+				trims = append(trims, rectPath(s[0], b.Y0, b.X0, b.Y1))
+			case 1:
+				if b.X1 >= s[2]-1e-4 {
+					continue
+				}
+				trims = append(trims, rectPath(b.X1, b.Y0, s[2], b.Y1))
+			case 2:
+				if b.Y0 <= s[1]+1e-4 {
+					continue
+				}
+				trims = append(trims, rectPath(b.X0, s[1], b.X1, b.Y0))
+			default:
+				if b.Y1 >= s[3]-1e-4 {
+					continue
+				}
+				trims = append(trims, rectPath(b.X0, b.Y1, b.X1, s[3]))
+			}
+		}
+	}
+	if len(trims) == 0 {
+		return cut
+	}
+	opened := cut.Not(unionCanvas(trims))
+	if opened == nil || opened.Empty() {
+		return cut
+	}
+	return opened
 }
 
 func perimeterBands(x0, y0, x1, y1, hw float64) []*canvas.Path {

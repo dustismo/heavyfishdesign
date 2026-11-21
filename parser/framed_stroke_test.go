@@ -200,6 +200,101 @@ func TestFramedStrokeFitsChildToPanel(t *testing.T) {
 	}
 }
 
+func TestFramedStrokeFitFalseKeepsLine(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "framed_stroke",
+		"fit": false,
+		"frame": false,
+		"width": 4,
+		"height": 2,
+		"margin": 0.25,
+		"thickness": 0,
+		"components": [{
+			"type": "draw",
+			"commands": [
+				{"command": "move", "to": "1, 1"},
+				{"command": "line", "to": "3, 1"}
+			]
+		}]
+	}`)
+	start := pth.Segments()[0].End()
+	end := pth.Segments()[1].End()
+	if math.Abs(start.Y-1) > 1e-4 || math.Abs(end.Y-1) > 1e-4 {
+		t.Fatalf("fit false moved the line to y %v, %v", start.Y, end.Y)
+	}
+	xs := []float64{start.X, end.X}
+	if math.Abs(math.Min(xs[0], xs[1])-1) > 1e-4 || math.Abs(math.Max(xs[0], xs[1])-3) > 1e-4 {
+		t.Fatalf("fit false moved x to %v", xs)
+	}
+}
+
+func TestFramedStrokeRoundJoinCurvesCorners(t *testing.T) {
+	rect := `{
+		"type": "framed_stroke",
+		"fit": false,
+		"frame": false,
+		"width": 4,
+		"height": 4,
+		"margin": 0,
+		"thickness": 0.2,
+		"components": [{
+			"type": "draw",
+			"commands": [
+				{"command": "move", "to": "1, 1"},
+				{"command": "line", "to": "2, 1"},
+				{"command": "line", "to": "2, 2"},
+				{"command": "line", "to": "1, 2"},
+				{"command": "line", "to": "1, 1"}
+			]
+		}]
+	}`
+	miter := renderPatternComponent(t, rect)
+	roundJSON := `{
+		"type": "framed_stroke",
+		"fit": false,
+		"frame": false,
+		"join": "round",
+		"width": 4,
+		"height": 4,
+		"margin": 0,
+		"thickness": 0.2,
+		"components": [{
+			"type": "draw",
+			"commands": [
+				{"command": "move", "to": "1, 1"},
+				{"command": "line", "to": "2, 1"},
+				{"command": "line", "to": "2, 2"},
+				{"command": "line", "to": "1, 2"},
+				{"command": "line", "to": "1, 1"}
+			]
+		}]
+	}`
+	round := renderPatternComponent(t, roundJSON)
+	const hw = 0.1
+	sharpX, sharpY := 1-hw, 1-hw
+	arcX := 1 - hw/math.Sqrt2
+	arcY := 1 - hw/math.Sqrt2
+	if !pointNear(miter, sharpX, sharpY, 0.02) {
+		t.Fatal("miter join lost the sharp outer corner")
+	}
+	if pointNear(round, sharpX, sharpY, 0.02) {
+		t.Fatal("round join still has the sharp outer corner")
+	}
+	if !pointNear(round, arcX, arcY, 0.015) {
+		t.Fatal("round join is missing the corner arc")
+	}
+}
+
+func pointNear(p path.Path, x, y, tol float64) bool {
+	for _, seg := range p.Segments() {
+		e := seg.End()
+		if math.Hypot(e.X-x, e.Y-y) <= tol {
+			return true
+		}
+	}
+	return false
+}
+
 func TestFramedStrokeRequiresPanelSize(t *testing.T) {
 	InitContext()
 	_, _, err := renderPatternComponentMaybeErr(t, `{

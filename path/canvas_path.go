@@ -1,29 +1,60 @@
 package path
 
-import "github.com/tdewolff/canvas"
+import (
+	"math"
+
+	"github.com/tdewolff/canvas"
+)
 
 // ToCanvasPath converts an HFD path to a canvas path. Move, line, and cubic
 // segments are preserved. Canvas may drop a zero-length line or merge collinear
 // lines, so this is not a byte-identical round trip.
 func ToCanvasPath(p Path) *canvas.Path {
+	return toCanvasPath(p, false)
+}
+
+// ToCanvasPathJoinLoops is ToCanvasPath, and it closes a subpath that returns
+// to its start so a stroke joins those corners instead of capping both ends.
+func ToCanvasPathJoinLoops(p Path) *canvas.Path {
+	return toCanvasPath(p, true)
+}
+
+func toCanvasPath(p Path, closeLoops bool) *canvas.Path {
 	cp := &canvas.Path{}
 	if p == nil {
 		return cp
 	}
+	var startX, startY, curX, curY float64
+	has, drew := false, false
+	finish := func() {
+		if closeLoops && has && drew && math.Hypot(curX-startX, curY-startY) < 1e-6 {
+			cp.Close()
+		}
+		has, drew = false, false
+	}
 	for _, seg := range p.Segments() {
 		switch s := seg.(type) {
 		case MoveSegment:
-			cp.MoveTo(s.End().X, s.End().Y)
+			finish()
+			startX, startY = s.End().X, s.End().Y
+			curX, curY = startX, startY
+			has = true
+			cp.MoveTo(startX, startY)
 		case LineSegment:
-			cp.LineTo(s.End().X, s.End().Y)
+			curX, curY = s.End().X, s.End().Y
+			drew = true
+			cp.LineTo(curX, curY)
 		case CurveSegment:
+			curX, curY = s.End().X, s.End().Y
+			drew = true
 			cp.CubeTo(
 				s.ControlPointStart.X, s.ControlPointStart.Y,
 				s.ControlPointEnd.X, s.ControlPointEnd.Y,
-				s.End().X, s.End().Y,
+				curX, curY,
 			)
 		}
 	}
+	finish()
 	return cp
 }
 
