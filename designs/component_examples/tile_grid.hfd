@@ -1,0 +1,95 @@
+{
+    "params": {
+        "material_width": 12,
+        "material_height": 12,
+        "material_thickness": 0.25,
+        "panel_width": 4,
+        "panel_height": 4,
+        "panel_margin": 0.2,
+        "clip": "false",
+        "tile_scale": 0.32,
+        "tile_gap_x": 0.12,
+        "tile_gap_y": 0.12,
+        "tile_stagger": 0.5,
+        "tile_arm": 0,
+        "tile_corner": 0.08,
+        "tile_rotation": 0
+    },
+    "parts": [
+        {
+            "label": {"text": "quatrefoil"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "tile_grid",
+                    "shape": "quatrefoil",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "scale": "tile_scale",
+                    "gap_x": "tile_gap_x",
+                    "gap_y": "tile_gap_y",
+                    "stagger": "tile_stagger",
+                    "arm": "tile_arm"
+                }
+            ]
+        },
+        {
+            "label": {"text": "circles"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "tile_grid",
+                    "shape": "circle",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "scale": "tile_scale",
+                    "gap_x": "tile_gap_x",
+                    "gap_y": "tile_gap_y",
+                    "stagger": "tile_stagger"
+                }
+            ]
+        },
+        {
+            "label": {"text": "rectangles"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "tile_grid",
+                    "shape": "rounded_rect",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "scale": "tile_scale",
+                    "gap_x": "tile_gap_x",
+                    "gap_y": "tile_gap_y",
+                    "stagger": "tile_stagger",
+                    "corner_radius": "tile_corner"
+                }
+            ]
+        },
+        {
+            "label": {"text": "diamonds"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "tile_grid",
+                    "shape": "diamond",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "clip_to_border": "clip",
+                    "scale": "tile_scale",
+                    "gap_x": "tile_gap_x",
+                    "gap_y": "tile_gap_y",
+                    "stagger": "tile_stagger",
+                    "rotation_deg": "tile_rotation"
+                }
+            ]
+        }
+    ]
+}

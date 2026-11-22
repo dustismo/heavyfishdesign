@@ -594,6 +594,254 @@ func TestWaveAndLatticeCustomComponents(t *testing.T) {
 	endpointsInside(t, lattice, 0.25, 0.25, 2.75, 2.75, 0.02)
 }
 
+func TestTileGridCirclesAndStagger(t *testing.T) {
+	straight := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "circle",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.5,
+		"gap_x": 0.2,
+		"gap_y": 0.2,
+		"stagger": 0
+	}`)
+	moves, _, curves := countSegments(straight)
+	if moves != 4 || curves < 8 {
+		t.Fatalf("circle grid moves=%d curves=%d, want 4 tiles\n%s", moves, curves, path.SvgString(straight, 3))
+	}
+	if !subpathsClosed(straight, 1e-3) {
+		t.Fatalf("circle tiles do not close\n%s", path.SvgString(straight, 3))
+	}
+
+	staggered := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "circle",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.5,
+		"gap_x": 0.2,
+		"gap_y": 0.2,
+		"stagger": 0.5
+	}`)
+	moves, _, _ = countSegments(staggered)
+	if moves != 3 {
+		t.Fatalf("staggered circle grid moves=%d, want 3\n%s", moves, path.SvgString(staggered, 3))
+	}
+}
+
+func TestTileGridQuatrefoilIsRound(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "quatrefoil",
+		"width": 3,
+		"height": 3,
+		"margin": 0.2,
+		"scale": 0.4,
+		"gap_x": 0.2,
+		"gap_y": 0.2,
+		"stagger": 0,
+		"arm": 0.2
+	}`)
+	moves, lines, curves := countSegments(pth)
+	if moves != 1 || lines != 0 || curves < 4 {
+		t.Fatalf("quatrefoil moves=%d lines=%d curves=%d\n%s", moves, lines, curves, path.SvgString(pth, 3))
+	}
+	if !subpathsClosed(pth, 1e-3) {
+		t.Fatalf("quatrefoil does not close\n%s", path.SvgString(pth, 3))
+	}
+	tl, br := pathBox(t, pth)
+	// Four outer semicircles of radius 0.2 span 0.8 on each axis. The cusp
+	// square alone would span 0.4, so this catches an arc that turned inward.
+	if math.Abs((br.X-tl.X)-0.8) > 0.02 || math.Abs((br.Y-tl.Y)-0.8) > 0.02 {
+		t.Fatalf("quatrefoil bbox %v x %v, want about 0.8", br.X-tl.X, br.Y-tl.Y)
+	}
+}
+
+func TestTileGridClipKeepsPartialCircle(t *testing.T) {
+	open := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "circle",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 2,
+		"gap_x": 0,
+		"gap_y": 0,
+		"stagger": 0
+	}`)
+	moves, _, curves := countSegments(open)
+	if moves != 1 || curves != 0 {
+		t.Fatalf("uncropped circle should be dropped, moves=%d curves=%d", moves, curves)
+	}
+	clipped := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "circle",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 2,
+		"gap_x": 0,
+		"gap_y": 0,
+		"stagger": 0,
+		"clip_to_border": true
+	}`)
+	moves, _, curves = countSegments(clipped)
+	if moves < 1 || curves < 2 {
+		t.Fatalf("clipped circle moves=%d curves=%d, the arc was flattened\n%s", moves, curves, path.SvgString(clipped, 3))
+	}
+	endpointsInside(t, clipped, 0.2, 0.2, 1.8, 1.8, 0.03)
+}
+
+func TestTileGridDiamondRotationPacksMore(t *testing.T) {
+	upright := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "diamond",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.8,
+		"gap_x": 0.05,
+		"gap_y": 0.05,
+		"stagger": 0,
+		"rotation_deg": 0
+	}`)
+	turned := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "diamond",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.8,
+		"gap_x": 0.05,
+		"gap_y": 0.05,
+		"stagger": 0,
+		"rotation_deg": 45
+	}`)
+	upMoves, _, _ := countSegments(upright)
+	turnMoves, _, _ := countSegments(turned)
+	if upMoves != 1 || turnMoves != 4 {
+		t.Fatalf("diamond tiles upright=%d turned=%d, want 1 and 4", upMoves, turnMoves)
+	}
+}
+
+func TestTileGridRoundedRectCorner(t *testing.T) {
+	sharp := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "rounded_rect",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.5,
+		"gap_x": 1.2,
+		"gap_y": 1.2,
+		"stagger": 0,
+		"corner_radius": 0
+	}`)
+	moves, lines, curves := countSegments(sharp)
+	if moves != 1 || lines != 4 || curves != 0 {
+		t.Fatalf("sharp rect moves=%d lines=%d curves=%d", moves, lines, curves)
+	}
+	round := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "rounded_rect",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.5,
+		"gap_x": 1.2,
+		"gap_y": 1.2,
+		"stagger": 0,
+		"corner_radius": 0.1
+	}`)
+	moves, _, curves = countSegments(round)
+	if moves != 1 || curves < 4 {
+		t.Fatalf("rounded rect moves=%d curves=%d", moves, curves)
+	}
+	tl, br := pathBox(t, round)
+	if math.Abs((br.X-tl.X)-0.5) > 0.02 || math.Abs((br.Y-tl.Y)-0.5) > 0.02 {
+		t.Fatalf("rounded rect bbox %v x %v, want 0.5", br.X-tl.X, br.Y-tl.Y)
+	}
+}
+
+func TestTileGridCustomMotif(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "custom_svg",
+		"width": 2,
+		"height": 2,
+		"margin": 0.2,
+		"scale": 0.5,
+		"gap_x": 0.2,
+		"gap_y": 0.2,
+		"stagger": 0,
+		"motif": "M 0 0 L 1 0 L 1 1 L 0 1 Z"
+	}`)
+	moves, lines, _ := countSegments(pth)
+	if moves != 4 || lines != 16 {
+		t.Fatalf("custom tiles moves=%d lines=%d, want 4 closed squares", moves, lines)
+	}
+	if !subpathsClosed(pth, 1e-6) {
+		t.Fatalf("custom tiles do not close")
+	}
+}
+
+func TestTileGridUnknownShape(t *testing.T) {
+	_, _, err := renderPatternComponentMaybeErr(t, `{
+		"type": "pattern",
+		"kind": "tile_grid",
+		"shape": "nope",
+		"width": 2,
+		"height": 2
+	}`)
+	if err == nil {
+		t.Fatal("expected unknown tile shape to fail")
+	}
+}
+
+func subpathsClosed(p path.Path, tol float64) bool {
+	var start path.Point
+	var end path.Point
+	open := false
+	for _, seg := range p.Segments() {
+		if _, ok := seg.(path.MoveSegment); ok {
+			if open && (math.Abs(end.X-start.X) > tol || math.Abs(end.Y-start.Y) > tol) {
+				return false
+			}
+			start = seg.End()
+			end = start
+			open = true
+			continue
+		}
+		end = seg.End()
+		open = true
+	}
+	if open && (math.Abs(end.X-start.X) > tol || math.Abs(end.Y-start.Y) > tol) {
+		return false
+	}
+	return true
+}
+
+func pathBox(t *testing.T, p path.Path) (path.Point, path.Point) {
+	t.Helper()
+	tl, br, err := path.BoundingBoxTrimWhitespace(p, path.NewSegmentOperators())
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tl, br
+}
+
 func renderImportedComponent(t *testing.T, docJSON string) path.Path {
 	t.Helper()
 	InitContext()

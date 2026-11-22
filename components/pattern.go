@@ -11,9 +11,9 @@ import (
 )
 
 // PatternComponentFactory builds Pattern Studio kinds. Closed cutouts,
-// overlapping circles, and voronoi are finished paths. Hatch, wave, and
-// lattice kinds emit centerlines; the custom components stroke those with
-// framed_stroke.
+// tile grids, overlapping circles, and voronoi are finished paths. Hatch,
+// wave, and lattice kinds emit centerlines; the custom components stroke
+// those with framed_stroke.
 type PatternComponentFactory struct{}
 
 type PatternComponent struct {
@@ -97,6 +97,22 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 			thickness:  attr.MustFloat64("thickness", 0.25),
 			minSiteGap: attr.MustFloat64("min_site_gap", 0.2),
 		})
+	case "tile_grid":
+		var err error
+		p, err = tileGrid(width, height, margin, tileParams{
+			shape:    attr.MustString("shape", "quatrefoil"),
+			scale:    attr.MustFloat64("scale", 0.4),
+			gapX:     attr.MustFloat64("gap_x", 0.2),
+			gapY:     attr.MustFloat64("gap_y", 0.2),
+			stagger:  attr.MustFloat64("stagger", 0.5),
+			arm:      attr.MustFloat64("arm", 0),
+			corner:   attr.MustFloat64("corner_radius", 0.04),
+			rotation: attr.MustFloat64("rotation_deg", 0),
+			motif:    attr.MustString("motif", ""),
+		}, clip)
+		if err != nil {
+			return nil, ctx, err
+		}
 	default:
 		return nil, ctx, fmt.Errorf("unknown pattern kind %q", kind)
 	}
@@ -531,7 +547,9 @@ func appendClipped(d *path.Draw, shape *canvas.Path, margin, width, height float
 	if width-margin <= margin+1e-9 || height-margin <= margin+1e-9 {
 		return
 	}
-	clipped := shape.And(innerRectCanvas(margin, width, height))
+	// And() flattens every curve to the canvas tolerance, so a circle becomes
+	// a polygon. Clip the cubics instead and keep the arc.
+	clipped := clipCurvesToRect(shape, margin, margin, width-margin, height-margin)
 	appendCanvas(d, clipped)
 }
 
