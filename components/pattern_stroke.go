@@ -10,7 +10,9 @@ import (
 )
 
 // Hatch, wave, and lattice kinds emit centerlines. framed_stroke thickens
-// them. Overlapping circles stay a panel minus the stroked rings.
+// them. Overlapping circles stay a panel minus the stroked rings. Voronoi
+// emits the thickened cell edges itself: three edges meet at a vertex, so
+// each edge is stroked and the strokes are unioned.
 
 type hatchParams struct {
 	angleDeg    float64
@@ -42,6 +44,13 @@ type overlapParams struct {
 	strokeWidth float64
 	count       int
 	seed        int32
+}
+
+type voronoiParams struct {
+	siteCount  int
+	seed       int32
+	thickness  float64
+	minSiteGap float64
 }
 
 func hatchPath(w, h, m float64, p hatchParams) path.Path {
@@ -96,36 +105,33 @@ func waveLattice(w, h, m float64, p waveParams, clip bool) path.Path {
 	if samples < 16 {
 		samples = 16
 	}
-	innerH := math.Max(0, h-2*m)
-	envelope := thick + 2*amp
-	slack := innerH - envelope
-	count := 1
-	if slack > 0 && pitch > 1e-9 {
-		count = 1 + int(math.Floor(slack/pitch+1e-9))
-		for count > 1 && float64(count-1)*pitch+envelope > innerH+1e-6 {
-			count--
-		}
-	}
 	xmin, ymin := m, m
 	xmax, ymax := w-m, h-m
-	type ribbon struct {
-		yCenter float64
-		phase   float64
+	if xmax <= xmin || ymax <= ymin {
+		return d.Path()
 	}
-	var ribbons []ribbon
-	var bb box
-	for i := 0; i < count; i++ {
-		yCenter := m + (float64(i)+0.5)*pitch - thick/2
-		if !clip && (yCenter+thick+amp > h-m || yCenter-amp < m) {
-			continue
+	// The crest of the top ribbon and the trough of the bottom one sit half a
+	// stroke outside the margin. The stroke clip then cuts them on that edge,
+	// so the peaks open through the top and bottom instead of stopping short.
+	past := thick / 2
+	innerH := ymax - ymin
+	need := innerH + 2*past - 2*amp
+	intervals := 0
+	pitchUsed := pitch
+	if need > 1e-9 && pitch > 1e-9 {
+		intervals = int(math.Round(need / pitch))
+		if intervals < 1 {
+			intervals = 1
 		}
-		ribbons = append(ribbons, ribbon{yCenter: yCenter, phase: float64(i) * p.phaseStep})
-		bb.add(xmin, yCenter-amp, xmax, yCenter+thick+amp)
+		pitchUsed = need / float64(intervals)
 	}
-	ox, oy := centeringOffset(xmin, ymin, xmax, ymax, bb)
-	x0, x1 := xmin+ox, xmax+ox
-	for _, rib := range ribbons {
-		appendWaveCenterline(d, x0, x1, rib.yCenter+oy+thick/2, amp, wl, rib.phase, samples, clip, xmin, ymin, xmax, ymax)
+	yTop := (ymin + ymax) / 2
+	if intervals > 0 {
+		yTop = ymin - past + amp
+	}
+	for i := 0; i <= intervals; i++ {
+		yCL := yTop + float64(i)*pitchUsed
+		appendWaveCenterline(d, xmin, xmax, yCL, amp, wl, float64(i)*p.phaseStep, samples, clip, xmin, ymin, xmax, ymax)
 	}
 	return d.Path()
 }
@@ -342,6 +348,13 @@ func staggeredLattice(w, h, m float64, p latticeParams, clip bool) path.Path {
 // staggered lattice does: butt caps on the border, endcap slivers, a
 // perimeter band, then the bare inner rectangle is dropped.
 func expandStroke(segments []seg, thickness, margin, width, height float64) path.Path {
+	return strokeOpenSegments(segments, thickness, margin, width, height, true)
+}
+
+// strokeOpenSegments thickens independent segments and unions them, so a
+// vertex where three edges meet fills instead of leaving butt-cap gaps.
+// Ends on the margin get a butt cap. frame adds the perimeter band.
+func strokeOpenSegments(segments []seg, thickness, margin, width, height float64, frame bool) path.Path {
 	d := path.NewDraw()
 	innerX0, innerY0 := margin, margin
 	innerX1, innerY1 := width-margin, height-margin
@@ -391,25 +404,31 @@ func expandStroke(segments []seg, thickness, margin, width, height float64) path
 	if geom == nil || geom.Empty() {
 		return d.Path()
 	}
-	var slivers []*canvas.Path
-	for _, s := range clipped {
-		if sl := endcapSliver(s.ax, s.ay, innerX0, innerY0, innerX1, innerY1, hw, bboxTol); sl != nil {
-			slivers = append(slivers, sl)
+	// A border replaces those open ends: the band covers the margin, and a
+	// sliver cut there would sever the slot from the border.
+	if !frame {
+		var slivers []*canvas.Path
+		for _, s := range clipped {
+			if sl := endcapSliver(s.ax, s.ay, innerX0, innerY0, innerX1, innerY1, hw, bboxTol); sl != nil {
+				slivers = append(slivers, sl)
+			}
+			if sl := endcapSliver(s.bx, s.by, innerX0, innerY0, innerX1, innerY1, hw, bboxTol); sl != nil {
+				slivers = append(slivers, sl)
+			}
 		}
-		if sl := endcapSliver(s.bx, s.by, innerX0, innerY0, innerX1, innerY1, hw, bboxTol); sl != nil {
-			slivers = append(slivers, sl)
+		if len(slivers) > 0 {
+			if cut := unionCanvas(slivers); cut != nil && !cut.Empty() {
+				geom = geom.Not(cut)
+			}
+		}
+		if geom == nil || geom.Empty() {
+			return d.Path()
 		}
 	}
-	if len(slivers) > 0 {
-		if cut := unionCanvas(slivers); cut != nil && !cut.Empty() {
-			geom = geom.Not(cut)
+	if frame {
+		if bands := perimeterBands(innerX0, innerY0, innerX1, innerY1, hw); len(bands) > 0 {
+			geom = unionCanvas(append([]*canvas.Path{geom}, bands...))
 		}
-	}
-	if geom == nil || geom.Empty() {
-		return d.Path()
-	}
-	if bands := perimeterBands(innerX0, innerY0, innerX1, innerY1, hw); len(bands) > 0 {
-		geom = unionCanvas(append([]*canvas.Path{geom}, bands...))
 	}
 	appendCanvasExceptInnerRect(d, geom, innerX0, innerY0, innerX1, innerY1)
 	return d.Path()
@@ -806,6 +825,320 @@ func overlapAnnuli(w, h, m float64, p overlapParams) []annulus {
 		rings = append(rings, annulus{cx: c.cx, cy: c.cy, inner: inner, outer: c.r + half})
 	}
 	return rings
+}
+
+func voronoiSlots(w, h, m float64, p voronoiParams) path.Path {
+	xmin, ymin := m, m
+	xmax, ymax := w-m, h-m
+	if xmax <= xmin || ymax <= ymin {
+		return path.NewPath()
+	}
+	sites := voronoiSites(xmin, ymin, xmax, ymax, p)
+	return strokeOpenSegments(voronoiEdges(sites, xmin, ymin, xmax, ymax), p.thickness, m, w, h, true)
+}
+
+// voronoiSites matches the studio placer, including the rejection loop and the
+// padding that tops the list up to three points.
+func voronoiSites(xmin, ymin, xmax, ymax float64, p voronoiParams) []point {
+	iw, ih := xmax-xmin, ymax-ymin
+	target := p.siteCount
+	if target < 4 {
+		target = 4
+	}
+	rng := mulberry32(p.seed)
+	minGap := p.minSiteGap
+	if minGap < 0 || math.IsNaN(minGap) || math.IsInf(minGap, 0) {
+		minGap = 0
+	}
+	minD2 := minGap * minGap
+	coords := make([]float64, 0, target*2)
+	maxAttempts := target * 120
+	if maxAttempts < 3000 {
+		maxAttempts = 3000
+	}
+	attempts := 0
+	for len(coords) < target*2 && attempts < maxAttempts {
+		attempts++
+		x := xmin + rng()*iw
+		y := ymin + rng()*ih
+		if minGap > 1e-12 {
+			ok := true
+			for i := 0; i < len(coords); i += 2 {
+				dx := x - coords[i]
+				dy := y - coords[i+1]
+				if dx*dx+dy*dy < minD2 {
+					ok = false
+					break
+				}
+			}
+			if !ok {
+				continue
+			}
+		}
+		coords = append(coords, x, y)
+	}
+	for len(coords) < 6 {
+		coords = append(coords, xmin+(0.1+rng()*0.8)*iw, ymin+(0.1+rng()*0.8)*ih)
+	}
+	sites := make([]point, 0, len(coords)/2)
+	for i := 0; i+1 < len(coords); i += 2 {
+		sites = append(sites, point{coords[i], coords[i+1]})
+	}
+	return sites
+}
+
+// voronoiEdges is the Voronoi diagram of sites, clipped to the rectangle.
+// Each triangle's circumcenter is a vertex. An interior edge joins the two
+// neighboring circumcenters. A hull edge is the ray from its circumcenter
+// along the perpendicular bisector, away from the triangle.
+func voronoiEdges(sites []point, xmin, ymin, xmax, ymax float64) []seg {
+	pts := make([]point, 0, len(sites))
+	for _, p := range sites {
+		dup := false
+		for _, q := range pts {
+			if math.Hypot(p.x-q.x, p.y-q.y) < 1e-9 {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			pts = append(pts, p)
+		}
+	}
+	tris := delaunay(pts)
+	type info struct {
+		centers []point
+		third   point
+		a, b    point
+	}
+	edges := map[[2]int]*info{}
+	for _, t := range tris {
+		cc, ok := circumcenter(pts[t[0]], pts[t[1]], pts[t[2]])
+		if !ok {
+			continue
+		}
+		idx := [3]int{t[0], t[1], t[2]}
+		for k := 0; k < 3; k++ {
+			i, j := idx[k], idx[(k+1)%3]
+			other := idx[(k+2)%3]
+			if i > j {
+				i, j = j, i
+			}
+			key := [2]int{i, j}
+			inf := edges[key]
+			if inf == nil {
+				inf = &info{a: pts[i], b: pts[j], third: pts[other]}
+				edges[key] = inf
+			}
+			inf.centers = append(inf.centers, cc)
+		}
+	}
+	var out []seg
+	seen := map[[4]int]bool{}
+	add := func(x0, y0, x1, y1 float64) {
+		if math.Hypot(x1-x0, y1-y0) < 1e-8 {
+			return
+		}
+		r := func(v float64) int { return int(math.Round(v * 1e6)) }
+		k := [4]int{r(x0), r(y0), r(x1), r(y1)}
+		if k[0] > k[2] || (k[0] == k[2] && k[1] > k[3]) {
+			k = [4]int{k[2], k[3], k[0], k[1]}
+		}
+		if seen[k] {
+			return
+		}
+		seen[k] = true
+		out = append(out, seg{x0, y0, x1, y1})
+	}
+	for _, inf := range edges {
+		if len(inf.centers) >= 2 {
+			ax, ay, bx, by, ok := clipSegmentToRect(inf.centers[0].x, inf.centers[0].y, inf.centers[1].x, inf.centers[1].y, xmin, ymin, xmax, ymax)
+			if ok {
+				add(ax, ay, bx, by)
+			}
+			continue
+		}
+		if len(inf.centers) != 1 {
+			continue
+		}
+		dx, dy := outwardBisector(inf.a, inf.b, inf.third)
+		ax, ay, bx, by, ok := clipRayToRect(inf.centers[0].x, inf.centers[0].y, dx, dy, xmin, ymin, xmax, ymax)
+		if ok {
+			add(ax, ay, bx, by)
+		}
+	}
+	return out
+}
+
+func outwardBisector(a, b, third point) (float64, float64) {
+	px, py := -(b.y - a.y), b.x-a.x
+	midX, midY := (a.x+b.x)/2, (a.y+b.y)/2
+	if px*(third.x-midX)+py*(third.y-midY) > 0 {
+		px, py = -px, -py
+	}
+	return px, py
+}
+
+func clipRayToRect(ox, oy, dx, dy, xmin, ymin, xmax, ymax float64) (float64, float64, float64, float64, bool) {
+	length := math.Hypot(dx, dy)
+	if length < 1e-15 {
+		return 0, 0, 0, 0, false
+	}
+	dx, dy = dx/length, dy/length
+	u0, u1 := 0.0, math.Inf(1)
+	clip := func(p, q float64) bool {
+		if math.Abs(p) < 1e-15 {
+			return q >= -1e-9
+		}
+		r := q / p
+		if p < 0 {
+			if r > u1 {
+				return false
+			}
+			if r > u0 {
+				u0 = r
+			}
+		} else {
+			if r < u0 {
+				return false
+			}
+			if r < u1 {
+				u1 = r
+			}
+		}
+		return true
+	}
+	if !clip(-dx, ox-xmin) || !clip(dx, xmax-ox) || !clip(-dy, oy-ymin) || !clip(dy, ymax-oy) {
+		return 0, 0, 0, 0, false
+	}
+	if u0 < 0 {
+		u0 = 0
+	}
+	if u1 < u0 || u1-u0 < 1e-8 {
+		return 0, 0, 0, 0, false
+	}
+	return ox + u0*dx, oy + u0*dy, ox + u1*dx, oy + u1*dy, true
+}
+
+func delaunay(pts []point) [][3]int {
+	n := len(pts)
+	if n < 3 {
+		return nil
+	}
+	minX, minY := pts[0].x, pts[0].y
+	maxX, maxY := minX, minY
+	for _, p := range pts[1:] {
+		if p.x < minX {
+			minX = p.x
+		}
+		if p.y < minY {
+			minY = p.y
+		}
+		if p.x > maxX {
+			maxX = p.x
+		}
+		if p.y > maxY {
+			maxY = p.y
+		}
+	}
+	dx, dy := maxX-minX, maxY-minY
+	if dx < 1 {
+		dx = 1
+	}
+	if dy < 1 {
+		dy = 1
+	}
+	span := math.Max(dx, dy) * 20
+	midX, midY := (minX+maxX)/2, (minY+maxY)/2
+	all := append(append([]point{}, pts...), point{midX - 2*span, midY - span}, point{midX + 2*span, midY - span}, point{midX, midY + 2*span})
+	tris := [][3]int{{n, n + 1, n + 2}}
+	for i := 0; i < n; i++ {
+		bad := make([]bool, len(tris))
+		for ti, t := range tris {
+			if inCircumcircle(all[i], all[t[0]], all[t[1]], all[t[2]]) {
+				bad[ti] = true
+			}
+		}
+		type de struct{ a, b int }
+		count := map[[2]int]int{}
+		var directed []de
+		for ti, t := range tris {
+			if !bad[ti] {
+				continue
+			}
+			for _, e := range []de{{t[0], t[1]}, {t[1], t[2]}, {t[2], t[0]}} {
+				k := [2]int{e.a, e.b}
+				if k[0] > k[1] {
+					k[0], k[1] = k[1], k[0]
+				}
+				count[k]++
+				directed = append(directed, e)
+			}
+		}
+		next := make([][3]int, 0, len(tris)+8)
+		for ti, t := range tris {
+			if !bad[ti] {
+				next = append(next, t)
+			}
+		}
+		for _, e := range directed {
+			k := [2]int{e.a, e.b}
+			if k[0] > k[1] {
+				k[0], k[1] = k[1], k[0]
+			}
+			if count[k] != 1 {
+				continue
+			}
+			if orient(all[e.a], all[e.b], all[i]) < 0 {
+				next = append(next, [3]int{e.b, e.a, i})
+			} else {
+				next = append(next, [3]int{e.a, e.b, i})
+			}
+		}
+		tris = next
+	}
+	out := make([][3]int, 0, len(tris))
+	for _, t := range tris {
+		if t[0] >= n || t[1] >= n || t[2] >= n {
+			continue
+		}
+		if math.Abs(orient(all[t[0]], all[t[1]], all[t[2]])) < 1e-14 {
+			continue
+		}
+		out = append(out, t)
+	}
+	return out
+}
+
+func orient(a, b, c point) float64 {
+	return (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x)
+}
+
+func inCircumcircle(p, a, b, c point) bool {
+	if orient(a, b, c) < 0 {
+		b, c = c, b
+	}
+	a1, a2 := a.x-p.x, a.y-p.y
+	b1, b2 := b.x-p.x, b.y-p.y
+	c1, c2 := c.x-p.x, c.y-p.y
+	det := (a1*a1+a2*a2)*(b1*c2-c1*b2) -
+		(b1*b1+b2*b2)*(a1*c2-c1*a2) +
+		(c1*c1+c2*c2)*(a1*b2-b1*a2)
+	return det >= -1e-10
+}
+
+func circumcenter(a, b, c point) (point, bool) {
+	d := 2 * (a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y))
+	if math.Abs(d) < 1e-14 {
+		return point{}, false
+	}
+	a2 := a.x*a.x + a.y*a.y
+	b2 := b.x*b.x + b.y*b.y
+	c2 := c.x*c.x + c.y*c.y
+	return point{
+		(a2*(b.y-c.y) + b2*(c.y-a.y) + c2*(a.y-b.y)) / d,
+		(a2*(c.x-b.x) + b2*(a.x-c.x) + c2*(b.x-a.x)) / d,
+	}, true
 }
 
 type annulus struct {

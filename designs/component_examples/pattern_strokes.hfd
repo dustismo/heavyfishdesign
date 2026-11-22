@@ -30,7 +30,11 @@
         "ring_radius_max": 0.48,
         "ring_stroke": 0.07,
         "ring_count": 12,
-        "ring_seed": 17
+        "ring_seed": 17,
+        "voronoi_sites": 28,
+        "voronoi_seed": 7,
+        "voronoi_gap": 0.22,
+        "voronoi_thickness": 0.1
     },
     "parts": [
         {
@@ -97,6 +101,22 @@
                     "count": "ring_count",
                     "seed": "ring_seed",
                     "segments": "ring_segments"
+                }
+            ]
+        },
+        {
+            "label": {"text": "voronoi"},
+            "components": [
+                {
+                    "type": "pattern",
+                    "kind": "voronoi",
+                    "width": "panel_width",
+                    "height": "panel_height",
+                    "margin": "panel_margin",
+                    "site_count": "voronoi_sites",
+                    "seed": "voronoi_seed",
+                    "min_site_gap": "voronoi_gap",
+                    "thickness": "voronoi_thickness"
                 }
             ]
         }

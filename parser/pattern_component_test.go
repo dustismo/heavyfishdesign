@@ -310,6 +310,68 @@ func TestPatternWaveLatticeRibbons(t *testing.T) {
 	}
 }
 
+func TestWavePeaksCrossTopAndBottom(t *testing.T) {
+	center := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "wave_lattice",
+		"width": 4,
+		"height": 3,
+		"margin": 0.2,
+		"amplitude": 0.15,
+		"wavelength": 1.1,
+		"ribbon_thickness": 0.18,
+		"ribbon_gap": 0.22,
+		"phase_step": 0.5,
+		"samples": 32
+	}`)
+	above, below := false, false
+	for _, seg := range center.Segments() {
+		y := seg.End().Y
+		if y < 0.2-1e-3 {
+			above = true
+		}
+		if y > 2.8+1e-3 {
+			below = true
+		}
+	}
+	if !above || !below {
+		t.Fatalf("centerline peaks stay inside the margin above=%v below=%v", above, below)
+	}
+
+	stroked := renderImportedComponent(t, `{
+		"imports": [{"path": "../designs/component_examples/wave_lattice.hfd"}],
+		"parts": [{"components": [{
+			"type": "wave_lattice",
+			"width": 4,
+			"height": 3,
+			"margin": 0.2,
+			"thickness": 0.18,
+			"amplitude": 0.15,
+			"wavelength": 1.1,
+			"ribbon_gap": 0.22,
+			"phase_step": 0.5,
+			"samples": 32,
+			"frame": false
+		}]}]
+	}`)
+	top, bot := false, false
+	for _, seg := range stroked.Segments() {
+		y := seg.End().Y
+		if math.Abs(y-0.2) < 0.03 {
+			top = true
+		}
+		if math.Abs(y-2.8) < 0.03 {
+			bot = true
+		}
+		if y < 0.2-0.03 || y > 2.8+0.03 {
+			t.Fatalf("stroked wave left the margin at y=%v", y)
+		}
+	}
+	if !top || !bot {
+		t.Fatalf("stroked peaks do not meet the edges top=%v bottom=%v", top, bot)
+	}
+}
+
 func TestPatternWaveClipStaysInsideMargin(t *testing.T) {
 	pth := renderPatternComponent(t, `{
 		"type": "pattern",

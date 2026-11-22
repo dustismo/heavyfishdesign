@@ -10,9 +10,10 @@ import (
 	"github.com/tdewolff/canvas"
 )
 
-// PatternComponentFactory builds Pattern Studio kinds. Closed cutouts and
-// overlapping circles are finished paths. Hatch, wave, and lattice kinds emit
-// centerlines; the custom components stroke those with framed_stroke.
+// PatternComponentFactory builds Pattern Studio kinds. Closed cutouts,
+// overlapping circles, and voronoi are finished paths. Hatch, wave, and
+// lattice kinds emit centerlines; the custom components stroke those with
+// framed_stroke.
 type PatternComponentFactory struct{}
 
 type PatternComponent struct {
@@ -88,6 +89,13 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 			strokeWidth: attr.MustFloat64("stroke_width", 0.08),
 			count:       int(math.Floor(attr.MustFloat64("count", 30))),
 			seed:        int32(attr.MustFloat64("seed", 17)),
+		})
+	case "voronoi":
+		p = voronoiSlots(width, height, margin, voronoiParams{
+			siteCount:  int(math.Floor(attr.MustFloat64("site_count", 32))),
+			seed:       int32(attr.MustFloat64("seed", 7)),
+			thickness:  attr.MustFloat64("thickness", 0.25),
+			minSiteGap: attr.MustFloat64("min_site_gap", 0.2),
 		})
 	default:
 		return nil, ctx, fmt.Errorf("unknown pattern kind %q", kind)
