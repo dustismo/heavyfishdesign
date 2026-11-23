@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"math"
 	"strings"
 	"testing"
 
@@ -199,6 +200,216 @@ func TestJoinOutlineWithSeamStraightLine(t *testing.T) {
 	if !strings.Contains(s, "L 13.507 6.000 L 0.000 6.000") &&
 		!strings.Contains(s, "L 0.000 6.000 L 13.507 6.000") {
 		t.Fatalf("missing straight seam:\n%s", s)
+	}
+}
+
+// fingerJointWall is a closed 6×3.5 outline with vertical finger notches on
+// both sides and horizontal fingers on the top and bottom, matching a
+// full-height box wall before it is split.
+func fingerJointWall(t *testing.T) path.Path {
+	t.Helper()
+	p, err := path.ParsePathFromSvg(strings.Join([]string{
+		"M 0 0",
+		"L 0.5 0 L 0.5 0.25 L 1 0.25 L 1 0",
+		"L 6 0",
+		"L 6 0.4 L 5.75 0.4 L 5.75 0.9 L 6 0.9",
+		"L 6 1.4 L 5.75 1.4 L 5.75 1.9 L 6 1.9",
+		"L 6 3.5",
+		"L 5.5 3.5 L 5.5 3.25 L 5 3.25 L 5 3.5",
+		"L 0 3.5",
+		"L 0 1.9 L 0.25 1.9 L 0.25 1.4 L 0 1.4",
+		"L 0 0.9 L 0.25 0.9 L 0.25 0.4 L 0 0.4",
+		"L 0 0",
+	}, " "))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return p
+}
+
+func TestStraightSplitThroughVerticalFingers(t *testing.T) {
+	so := path.NewSegmentOperators()
+	precision := 3
+	wall := fingerJointWall(t)
+	seamY := 1.5
+
+	sliced, err := hSlicePath(wall, seamY, so, precision)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	joined, err := closeSlicedOutline(sliced, seamY, precision, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := path.SvgString(joined, precision)
+	tl, br, err := path.BoundingBoxTrimWhitespace(joined, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if h := br.Y - tl.Y; h < 1.4 || h > 1.6 {
+		t.Fatalf("top half height = %.3f, want ~1.5\n%s", h, s)
+	}
+	if strings.Count(s, "M ") > 1 {
+		t.Fatalf("top half is not one closed outline:\n%s", s)
+	}
+	if !strings.Contains(s, "L 0.500 0.000") {
+		t.Fatalf("top half lost the top finger edge:\n%s", s)
+	}
+	if !strings.Contains(s, "5.750 1.500") || !strings.Contains(s, "0.250 1.500") {
+		t.Fatalf("top half seam does not meet the cut fingers:\n%s", s)
+	}
+	if strings.Contains(s, "6.000 1.500") || strings.Contains(s, "0.000 1.500") {
+		t.Fatalf("top half squared off the finger the cut passes through:\n%s", s)
+	}
+	if len(diagonalSegments(joined)) > 0 {
+		t.Fatalf("top half has a diagonal seam:\n%s", s)
+	}
+
+	// Bottom half: mirror, slice, mirror back, join at the original seam Y
+	// the way PartSplitter.transformPart does.
+	flipped, err := transforms.MirrorTransform{
+		Axis:             transforms.Horizontal,
+		Handle:           path.TopLeft,
+		SegmentOperators: so,
+	}.PathTransform(wall)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, brWall, err := path.BoundingBoxTrimWhitespace(wall, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bottomY := brWall.Y - seamY
+	bottomSliced, err := hSlicePath(flipped, bottomY, so, precision)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bottomOutline, err := transforms.MirrorTransform{
+		Axis:             transforms.Horizontal,
+		Handle:           path.TopLeft,
+		SegmentOperators: so,
+	}.PathTransform(bottomSliced)
+	if err != nil {
+		t.Fatal(err)
+	}
+	joinedBottom, err := closeSlicedOutline(bottomOutline, math.NaN(), precision, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bs := path.SvgString(joinedBottom, precision)
+	btl, bbr, err := path.BoundingBoxTrimWhitespace(joinedBottom, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if h := bbr.Y - btl.Y; h < 1.9 || h > 2.1 {
+		t.Fatalf("bottom half height = %.3f, want ~2.0\n%s", h, bs)
+	}
+	if strings.Count(bs, "M ") > 1 {
+		t.Fatalf("bottom half is not one closed outline:\n%s", bs)
+	}
+	if !strings.Contains(bs, "5.500 2.000") || !strings.Contains(bs, "5.000 1.750") {
+		t.Fatalf("bottom half lost the bottom finger edge:\n%s", bs)
+	}
+	if !strings.Contains(bs, "5.750 0.000") || !strings.Contains(bs, "0.250 0.000") {
+		t.Fatalf("bottom half seam does not meet the cut fingers:\n%s", bs)
+	}
+	if strings.Contains(bs, "1.500") {
+		t.Fatalf("bottom half seam was drawn through the middle:\n%s", bs)
+	}
+	if len(diagonalSegments(joinedBottom)) > 0 {
+		t.Fatalf("bottom half has a diagonal seam:\n%s", bs)
+	}
+}
+
+func TestCloseSlicedOutlineSnapsBleedToSeam(t *testing.T) {
+	so := path.NewSegmentOperators()
+	precision := 3
+	rect, err := path.ParsePathFromSvg("M 0 0 L 10 0 L 10 8 L 0 8 L 0 0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sliced, err := hSlicePath(rect, 4.0035, so, precision)
+	if err != nil {
+		t.Fatal(err)
+	}
+	closed, err := closeSlicedOutline(sliced, 4, precision, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := path.SvgString(closed, precision)
+	if strings.Count(s, "M ") > 1 {
+		t.Fatalf("expected one outline:\n%s", s)
+	}
+	if !strings.Contains(s, "10.000 4.000") || !strings.Contains(s, "0.000 4.000") {
+		t.Fatalf("seam not snapped to y=4:\n%s", s)
+	}
+	if strings.Contains(s, "4.003") || strings.Contains(s, "4.004") {
+		t.Fatalf("bleed stub left on the seam:\n%s", s)
+	}
+}
+
+func TestCloseSlicedOutlineWithSeamKeepsFingers(t *testing.T) {
+	so := path.NewSegmentOperators()
+	precision := 3
+	// Open top half: the knife stopped on the finger faces at x=0.25 and x=5.75.
+	sliced, err := path.ParsePathFromSvg(
+		"M 0.25 1.5 L 0.25 0.5 L 0 0.5 L 0 0 L 6 0 L 6 0.5 L 5.75 0.5 L 5.75 1.5",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	seam, err := path.ParsePathFromSvg("M 0.25 1.5 L 3 1.9 L 5.75 1.5")
+	if err != nil {
+		t.Fatal(err)
+	}
+	chain, err := slicedOpenChain(sliced, 1.5, precision, so)
+	if err != nil {
+		t.Fatal(err)
+	}
+	start, end := pathEndpoints(chain)
+	chain = append(chain, orientSeamOnto(path.TrimMove(seam.Segments()), end, start, so)...)
+	closed, err := transforms.CleanupTransform{Precision: precision}.PathTransform(
+		path.NewPathFromSegmentsWithoutMove(chain))
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := path.SvgString(closed, precision)
+	if strings.Count(s, "M ") > 1 {
+		t.Fatalf("expected one outline:\n%s", s)
+	}
+	if !strings.Contains(s, "3.000 1.900") {
+		t.Fatalf("curve was dropped:\n%s", s)
+	}
+	if !strings.Contains(s, "0.000 0.000") || !strings.Contains(s, "0.250 0.500") {
+		t.Fatalf("finger beside the cut was dropped:\n%s", s)
+	}
+	if strings.Contains(s, "0.000 1.500") || strings.Contains(s, "6.000 1.500") {
+		t.Fatalf("seam squared off to the outer corners:\n%s", s)
+	}
+}
+
+func TestPruneHolePathKeepsSmallClosedHole(t *testing.T) {
+	// 1/8 in hole approximated by chords of ~0.088, under minHoleSegmentLength.
+	hole, err := path.ParsePathFromSvg(
+		"M 0 0.0625 L 0.0625 0 L 0.125 0.0625 L 0.0625 0.125 L 0 0.0625",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	kept, ok := pruneHolePath(hole, 3)
+	if !ok {
+		t.Fatal("small closed hole was dropped")
+	}
+	if len(path.TrimMove(kept.Segments())) == 0 {
+		t.Fatal("kept hole has no segments")
+	}
+	stub, err := path.ParsePathFromSvg("M 0 0 L 0.02 0.01")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := pruneHolePath(stub, 3); ok {
+		t.Fatal("open sliver was kept")
 	}
 }
 

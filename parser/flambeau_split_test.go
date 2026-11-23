@@ -176,20 +176,30 @@ func TestFlambeauShelvesBackPanelSplitLineSeam(t *testing.T) {
 	for i, p := range bottomPaths {
 		s := path.SvgString(p, precision)
 		longest := longestSubpath(s)
+		// Top half keeps the seam at the split (y=6). The mirrored bottom half
+		// is trimmed so that same butt cut sits on y=0, and the original
+		// finger joints remain on the far edge.
 		hasStraightSeam := strings.Contains(s, "13.507 6.000 L 0.000 6.000") ||
-			strings.Contains(s, "0.000 6.000 L 13.507 6.000")
+			strings.Contains(s, "0.000 6.000 L 13.507 6.000") ||
+			strings.Contains(s, "0.000 0.000 L 13.507 0.000") ||
+			strings.Contains(s, "13.507 0.000 L 0.000 0.000")
 		if !hasStraightSeam {
 			t.Fatalf("bottom half %d: missing straight seam line in path:\n%s", i, s)
 		}
 		if strings.Contains(longest, "L 13.507 6.003 L 13.507 6.000") {
 			t.Fatalf("bottom half %d: stray HSlice stub at seam:\n%s", i, longest)
 		}
+		if strings.Contains(s, "0.000 0.000 L 13.507 0.000") || strings.Contains(s, "13.507 0.000 L 0.000 0.000") {
+			if !strings.Contains(s, "5.761") {
+				t.Fatalf("bottom half %d: finger joints on the uncut edge were replaced:\n%s", i, longest)
+			}
+		}
 		pts := extractPathPoints(longest)
 		if len(pts) < 4 {
 			t.Fatalf("bottom half %d: outline too short:\n%s", i, longest)
 		}
 		if pts[0] != pts[len(pts)-1] {
-			t.Logf("bottom half %d: line-seam outline not closed (start=%s end=%s)", i, pts[0], pts[len(pts)-1])
+			t.Fatalf("bottom half %d: line-seam outline not closed (start=%s end=%s):\n%s", i, pts[0], pts[len(pts)-1], longest)
 		}
 	}
 }

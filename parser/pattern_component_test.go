@@ -797,6 +797,57 @@ func TestTileGridCustomMotif(t *testing.T) {
 	}
 }
 
+func TestPatternFramedStroke(t *testing.T) {
+	pth := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "framed_stroke",
+		"width": 4,
+		"height": 3,
+		"margin": 0.2,
+		"thickness": 0.2,
+		"fit": true,
+		"frame": true,
+		"join": "miter",
+		"motif": "M 0 1 L 4 1 M 2 0 L 2 3"
+	}`)
+	tl, br := pathBox(t, pth)
+	// The sheet outline is not part of the cut. The frame band's inner edge is one half-stroke inside the margin.
+	if math.Abs(tl.X-0.3) > 0.08 || math.Abs(tl.Y-0.3) > 0.08 || math.Abs(br.X-3.7) > 0.08 || math.Abs(br.Y-2.7) > 0.08 {
+		t.Fatalf("framed stroke bbox (%v,%v)-(%v,%v), want the frame's inner edge", tl.X, tl.Y, br.X, br.Y)
+	}
+	moves, _, _ := countSegments(pth)
+	if moves < 2 {
+		t.Fatalf("framed stroke moves=%d, want the frame and the stroke", moves)
+	}
+
+	center := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "framed_stroke",
+		"width": 4,
+		"height": 3,
+		"margin": 0.2,
+		"thickness": 0,
+		"fit": true,
+		"frame": true,
+		"motif": "M 0 1 L 4 1 M 2 0 L 2 3"
+	}`)
+	moves, lines, _ := countSegments(center)
+	if moves != 2 || lines != 2 {
+		t.Fatalf("zero thickness moves=%d lines=%d, want the two centerlines", moves, lines)
+	}
+
+	empty := renderPatternComponent(t, `{
+		"type": "pattern",
+		"kind": "framed_stroke",
+		"width": 2,
+		"height": 2,
+		"motif": ""
+	}`)
+	if len(empty.Segments()) != 1 {
+		t.Fatalf("empty motif segments=%d, want a single placeholder move", len(empty.Segments()))
+	}
+}
+
 func TestTileGridUnknownShape(t *testing.T) {
 	_, _, err := renderPatternComponentMaybeErr(t, `{
 		"type": "pattern",

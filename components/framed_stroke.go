@@ -93,6 +93,36 @@ func (c *FramedStrokeComponent) Render(ctx dom.RenderContext) (path.Path, dom.Re
 	return c.HandleTransforms(c, result, context)
 }
 
+type framedStrokeParams struct {
+	motif     string
+	thickness float64
+	fit       bool
+	frame     bool
+	join      string
+}
+
+// patternFramedStroke is the pattern kind. The motif is the centerline drawing.
+func patternFramedStroke(width, height, margin float64, p framedStrokeParams) (path.Path, error) {
+	data, err := motifPathData(p.motif)
+	if err != nil {
+		return nil, err
+	}
+	if data == "" {
+		return path.NewPath(), nil
+	}
+	drawing, err := path.ParsePathFromSvg(data)
+	if err != nil {
+		return nil, fmt.Errorf("framed_stroke motif: %w", err)
+	}
+	if p.fit {
+		drawing, err = fitDrawingToPanel(drawing, margin, width, height)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return strokeCenterline(drawing, p.thickness, margin, width, height, p.frame, p.join), nil
+}
+
 // fitDrawingToPanel uses the shared scale and move transforms. Both width and
 // height map the bounding box onto the inner margin. A flat drawing sets only
 // the axis it has, which keeps that scale uniform.

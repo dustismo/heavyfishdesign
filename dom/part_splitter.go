@@ -1008,12 +1008,281 @@ func splitOutlineFromHoles(p path.Path, so path.SegmentOperators) (outline path.
 	return outline, holes
 }
 
+// mirrorFrame is the horizontal-flip frame MirrorTransform uses: the path's
+// top-left, and the Y extent after that corner is moved to the origin.
+func mirrorFrame(p path.Path, so path.SegmentOperators) (origin path.Point, height float64, err error) {
+	origin, err = path.PointPathAttribute(path.TopLeft, p, so)
+	if err != nil {
+		return origin, 0, err
+	}
+	moved, err := transforms.MoveTransform{
+		Point:            path.NewPoint(0, 0),
+		Handle:           path.TopLeft,
+		SegmentOperators: so,
+	}.PathTransform(p)
+	if err != nil {
+		return origin, 0, err
+	}
+	_, br, err := path.BoundingBoxWithWhitespace(moved, so)
+	if err != nil {
+		return origin, 0, err
+	}
+	return origin, br.Y, nil
+}
+
+// mirrorHorizontalInFrame flips p inside a frame taken from another path.
+// MirrorTransform flips each path inside its own bounding box, which leaves a
+// small hole unmoved. Holes have to flip inside the outline's frame so a
+// split keeps the cutouts that belong on that half.
+func mirrorHorizontalInFrame(p path.Path, origin path.Point, height float64, so path.SegmentOperators) (path.Path, error) {
+	shifted, err := transforms.ShiftTransform{
+		DeltaX:           -origin.X,
+		DeltaY:           -origin.Y,
+		SegmentOperators: so,
+	}.PathTransform(p)
+	if err != nil {
+		return nil, err
+	}
+	segs := make([]path.Segment, 0, len(shifted.Segments()))
+	for _, seg := range shifted.Segments() {
+		s, err := so.TransformPoints(seg, func(pt path.Point) path.Point {
+			np := pt.Clone()
+			np.Y = height - pt.Y
+			return np
+		})
+		if err != nil {
+			return nil, err
+		}
+		segs = append(segs, s)
+	}
+	return transforms.ShiftTransform{
+		DeltaX:           origin.X,
+		DeltaY:           origin.Y,
+		SegmentOperators: so,
+	}.PathTransform(path.NewPathFromSegments(segs))
+}
+
 func hSlicePath(p path.Path, y float64, so path.SegmentOperators, precision int) (path.Path, error) {
 	return transforms.HSliceTransform{
 		Y:                y,
 		SegmentOperators: so,
 		Precision:        precision,
 	}.PathTransform(p)
+}
+
+const straightCutSnapSlop = 0.05
+
+// slicedOpenChain joins the open chains left by a horizontal knife cut.
+// snapY pulls the cut ends back onto the nominal seam when the slice bled
+// past it by a kerf offset; NaN leaves the cut where the knife made it.
+func slicedOpenChain(p path.Path, snapY float64, precision int, so path.SegmentOperators) ([]path.Segment, error) {
+	var chains [][]path.Segment
+	for _, sp := range path.SplitPathOnMove(p) {
+		segs := path.TrimMove(sp.Segments())
+		if len(segs) == 0 {
+			continue
+		}
+		chains = append(chains, segs)
+	}
+	if len(chains) == 0 {
+		return nil, nil
+	}
+	chains = mergeOpenChains(chains, precision, so)
+	chain := append([]path.Segment{}, chains[longestChainIndex(chains)]...)
+	snapOpenChainEnds(chain, snapY, straightCutSnapSlop)
+	return chain, nil
+}
+
+// closeSlicedOutline closes the knife cut with one straight segment between
+// the two cut ends.
+func closeSlicedOutline(p path.Path, snapY float64, precision int, so path.SegmentOperators) (path.Path, error) {
+	chain, err := slicedOpenChain(p, snapY, precision, so)
+	if err != nil || len(chain) == 0 {
+		return p, err
+	}
+	start, end := pathEndpoints(chain)
+	if !start.EqualsPrecision(end, precision) {
+		chain = append(chain, path.LineSegment{StartPoint: end, EndPoint: start})
+	}
+	return transforms.CleanupTransform{Precision: precision}.PathTransform(
+		path.NewPathFromSegmentsWithoutMove(chain))
+}
+
+// closeWithRenderedSeam closes the knife cut with edge, drawn left to right
+// between the two cut ends so a curve keeps the same side on both halves.
+func closeWithRenderedSeam(sliced path.Path, edge Component, snapY float64, ctx RenderContext, precision int, so path.SegmentOperators) (path.Path, error) {
+	chain, err := slicedOpenChain(sliced, snapY, precision, so)
+	if err != nil || len(chain) == 0 {
+		return sliced, err
+	}
+	start, end := pathEndpoints(chain)
+	if start.EqualsPrecision(end, precision) {
+		return transforms.CleanupTransform{Precision: precision}.PathTransform(
+			path.NewPathFromSegmentsWithoutMove(chain))
+	}
+	seam, err := renderEdgeLeftToRight(edge, start, end, ctx)
+	if err != nil {
+		return nil, err
+	}
+	chain = append(chain, orientSeamOnto(path.TrimMove(seam.Segments()), end, start, so)...)
+	start, end = pathEndpoints(chain)
+	if !start.EqualsPrecision(end, precision) {
+		chain = append(chain, path.LineSegment{StartPoint: end, EndPoint: start})
+	}
+	return transforms.CleanupTransform{Precision: precision}.PathTransform(
+		path.NewPathFromSegmentsWithoutMove(chain))
+}
+
+// renderEdgeLeftToRight draws edge along the horizontal chord from the left
+// cut end to the right one. Left to right keeps the edge's +y downward.
+func renderEdgeLeftToRight(edge Component, a, b path.Point, ctx RenderContext) (path.Path, error) {
+	left, right := a, b
+	if left.X > right.X {
+		left, right = right, left
+	}
+	edge.SetLocalVariable("from", left.ToDynMap())
+	edge.SetLocalVariable("to", right.ToDynMap())
+	p, _, err := edge.Render(ctx)
+	return p, err
+}
+
+// orientSeamOnto turns seam so it runs from `from` to `to`, and pins the
+// ends so a float gap does not become a broken move.
+func orientSeamOnto(segs []path.Segment, from, to path.Point, so path.SegmentOperators) []path.Segment {
+	if len(segs) == 0 {
+		return []path.Segment{path.LineSegment{StartPoint: from, EndPoint: to}}
+	}
+	ss, se := pathEndpoints(segs)
+	if path.Distance(ss, to)+path.Distance(se, from) < path.Distance(ss, from)+path.Distance(se, to) {
+		segs = reverseSegmentChain(segs, so)
+	}
+	segs[0] = setSegmentStart(segs[0], from)
+	segs[len(segs)-1] = setSegmentEnd(segs[len(segs)-1], to)
+	return segs
+}
+
+func setSegmentStart(seg path.Segment, p path.Point) path.Segment {
+	switch s := seg.(type) {
+	case path.LineSegment:
+		s.StartPoint = p
+		return s
+	case path.CurveSegment:
+		s.StartPoint = p
+		return s
+	default:
+		return seg
+	}
+}
+
+func setSegmentEnd(seg path.Segment, p path.Point) path.Segment {
+	switch s := seg.(type) {
+	case path.LineSegment:
+		s.EndPoint = p
+		return s
+	case path.CurveSegment:
+		s.EndPoint = p
+		return s
+	default:
+		return seg
+	}
+}
+
+func longestChainIndex(chains [][]path.Segment) int {
+	best := 0
+	bestLen := -1.0
+	for i, chain := range chains {
+		n := 0.0
+		for _, seg := range chain {
+			n += segmentLength(seg)
+		}
+		if n > bestLen {
+			bestLen = n
+			best = i
+		}
+	}
+	return best
+}
+
+func mergeOpenChains(chains [][]path.Segment, precision int, so path.SegmentOperators) [][]path.Segment {
+	for {
+		merged := false
+		for i := 0; i < len(chains) && !merged; i++ {
+			for j := i + 1; j < len(chains); j++ {
+				joined, ok := joinTwoChains(chains[i], chains[j], precision, so)
+				if !ok {
+					continue
+				}
+				chains[i] = joined
+				chains = append(chains[:j], chains[j+1:]...)
+				merged = true
+				break
+			}
+		}
+		if !merged {
+			return chains
+		}
+	}
+}
+
+func joinTwoChains(a, b []path.Segment, precision int, so path.SegmentOperators) ([]path.Segment, bool) {
+	if len(a) == 0 || len(b) == 0 {
+		return nil, false
+	}
+	as, ae := pathEndpoints(a)
+	bs, be := pathEndpoints(b)
+	// A closed chain meets itself; don't stitch another chain onto that point.
+	if as.EqualsPrecision(ae, precision) || bs.EqualsPrecision(be, precision) {
+		return nil, false
+	}
+	switch {
+	case ae.EqualsPrecision(bs, precision):
+		return append(append([]path.Segment{}, a...), b...), true
+	case ae.EqualsPrecision(be, precision):
+		return append(append([]path.Segment{}, a...), reverseSegmentChain(b, so)...), true
+	case as.EqualsPrecision(be, precision):
+		return append(append([]path.Segment{}, b...), a...), true
+	case as.EqualsPrecision(bs, precision):
+		return append(reverseSegmentChain(b, so), a...), true
+	default:
+		return nil, false
+	}
+}
+
+func snapOpenChainEnds(segs []path.Segment, snapY, tol float64) {
+	if len(segs) == 0 || math.IsNaN(snapY) {
+		return
+	}
+	snapLineEnd(segs, true, snapY, tol)
+	snapLineEnd(segs, false, snapY, tol)
+}
+
+func snapLineEnd(segs []path.Segment, atStart bool, y, tol float64) {
+	idx := 0
+	if !atStart {
+		idx = len(segs) - 1
+	}
+	line, ok := segs[idx].(path.LineSegment)
+	if !ok {
+		return
+	}
+	if atStart {
+		if math.Abs(line.StartPoint.Y-y) > tol {
+			return
+		}
+		line.StartPoint.Y = y
+		if math.Abs(line.EndPoint.Y-y) <= tol {
+			line.EndPoint.Y = y
+		}
+	} else {
+		if math.Abs(line.EndPoint.Y-y) > tol {
+			return
+		}
+		line.EndPoint.Y = y
+		if math.Abs(line.StartPoint.Y-y) <= tol {
+			line.StartPoint.Y = y
+		}
+	}
+	segs[idx] = line
 }
 
 const minHoleSegmentLength = 0.1
@@ -1031,13 +1300,56 @@ func subpathHasDrawnSegment(segs []path.Segment, minLen float64) bool {
 	return false
 }
 
+// subpathWorthKeeping keeps a subpath that has a long segment, or a closed
+// shape whose shorter side is at least minLen. Screw holes are four short
+// cubics (a 1/8 in circle's chord is ~0.088, under minHoleSegmentLength) but
+// the hole itself is larger than a sliced finger-slot sliver.
+func subpathWorthKeeping(segs []path.Segment, minLen float64) bool {
+	if subpathHasDrawnSegment(segs, minLen) {
+		return true
+	}
+	return closedSubpathMinSpan(segs) >= minLen
+}
+
+func closedSubpathMinSpan(segs []path.Segment) float64 {
+	if len(segs) < 2 {
+		return 0
+	}
+	if !segs[0].Start().EqualsPrecision(segs[len(segs)-1].End(), 3) {
+		return 0
+	}
+	minX, minY := math.Inf(1), math.Inf(1)
+	maxX, maxY := math.Inf(-1), math.Inf(-1)
+	for _, s := range segs {
+		for _, pt := range []path.Point{s.Start(), s.End()} {
+			if pt.X < minX {
+				minX = pt.X
+			}
+			if pt.Y < minY {
+				minY = pt.Y
+			}
+			if pt.X > maxX {
+				maxX = pt.X
+			}
+			if pt.Y > maxY {
+				maxY = pt.Y
+			}
+		}
+	}
+	w, h := maxX-minX, maxY-minY
+	if w < h {
+		return w
+	}
+	return h
+}
+
 // pruneHolePath drops move-only stubs left when HSlice clips finger-joint hole paths.
 func pruneHolePath(p path.Path, precision int) (path.Path, bool) {
 	subpaths := path.SplitPathOnMove(p)
 	kept := make([]path.Path, 0, len(subpaths))
 	for _, sp := range subpaths {
 		segs := path.TrimMove(sp.Segments())
-		if subpathHasDrawnSegment(segs, minHoleSegmentLength) {
+		if subpathWorthKeeping(segs, minHoleSegmentLength) {
 			kept = append(kept, sp)
 		}
 	}
@@ -1057,7 +1369,7 @@ func dropDegenerateSubpaths(p path.Path, precision int) path.Path {
 	kept := make([]path.Path, 0, len(subpaths))
 	for _, sp := range subpaths {
 		segs := path.TrimMove(sp.Segments())
-		if subpathHasDrawnSegment(segs, minHoleSegmentLength) {
+		if subpathWorthKeeping(segs, minHoleSegmentLength) {
 			kept = append(kept, sp)
 		}
 	}
@@ -1080,17 +1392,14 @@ func scrubOrphanMoves(p path.Path) path.Path {
 	for i := 0; i < len(segs); i++ {
 		seg := segs[i]
 		if path.IsMove(seg) {
-			hasDraw := false
+			var following []path.Segment
 			for j := i + 1; j < len(segs); j++ {
 				if path.IsMove(segs[j]) {
 					break
 				}
-				if segmentLength(segs[j]) >= minHoleSegmentLength {
-					hasDraw = true
-					break
-				}
+				following = append(following, segs[j])
 			}
-			if !hasDraw {
+			if !subpathWorthKeeping(following, minHoleSegmentLength) {
 				continue
 			}
 		}
@@ -1184,7 +1493,21 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 		return nil, err
 	}
 
-	topOutline, err = joinOutlineWithSeam(topOutline, plugEdgePath, tl.X, br.X, yPos, precision, so)
+	// A straight butt seam closes the knife cut between the two points where
+	// the outline actually crosses the split. Replacing a "seam run" squares
+	// off vertical fingers the cut passes through, and on the mirrored bottom
+	// half it can land in the middle of the piece and delete the rest.
+	straightPlug := seamIsStraightLine(path.TrimMove(plugEdgePath.Segments()), precision)
+	if straightPlug {
+		topOutline, err = closeSlicedOutline(topOutline, yPos, precision, so)
+	} else if plugEdge.ElementType() == "keyed_edge" {
+		topOutline, err = joinOutlineWithSeam(topOutline, plugEdgePath, tl.X, br.X, yPos, precision, so)
+	} else {
+		// Draw the profile left to right between the knife's cut ends. The
+		// first render runs right to left, and that 180° turn flips the
+		// curve to the other side of the seam.
+		topOutline, err = closeWithRenderedSeam(topOutline, plugEdge, yPos, ctx, precision, so)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -1215,6 +1538,7 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 	if err != nil {
 		return nil, err
 	}
+	straightSocket := seamIsStraightLine(path.TrimMove(socketEdgePath.Segments()), precision)
 
 	_, brSo, err := path.BoundingBoxTrimWhitespace(socketEdgePath, so)
 	if err != nil {
@@ -1223,6 +1547,16 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 	bleedBottom := attr.MustFloat64("bleed_bottom", brSo.Y-bottomY)
 
 	bottomOutline, err := hSlicePath(flippedOutline, bottomY+bleedBottom, so, precision)
+	if err != nil {
+		return nil, err
+	}
+	// Capture the flip frames before the outline is mirrored back. Holes must
+	// use these, not their own bounding boxes.
+	outlineOrigin, outlineH, err := mirrorFrame(outlinePath, so)
+	if err != nil {
+		return nil, err
+	}
+	bottomOrigin, bottomH, err := mirrorFrame(bottomOutline, so)
 	if err != nil {
 		return nil, err
 	}
@@ -1254,14 +1588,22 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 			return nil, err
 		}
 
-		socketEdge.SetLocalVariable("from", path.NewPoint(tl.X, yPos).ToDynMap())
-		socketEdge.SetLocalVariable("to", path.NewPoint(br.X, yPos).ToDynMap())
-		socketEdgePath, _, err = socketEdge.Render(ctx)
-		if err != nil {
-			return nil, err
+		if straightSocket {
+			// Mirror-back puts the knife cut on the piece's top edge (y≈0),
+			// not at the original split Y. Close that cut; snapping to yPos
+			// would draw the seam through the middle of the lower half.
+			bottomPath, err = closeSlicedOutline(bottomOutline, math.NaN(), precision, so)
+		} else if socketEdge.ElementType() == "keyed_edge" {
+			socketEdge.SetLocalVariable("from", path.NewPoint(tl.X, yPos).ToDynMap())
+			socketEdge.SetLocalVariable("to", path.NewPoint(br.X, yPos).ToDynMap())
+			socketEdgePath, _, err = socketEdge.Render(ctx)
+			if err != nil {
+				return nil, err
+			}
+			bottomPath, err = joinOutlineWithSeam(bottomOutline, socketEdgePath, tl.X, br.X, yPos, precision, so)
+		} else {
+			bottomPath, err = closeWithRenderedSeam(bottomOutline, socketEdge, math.NaN(), ctx, precision, so)
 		}
-
-		bottomPath, err = joinOutlineWithSeam(bottomOutline, socketEdgePath, tl.X, br.X, yPos, precision, so)
 		if err != nil {
 			return nil, err
 		}
@@ -1269,11 +1611,7 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 
 	bottomHoles := make([]path.Path, 0, len(holePaths))
 	for _, hp := range holePaths {
-		flippedHole, err := transforms.MirrorTransform{
-			Axis:             transforms.Horizontal,
-			Handle:           path.TopLeft,
-			SegmentOperators: so,
-		}.PathTransform(hp)
+		flippedHole, err := mirrorHorizontalInFrame(hp, outlineOrigin, outlineH, so)
 		if err != nil {
 			return nil, err
 		}
@@ -1281,11 +1619,7 @@ func (ps *PartSplitter) transformPart(part *RenderedPart, y float64, ctx RenderC
 		if err != nil {
 			return nil, err
 		}
-		sliced, err = transforms.MirrorTransform{
-			Axis:             transforms.Horizontal,
-			Handle:           path.TopLeft,
-			SegmentOperators: so,
-		}.PathTransform(sliced)
+		sliced, err = mirrorHorizontalInFrame(sliced, bottomOrigin, bottomH, so)
 		if err != nil {
 			return nil, err
 		}

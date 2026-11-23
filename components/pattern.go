@@ -97,6 +97,18 @@ func (pc *PatternComponent) Render(ctx dom.RenderContext) (path.Path, dom.Render
 			thickness:  attr.MustFloat64("thickness", 0.25),
 			minSiteGap: attr.MustFloat64("min_site_gap", 0.2),
 		})
+	case "framed_stroke":
+		var err error
+		p, err = patternFramedStroke(width, height, margin, framedStrokeParams{
+			motif:     attr.MustString("motif", ""),
+			thickness: attr.MustFloat64("thickness", 0.1),
+			fit:       attr.MustBool("fit", true),
+			frame:     attr.MustBool("frame", true),
+			join:      attr.MustString("join", "miter"),
+		})
+		if err != nil {
+			return nil, ctx, err
+		}
 	case "tile_grid":
 		var err error
 		p, err = tileGrid(width, height, margin, tileParams{
