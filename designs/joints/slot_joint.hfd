@@ -1,5 +1,6 @@
-// Joint to join two parts in an X
-// TODO: unfinished
+// Half-lap slot along an edge. One notch, material_thickness wide,
+// slot_depth into the part (to the right of travel). slot_position is
+// how far the notch starts from `from`.
 {
     "params": {
         "from": "0,0",
@@ -12,52 +13,41 @@
         {
             "components": [
                 {
-                    "type": "draw",
+                    "type": "basic_edge",
                     "custom_component": {
-                        "type": "slot_joint",
-                        "defaults": {} 
+                        "type": "slot_joint"
                     },
-                    "start_point": "from",
-                    "end_point": "to",
-                    "transforms": [
+                    "components": [
                         {
-                            "type": "rotate",
-                            "degrees": "angle(start_point,end_point)"
-                        },
-                        {
-                            "type": "move",
-                            "to": "start_point"
+                            "type": "draw",
+                            "commands": [
+                                {
+                                    "command": "move",
+                                    "to": "0,0"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "slot_position,0"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "slot_position,slot_depth"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "slot_position + material_thickness,slot_depth"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "slot_position + material_thickness,0"
+                                },
+                                {
+                                    "command": "line",
+                                    "to": "width,0"
+                                }
+                            ]
                         }
-                    ],
-                    "commands": [
-                        {
-                            "command": "move",
-                            "to": "0,0"
-                        },
-                        {
-                            "command": "line",
-                            "to": "slot_position, 0"
-                        },
-                        {
-                            "command": "line",
-                            "to": "slot_position, slot_depth"
-                        },
-                        {
-                            "command": "line",
-                            "to": "slot_position + material_thickness, slot_depth"
-                        },
-                        {
-                            "command": "line",
-                            "to": "slot_position + material_thickness, 0"
-                        },
-                        {
-                            "command": "line",
-                            "to": {
-                                "x": "distance(start_point, end_point)",
-                                "y": "0"
-                            }
-                        }
-                    ]  
+                    ]
                 }
             ]
         }
